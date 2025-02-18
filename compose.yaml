@@ -1,0 +1,14 @@
+services:
+  scanner:
+    image: socsguelph/socslinux:latest
+    command: "bash"
+    stdin_open: true
+    tty: true
+    working_dir: /app
+    develop:
+      watch:
+        - path: ./src/Scanner/lexer.l
+          action: sync+restart
+          target: /app
+
+
