@@ -1,10 +1,13 @@
+SCANNER=./Scanner/
 JAVAC=javac
 JFLEX=jflex
-LEX=document.l
 
-all: Token.class Lexer.class Scanner.class
+LEX=$(SCANNER)lexer.l
 
-%.class: %.java
+
+all: $(SCANNER)Token.class $(SCANNER)Lexer.class
+
+$(SCANNER)%.class: $(SCANNER)%.java
 	$(JAVAC) $^
 
 Lexer.java: $(LEX)
@@ -12,4 +15,3 @@ Lexer.java: $(LEX)
 
 clean:
 	rm -f Lexer.java *.class *~
-

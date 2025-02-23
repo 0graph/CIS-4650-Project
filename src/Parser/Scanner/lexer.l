@@ -5,26 +5,29 @@
 
 %%
 
+%class Lexer
+%type Token
+
 ID = [_a-zA-Z][_a-zA-Z0-9]*
 NUM = [0-9]+
 TRUTH = false|true
 
 WHITESPACE = [\r|\n|\r\n]|[ \t\f]
-COMMENTS = (/*({ID}|{NUM})+*/)
+COMMENTS = (\/*({ID}|{NUM})+*\/)
 %%
 
 /* Lexical Rules Section */
 
 /* Reserved Keywords */
-"bool"  {}
-"if"    {}
-"else"  {}
-"int"   {}
-"return"{}
-"void"  {}
-"while" {}
-"true"  {}
-"false" {}
+"bool"    { Token.CreateToken(yytext()); }
+"if"      {}
+"else"    {}
+"int"     {}
+"return"  {}
+"void"    {}
+"while"   {}
+"true"    {}
+"false"   {}
 
 /* Special Symbols */
 "+" {}
