@@ -10,3 +10,5 @@ services:
         - path: ./src/Parser/
           action: sync+restart
           target: /app
+    volumes:
+      - ./src/Parser/:/app

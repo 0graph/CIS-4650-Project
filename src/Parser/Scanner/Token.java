@@ -5,9 +5,28 @@
 public class Token {
 
   /**
+   * Contrustuctor
+   */
+  public Token() {
+
+  }
+
+  /**
    * Create a new token to be used by the cup parser
    */
-  public static void CreateToken(String value, int row, int column) {
+  public static Token CreateToken(String value, int row, int column) {
     System.out.println(value);
+
+    return null;
+  }
+
+  /**
+   * Create a new token to be used by the cup parser
+   */
+  public static Token CreateToken(String value) {
+    System.out.println(value);
+
+    return null;
+
   }
 }

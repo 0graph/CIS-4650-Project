@@ -7,6 +7,8 @@
 
 %class Lexer
 %type Token
+%line
+%column
 
 ID = [_a-zA-Z][_a-zA-Z0-9]*
 NUM = [0-9]+
@@ -19,7 +21,7 @@ COMMENTS = (\/*({ID}|{NUM})+*\/)
 /* Lexical Rules Section */
 
 /* Reserved Keywords */
-"bool"    { Token.CreateToken(yytext()); }
+"bool"    { return Token.CreateToken(yytext()); }
 "if"      {}
 "else"    {}
 "int"     {}

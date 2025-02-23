@@ -1,16 +1,17 @@
 SCANNER=./Scanner/
+
 JAVAC=javac
 JFLEX=jflex
 
-LEX=$(SCANNER)lexer.l
+LEX=lexer.l
 
 
-all: $(SCANNER)Token.class $(SCANNER)Lexer.class
+all: Token.class Lexer.class
 
-$(SCANNER)%.class: $(SCANNER)%.java
+$(SCANNER)%.class: %.java
 	$(JAVAC) $^
 
-Lexer.java: $(LEX)
+$(SCANNER)Lexer.java: $(LEX)
 	$(JFLEX) $(LEX)
 
 clean:
