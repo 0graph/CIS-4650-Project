@@ -1,14 +1,12 @@
 services:
-  scanner:
-    image: socsguelph/socslinux:latest
+  scanner: # Makefile
+    build: ./src/Parser
     command: "bash"
     stdin_open: true
     tty: true
     working_dir: /app
     develop:
       watch:
-        - path: ./src/Scanner/lexer.l
+        - path: ./src/Parser/
           action: sync+restart
           target: /app
-
-
