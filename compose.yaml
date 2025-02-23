@@ -7,8 +7,11 @@ services:
     working_dir: /app
     develop:
       watch:
-        - path: ./src/Parser/
+        - path: ./src/Parser/Scanner/
+          action: sync+restart
+          target: /app
+        - path: ./src/Parser/Parse/
           action: sync+restart
           target: /app
     volumes:
-      - ./src/Parser/:/app
+      - ./src/Parser/build:/app/build

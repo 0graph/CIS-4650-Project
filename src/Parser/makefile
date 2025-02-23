@@ -1,18 +1,19 @@
-SCANNER=./Scanner/
+BUILD_DIR=build
+SCANNER=Scanner
+PARSER=Parse
 
 JAVAC=javac
 JFLEX=jflex
 
 LEX=lexer.l
 
+all: $(BUILD_DIR)/Lexer.class
 
-all: Token.class Lexer.class
+$(BUILD_DIR)/%.class: $(SCANNER)/%.java
+	$(JAVAC) -cp $(SCANNER) $^ -d $(BUILD_DIR)
 
-$(SCANNER)%.class: %.java
-	$(JAVAC) $^
-
-$(SCANNER)Lexer.java: $(LEX)
-	$(JFLEX) $(LEX)
+$(SCANNER)/Lexer.java: $(SCANNER)/$(LEX)
+	$(JFLEX) $(SCANNER)/$(LEX)
 
 clean:
-	rm -f Lexer.java *.class *~
+	rm -rf $(BUILD_DIR)/*
