@@ -5,26 +5,30 @@ DIR=$(pwd)
 CUP_PATH=/usr/share/java/cup.jar
 BUILD_DIR=$(pwd)/Build
 
-BINARY=Scanner
+SCANNER=Scanner
+PARSER=Parser
 
 # Help
-run() {
-  printf "Help"
+help() {
+  printf "./run | Run the current Parser/Scanner\n-h This help page\n-s [file] Scan a file and see the output\n"
 }
 
-# Parse a tile
-parse() {
-  echo "java -cp "$CUP_PATH:$BUILD_DIR" $BINARY $1"
-
-  java -cp "$CUP_PATH:$BUILD_DIR" $BINARY <$1
+# Scan a file
+scan() {
+  java -cp "$CUP_PATH:$BUILD_DIR" $SCANNER <$1
 }
 
-while getopts "r:s" opt; do
+while getopts "sr:h" opt; do
   case $opt in
-  r)
+  h)
+    help
+    exit
+    ;;
+
+  s)
     option=$OPTARG
 
-    parse $option
+    scan $option
     exit
     ;;
   esac
@@ -32,5 +36,5 @@ done
 
 # Run the parser with only one option
 if [[ $# -eq 1 ]]; then
-  parse $1
+  scan $1
 fi
