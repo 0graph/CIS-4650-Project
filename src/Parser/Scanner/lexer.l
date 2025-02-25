@@ -8,7 +8,7 @@ import java_cup.runtime.*;
 %%
 
 %class Lexer
-%type Token
+%type Symbol
 %line
 %column
 %cup
