@@ -79,3 +79,4 @@ COMMENTS = (\/*({ID}|{NUM})+*\/)
 {NUM} {}
 {TRUTH} {}
 {COMMENTS} {}
+{WHITESPACE} {/*Ignore Whitespace*/}
