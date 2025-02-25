@@ -11,10 +11,10 @@ CUP=/usr/share/java/cup.jar
 all: $(BUILD_DIR)/Lexer.class
 
 $(BUILD_DIR)/%.class: $(SCANNER)/%.java
-    $(JAVAC) -cp "$(SCANNER):$(CUP)" $^ -d $(BUILD_DIR)
+	$(JAVAC) -cp "$(SCANNER):$(CUP)" $^ -d $(BUILD_DIR)
 
 $(SCANNER)/Lexer.java: $(SCANNER)/$(LEX)
-    $(JFLEX) $(SCANNER)/$(LEX)
+	$(JFLEX) $(SCANNER)/$(LEX)
 
 clean:
-    rm -rf $(BUILD_DIR)/*
+	rm -rf $(BUILD_DIR)/*
