@@ -5,13 +5,6 @@ services:
     stdin_open: true
     tty: true
     working_dir: /app
-    develop:
-      watch:
-        - path: ./src/Parser/Scanner/
-          action: sync+restart
-          target: /app
-        - path: ./src/Parser/Parse/
-          action: sync+restart
-          target: /app
     volumes:
       - ./src/Parser/build:/app/build
+      - ./src/Parser/Scanner:/app/Scanner
