@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Variables
+DIR=$(pwd)
 CUP_PATH=/usr/share/java/cup.jar
-BUILD_DIR=Build/
+BUILD_DIR=$(pwd)/Build
 
 BINARY=$BUILD_DIR/Scanner
 
@@ -16,13 +17,15 @@ parse() {
   java -cp "$CUP_PATH:$BUILD_DIR" $BINARY $1
 }
 
-while getopts ":r" opt; do
-  case r)
-    option="$OPTARG"
+while getopts "r:s" opt; do
+  case $opt in
+  r)
+    option=$OPTARG
 
     parse $option
     exit
     ;;
+  esac
 done
 
 # Run the parser with only one option
