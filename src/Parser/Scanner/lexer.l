@@ -75,8 +75,7 @@ COMMENTS = (\/*({ID}|{NUM})+*\/)
 "}"   { return symbol(Sym.RCURLY); }
 
 /* Special Tokens */
-{ID} {}
-{NUM} {}
-{TRUTH} {}
-{COMMENTS} {}
+{ID} {return symbol(Sym.ID, yytext());}
+{NUM} {return symbol(Sym.NUM, yytext());}
+{COMMENTS} {/*Ignore Comments*/}
 {WHITESPACE} {/*Ignore Whitespace*/}
