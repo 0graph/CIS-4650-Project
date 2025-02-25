@@ -9,6 +9,7 @@ terminal String ID, NUM;
 terminal ERROR;
 
 non terminal program;
+non terminal return_stmt, expression, var, obool_expression, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor, call, args, arg_list;
 
 non terminal declaration_list, declaration, var_declaration, local_declarations, fun_declaration;
 non terminal type_specifier;
@@ -16,39 +17,84 @@ non terminal fun_prototype, params, param_list, param;
 non terminal compound_stmt, iteration_stmt, selection_stmt, expression_stmt, return_stmt, statement, statement_list;
 
 /* Grammer Section */
-start with program;
+start with program; 
 
-program ::= declaration_list;
+program ::= ;
 
-declaration_list ::= declaration_list declaration | declaration;
 
-declaration ::= var_declaration | fun_declaration | fun_prototype;
+/* 18-34 */
 
-var_declaration ::= type_specifier ID | type_specifier ID LBRACKET NUM RBRACKET;
+return_stmt         ::= RETURN expression SEMI
+                        | RETURN SEMI
+                        ;
 
-type_specifier ::= BOOL | INT | VOID;
+expression          ::= var EQ expression
+                        | obool-expression
+                        ;
 
-fun_declaration ::= type_specifier ID LPAREN params RPAREN compound_stmt;
+var                 ::= ID 
+                        | ID LBRACKET expression RBRACKET
+                        ;
 
-fun_prototype ::= type_specifier ID LPAREN params RPAREN ;
+obool_expression    ::= obool_expression OR abool_expression
+                        | abool_expression
+                        ;
 
-params ::= param_list | VOID;
+abool_expression    ::= abool_expression AND ubool_expression
+                        | ubool_expression;
 
-param_list ::= param_list COMMA param | param
+ubool_expression    ::= NOT ubool_expression
+                        | simple_expression
+                        ;
 
-param ::= type_specifier ID | type_specifier ID LBRACKET RBRACKET;
+simple_expression   ::= additive_expression relop additive_expression
+                        | additive_expression
+                        ;
 
-compound_stmt ::= LCURLY local_declarations statement_list RCURLY;
+relop               ::= LTE 
+                        | LT
+                        | GT
+                        | GTE
+                        | EQ
+                        | NEQ
+                        ;
 
-local_declarations ::= local_declarations var_declaration | ;
+additive_expression ::= additive_expression addop term
+                        | term
+                        ;
 
-statement_list ::= statement_list statement | ;
+addop               ::= PLUS
+                        | MINUS
+                        ;
 
-statement ::= expression_stmt | compound_stmt | selection_stmt | iteration_stmt | return_stmt;
+term                ::= term mulop signed_factor
+                        | signed_factor
+                        ;
 
-expression_stmt ::= expression SEMI | ;
+mulop               ::= TIMES
+                        | DIVIDE
+                        ;
 
-selection_stmt ::= IF LPAREN expression RPAREN statement | IF LPAREN expression RPAREN statement ELSE statement;
+signed_factor       ::= MINUS signed_factor
+                        | factor
+                        ;
 
-iteration_stmt ::= WHILE LPAREN expression RPAREN statement;
+factor              ::= LPAREN expression RPAREN
+                        | var
+                        | call
+                        | NUM
+                        | TRUE
+                        | FALSE;
+
+call                ::= ID LPAREN args RPAREN
+                        ;
+
+args                ::= arg_list 
+                        |
+                        ;
+
+arg_list            ::= arg_list COMMA expression
+                        | expression
+                        ;
+
 
