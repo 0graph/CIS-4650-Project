@@ -21,6 +21,8 @@ $(BUILD_DIR)/%.class: $(SCANNER)/%.java $(BUILD_DIR)/sym.java
 
 $(SCANNER)/Lexer.java: $(SCANNER)/$(LEX)
 	$(JFLEX) $(SCANNER)/$(LEX)
+	$(JFLEX) $(SCANNER)/$(LEX)
 
 clean:
+	rm -rf $(BUILD_DIR)/*
 	rm -rf $(BUILD_DIR)/*
