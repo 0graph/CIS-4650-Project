@@ -4,13 +4,16 @@
 DIR=$(pwd)
 CUP_PATH=/usr/share/java/cup.jar
 BUILD_DIR=$(pwd)/Build
+SCANNER_DIR=$(pwd)/Scanner
+PARSE_DIR=$(pwd)/Parse
+AST_DIR=$(pwd)/Ast
 
 SCANNER=Scanner
 PARSER=Parser
 
 # Help
 help() {
-  printf "./run | Run the current Parser/Scanner\n-h This help page\n-s [file] Scan a file and see the output\n-p [file] parse a file with CUP and see the output\n"
+  printf "Run the current Parser/Scanner\n-h This help page\n-s [file] Scan a file and see the output\n-p [file] parse a file with CUP and see the output\n"
 }
 
 # Scan a file
@@ -19,27 +22,23 @@ scan() {
 }
 
 parse() {
-  javac -cp "/usr/share/java/cup.jar:Build:Parse:Scanner" Parse/ParserMain.java -d Build
-  java -cp "/usr/share/java/cup.jar:Build:Parse:Scanner" ParserMain $1
+  java -cp "$CUP_PATH:$BUILD_DIR:$PARSE_DIR:$SCANNER_DIR" ParserMain $1
 }
 
-while getopts "sr:h:p" opt; do
-  case $opt in
-  h)
-    help
-    exit
-    ;;
-
+while getopts "s:p:h" option; do
+  case "$option" in
   s)
-    option=$OPTARG
-
-    scan "$option"
+    scan "$OPTARG"
     exit
     ;;
 
   p)
-    option=$OPTARG
-    parse "$option"
+    parse "$OPTARG"
+    exit
+    ;;
+
+  h)
+    help
     exit
     ;;
   esac
