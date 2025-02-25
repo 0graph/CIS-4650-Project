@@ -5,7 +5,7 @@ DIR=$(pwd)
 CUP_PATH=/usr/share/java/cup.jar
 BUILD_DIR=$(pwd)/Build
 
-BINARY=$BUILD_DIR/Scanner
+BINARY=Scanner
 
 # Help
 run() {
@@ -14,7 +14,9 @@ run() {
 
 # Parse a tile
 parse() {
-  java -cp "$CUP_PATH:$BUILD_DIR" $BINARY $1
+  echo "java -cp "$CUP_PATH:$BUILD_DIR" $BINARY $1"
+
+  java -cp "$CUP_PATH:$BUILD_DIR" $BINARY <$1
 }
 
 while getopts "r:s" opt; do
