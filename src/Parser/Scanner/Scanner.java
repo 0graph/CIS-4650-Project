@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java_cup.runtime.Symbol;
 
 /**
  * Scanner implementation to check whether the lexer is working
@@ -19,7 +21,7 @@ public class Scanner {
       Scanner scanner = new Scanner(new Lexer(new InputStreamReader(System.in)));
       Symbol tok = null;
       while ((tok = scanner.getNextToken()) != null) {
-        System.out.print(sym.terminalNames[tok.sym]);
+        System.out.print(Sym.terminalNames[tok.sym]);
         if (tok.value != null)
           System.out.print("(" + tok.value + ")");
         System.out.println();

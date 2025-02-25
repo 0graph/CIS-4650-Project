@@ -40,39 +40,39 @@ COMMENTS = (\/*({ID}|{NUM})+*\/)
 /* Lexical Rules Section */
 
 /* Reserved Keywords */
-"bool"    { return symbol(sym.BOOL); }
-"if"      { return symbol(sym.IF); }
-"else"    { return symbol(sym.ELSE); }
-"int"     { return symbol(sym.INT); }
-"return"  { return symbol(sym.RETURN); }
-"void"    { return symbol(sym.VOID); }
-"while"   { return symbol(sym.WHILE); }
-"true"    { return symbol(sym.TRUE); }
-"false"   { return symbol(sym.FALSE); }
+"bool"    { return symbol(Sym.BOOL); }
+"if"      { return symbol(Sym.IF); }
+"else"    { return symbol(Sym.ELSE); }
+"int"     { return symbol(Sym.INT); }
+"return"  { return symbol(Sym.RETURN); }
+"void"    { return symbol(Sym.VOID); }
+"while"   { return symbol(Sym.WHILE); }
+"true"    { return symbol(Sym.TRUE); }
+"false"   { return symbol(Sym.FALSE); }
 
 /* Special Symbols */
-"+"   { return symbol(sym.PLUS); }
-"-"   { return symbol(sym.MINUS); }
-"*"   { return symbol(sym.TIMES); }
-"/"   { return symbol(sym.DIVIDE); }
-"<"   { return symbol(sym.LT); }
-"<="  { return symbol(sym.LTE); }
-">"   { return symbol(sym.GT); }
-">="  { return symbol(sym.GTE); }
-"=="  { return symbol(sym.EQ); }
-"!="  { return symbol(sym.NEQ); }
-"~"   { return symbol(sym.NOT); }
-"||"  { return symbol(sym.OR); }
-"&&"  { return symbol(sym.AND); }
-"="   { return symbol(sym.ASSIGN); }
-";"   { return symbol(sym.SEMI); }
-","   { return symbol(sym.COMMA); }
-"("   { return symbol(sym.LPAREN); }
-")"   { return symbol(sym.RPAREN); }
-"["   { return symbol(sym.LBRACKET); }
-"]"   { return symbol(sym.RBRACKET); }
-"{"   { return symbol(sym.LCURLY); }
-"}"   { return symbol(sym.RCURLY); }
+"+"   { return symbol(Sym.PLUS); }
+"-"   { return symbol(Sym.MINUS); }
+"*"   { return symbol(Sym.TIMES); }
+"/"   { return symbol(Sym.DIVIDE); }
+"<"   { return symbol(Sym.LT); }
+"<="  { return symbol(Sym.LTE); }
+">"   { return symbol(Sym.GT); }
+">="  { return symbol(Sym.GTE); }
+"=="  { return symbol(Sym.EQ); }
+"!="  { return symbol(Sym.NEQ); }
+"~"   { return symbol(Sym.NOT); }
+"||"  { return symbol(Sym.OR); }
+"&&"  { return symbol(Sym.AND); }
+"="   { return symbol(Sym.ASSIGN); }
+";"   { return symbol(Sym.SEMI); }
+","   { return symbol(Sym.COMMA); }
+"("   { return symbol(Sym.LPAREN); }
+")"   { return symbol(Sym.RPAREN); }
+"["   { return symbol(Sym.LBRACKET); }
+"]"   { return symbol(Sym.RBRACKET); }
+"{"   { return symbol(Sym.LCURLY); }
+"}"   { return symbol(Sym.RCURLY); }
 
 /* Special Tokens */
 {ID} {}

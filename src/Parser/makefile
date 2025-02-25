@@ -3,18 +3,22 @@ PARSE_DIR=Parse
 SCANNER_DIR=Scanner
 
 CUP=cup
-# CUP_CLASSPATH=
+CUP_CLASSPATH=/usr/share/java/cup.jar
 JFLEX=jflex
+JAVAC=javac
 
 LEX_FILE=$(SCANNER_DIR)/lexer.l
 PAR_FILE=$(PARSE_DIR)/parser.l
 
-all: Parser Scanner
+all: Project
+
+Project: Parser Scanner
+	$(JAVAC) -cp "$(CUP_CLASSPATH):$(PARSE_DIR):$(SCANNER_DIR)" $(SCANNER_DIR)/Scanner.java
 
 Parser: $(PAR_FILE)
-	$(CUP) -expect 3 $(PAR_FILE)
-	mv parser.java $(PARSE_DIR)/Parser.java
-	mv sym.java $(PARSE_DIR)/Sym.java
+	$(CUP) -parser Parser -symbols Sym -expect 3 $(PAR_FILE)
+	mv Parser.java $(PARSE_DIR)/Parser.java
+	mv Sym.java $(PARSE_DIR)/Sym.java
 
 Scanner: $(LEX_FILE)
 	$(JFLEX) $(LEX_FILE)

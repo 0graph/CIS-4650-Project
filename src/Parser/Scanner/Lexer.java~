@@ -674,157 +674,157 @@ class Lexer implements java_cup.runtime.Scanner {
             // fall through
           case 33: break;
           case 2: 
-            { return symbol(Sym.DIVIDE);
+            { return symbol(sym.DIVIDE);
             } 
             // fall through
           case 34: break;
           case 3: 
-            { return symbol(Sym.PLUS);
+            { return symbol(sym.PLUS);
             } 
             // fall through
           case 35: break;
           case 4: 
-            { return symbol(Sym.MINUS);
+            { return symbol(sym.MINUS);
             } 
             // fall through
           case 36: break;
           case 5: 
-            { return symbol(Sym.TIMES);
+            { return symbol(sym.TIMES);
             } 
             // fall through
           case 37: break;
           case 6: 
-            { return symbol(Sym.LT);
+            { return symbol(sym.LT);
             } 
             // fall through
           case 38: break;
           case 7: 
-            { return symbol(Sym.ASSIGN);
+            { return symbol(sym.ASSIGN);
             } 
             // fall through
           case 39: break;
           case 8: 
-            { return symbol(Sym.GT);
+            { return symbol(sym.GT);
             } 
             // fall through
           case 40: break;
           case 9: 
-            { return symbol(Sym.NOT);
+            { return symbol(sym.NOT);
             } 
             // fall through
           case 41: break;
           case 10: 
-            { return symbol(Sym.SEMI);
+            { return symbol(sym.SEMI);
             } 
             // fall through
           case 42: break;
           case 11: 
-            { return symbol(Sym.COMMA);
+            { return symbol(sym.COMMA);
             } 
             // fall through
           case 43: break;
           case 12: 
-            { return symbol(Sym.LPAREN);
+            { return symbol(sym.LPAREN);
             } 
             // fall through
           case 44: break;
           case 13: 
-            { return symbol(Sym.RPAREN);
+            { return symbol(sym.RPAREN);
             } 
             // fall through
           case 45: break;
           case 14: 
-            { return symbol(Sym.LBRACKET);
+            { return symbol(sym.LBRACKET);
             } 
             // fall through
           case 46: break;
           case 15: 
-            { return symbol(Sym.RBRACKET);
+            { return symbol(sym.RBRACKET);
             } 
             // fall through
           case 47: break;
           case 16: 
-            { return symbol(Sym.LCURLY);
+            { return symbol(sym.LCURLY);
             } 
             // fall through
           case 48: break;
           case 17: 
-            { return symbol(Sym.RCURLY);
+            { return symbol(sym.RCURLY);
             } 
             // fall through
           case 49: break;
           case 18: 
-            { return symbol(Sym.IF);
+            { return symbol(sym.IF);
             } 
             // fall through
           case 50: break;
           case 19: 
-            { return symbol(Sym.LTE);
+            { return symbol(sym.LTE);
             } 
             // fall through
           case 51: break;
           case 20: 
-            { return symbol(Sym.EQ);
+            { return symbol(sym.EQ);
             } 
             // fall through
           case 52: break;
           case 21: 
-            { return symbol(Sym.GTE);
+            { return symbol(sym.GTE);
             } 
             // fall through
           case 53: break;
           case 22: 
-            { return symbol(Sym.NEQ);
+            { return symbol(sym.NEQ);
             } 
             // fall through
           case 54: break;
           case 23: 
-            { return symbol(Sym.OR);
+            { return symbol(sym.OR);
             } 
             // fall through
           case 55: break;
           case 24: 
-            { return symbol(Sym.AND);
+            { return symbol(sym.AND);
             } 
             // fall through
           case 56: break;
           case 25: 
-            { return symbol(Sym.INT);
+            { return symbol(sym.INT);
             } 
             // fall through
           case 57: break;
           case 26: 
-            { return symbol(Sym.ELSE);
+            { return symbol(sym.ELSE);
             } 
             // fall through
           case 58: break;
           case 27: 
-            { return symbol(Sym.TRUE);
+            { return symbol(sym.TRUE);
             } 
             // fall through
           case 59: break;
           case 28: 
-            { return symbol(Sym.BOOL);
+            { return symbol(sym.BOOL);
             } 
             // fall through
           case 60: break;
           case 29: 
-            { return symbol(Sym.VOID);
+            { return symbol(sym.VOID);
             } 
             // fall through
           case 61: break;
           case 30: 
-            { return symbol(Sym.FALSE);
+            { return symbol(sym.FALSE);
             } 
             // fall through
           case 62: break;
           case 31: 
-            { return symbol(Sym.WHILE);
+            { return symbol(sym.WHILE);
             } 
             // fall through
           case 63: break;
           case 32: 
-            { return symbol(Sym.RETURN);
+            { return symbol(sym.RETURN);
             } 
             // fall through
           case 64: break;
