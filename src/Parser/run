@@ -1,5 +1,31 @@
 #!/bin/bash
 
+# Variables
+CUP_PATH=/usr/share/java/cup.jar
+BUILD_DIR=Build/
+
+BINARY=$BUILD_DIR/Scanner
+
 # Help
-run(){
+run() {
+  printf "Help"
 }
+
+# Parse a tile
+parse() {
+  java -cp "$CUP_PATH:$BUILD_DIR" $BINARY $1
+}
+
+while getopts ":r" opt; do
+  case r)
+    option="$OPTARG"
+
+    parse $option
+    exit
+    ;;
+done
+
+# Run the parser with only one option
+if [[ $# -eq 1 ]]; then
+  parse $1
+fi
