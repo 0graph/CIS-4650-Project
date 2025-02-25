@@ -13,7 +13,7 @@ PAR_FILE=$(PARSE_DIR)/parser.l
 all: Project
 
 Project: Parser Scanner
-	$(JAVAC) -cp "$(CUP_CLASSPATH):$(PARSE_DIR):$(SCANNER_DIR)" $(SCANNER_DIR)/Scanner.java
+	$(JAVAC) -cp "$(CUP_CLASSPATH):$(PARSE_DIR):$(SCANNER_DIR)" $(SCANNER_DIR)/Scanner.java -d $(BUILD_DIR)
 
 Parser: $(PAR_FILE)
 	$(CUP) -parser Parser -symbols Sym -expect 3 $(PAR_FILE)

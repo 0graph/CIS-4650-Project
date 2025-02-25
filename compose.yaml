@@ -6,6 +6,6 @@ services:
     tty: true
     working_dir: /app
     volumes:
-      - ./src/Parser/build:/app/build
+      - ./src/Parser/Build:/app/Build
       - ./src/Parser/Scanner:/app/Scanner
       - ./src/Parser/Parse:/app/Parse
