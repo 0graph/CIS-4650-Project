@@ -10,7 +10,7 @@ PARSER=Parser
 
 # Help
 help() {
-  printf "./run | Run the current Parser/Scanner\n-h This help page\n-s [file] Scan a file and see the output\n"
+  printf "./run | Run the current Parser/Scanner\n-h This help page\n-s [file] Scan a file and see the output\n-p [file] parse a file with CUP and see the output\n"
 }
 
 # Scan a file
@@ -18,7 +18,12 @@ scan() {
   java -cp "$CUP_PATH:$BUILD_DIR" $SCANNER <$1
 }
 
-while getopts "sr:h" opt; do
+parse() {
+  javac -cp "/usr/share/java/cup.jar:Build:Parse:Scanner" Parse/ParserMain.java -d Build
+  java -cp "/usr/share/java/cup.jar:Build:Parse:Scanner" ParserMain $1
+}
+
+while getopts "sr:h:p" opt; do
   case $opt in
   h)
     help
@@ -28,7 +33,13 @@ while getopts "sr:h" opt; do
   s)
     option=$OPTARG
 
-    scan $option
+    scan "$option"
+    exit
+    ;;
+
+  p)
+    option=$OPTARG
+    parse "$option"
     exit
     ;;
   esac
@@ -36,5 +47,5 @@ done
 
 # Run the parser with only one option
 if [[ $# -eq 1 ]]; then
-  scan $1
+  parse $1
 fi
