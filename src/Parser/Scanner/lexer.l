@@ -15,7 +15,7 @@ import java_cup.runtime.*;
 
 %eofval{
   return null;
-$eofval};
+%eofval};
 
 %{
   // Create Cup Symbol for parsing with no value object
