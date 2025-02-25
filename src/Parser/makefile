@@ -1,26 +1,23 @@
-BUILD_DIR=build
-SCANNER=Scanner
-PARSER=Parse
+BUILD_DIR=Build
+PARSE_DIR=Parse
+SCANNER_DIR=Scanner
 
-JAVAC=javac
+CUP=cup
+# CUP_CLASSPATH=
 JFLEX=jflex
 
-LEX=lexer.l
-CUP=/usr/share/java/cup.jar
-CUP_CFG=$(PARSER)/parser.l
-PARSER_FILES=$(BUILD_DIR)/Parser.java $(BUILD_DIR)/sym.java
+LEX_FILE=$(SCANNER_DIR)/lexer.l
+PAR_FILE=$(PARSE_DIR)/parser.l
 
+all: Parser Scanner
 
-all: $(BUILD_DIR)/Lexer.class $(PARSER_FILES)
+Parser: $(PAR_FILE)
+	$(CUP) -expect 3 $(PAR_FILE)
+	mv parser.java $(PARSE_DIR)/Parser.java
+	mv sym.java $(PARSE_DIR)/Sym.java
 
-$(PARSER_FILES): $(CUP_CFG)
-	java -cp "$(CUP):$(SCANNER)" java_cup.Main -parser Parser -symbols sym $(CUP_CFG)
+Scanner: $(LEX_FILE)
+	$(JFLEX) $(LEX_FILE)
 
-$(BUILD_DIR)/%.class: $(SCANNER)/%.java $(BUILD_DIR)/sym.java
-	$(JAVAC) -cp "$(SCANNER):$(CUP)" $^ -d $(BUILD_DIR)
-
-$(SCANNER)/Lexer.java: $(SCANNER)/$(LEX)
-	$(JFLEX) $(SCANNER)/$(LEX)
-
-clean:
-	rm -rf $(BUILD_DIR)/*
+clean: 
+	rm -rf $(BUILD_DIR) *.class *.java

@@ -8,3 +8,4 @@ services:
     volumes:
       - ./src/Parser/build:/app/build
       - ./src/Parser/Scanner:/app/Scanner
+      - ./src/Parser/Parse:/app/Parse
