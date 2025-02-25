@@ -16,7 +16,7 @@ CUP=$(JAVA) -cp  $(JCUP)
 all: $(BUILD_DIR)/Parser.class $(BUILD_DIR)/Lexer.class
 
 $(BUILD_DIR)/%.class: $(SCANNER)/%.java
-	$(JAVAC) -cp $(SCANNER) $^ -d $(BUILD_DIR)
+	$(JAVAC) -cp "$(SCANNER):$(CUP)" $^ -d $(BUILD_DIR)
 
 $(SCANNER)/Lexer.java: $(SCANNER)/$(LEX)
 	$(JFLEX) $(SCANNER)/$(LEX)
