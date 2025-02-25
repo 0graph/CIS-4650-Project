@@ -5,6 +5,6 @@ package Ast;
  */
 public interface AstVisitor {
 
-  public void visit(ExpList exp, int level);
+  public void visit(Object exp, int level);
 
 }
