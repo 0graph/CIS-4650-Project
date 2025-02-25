@@ -15,7 +15,7 @@ import java_cup.runtime.*;
 
 %eofval{
   return null;
-$eofval};
+%eofval};
 
 %{
   // Create Cup Symbol for parsing with no value object
@@ -40,40 +40,39 @@ COMMENTS = (\/*({ID}|{NUM})+*\/)
 /* Lexical Rules Section */
 
 /* Reserved Keywords */
-"bool"    { return Token.CreateToken(yytext()); }
-"if"      {}
-"else"    {}
-"int"     {}
-"return"  {}
-"void"    {}
-"while"   {}
-"true"    {}
-"false"   {}
+"bool"    { return symbol(sym.BOOL); }
+"if"      { return symbol(sym.IF); }
+"else"    { return symbol(sym.ELSE); }
+"int"     { return symbol(sym.INT); }
+"return"  { return symbol(sym.RETURN); }
+"void"    { return symbol(sym.VOID); }
+"while"   { return symbol(sym.WHILE); }
+"true"    { return symbol(sym.TRUE); }
+"false"   { return symbol(sym.FALSE); }
 
 /* Special Symbols */
-"+" {}
-"-" {}
-"*" {}
-"/" {}
-"<" {}
-"<=" {}
-">" {}
-">=" {}
-"==" {}
-"!=" {}
-"~" {}
-"||" {}
-"&&" {}
-"=" {}
-";" {}
-"," {}
-"(" {}
-")" {}
-"[" {}
-"]" {}
-"{" {}
-"}" {}
-
+"+"   { return symbol(sym.PLUS); }
+"-"   { return symbol(sym.MINUS); }
+"*"   { return symbol(sym.TIMES); }
+"/"   { return symbol(sym.DIVIDE); }
+"<"   { return symbol(sym.LT); }
+"<="  { return symbol(sym.LTE); }
+">"   { return symbol(sym.GT); }
+">="  { return symbol(sym.GTE); }
+"=="  { return symbol(sym.EQ); }
+"!="  { return symbol(sym.NEQ); }
+"~"   { return symbol(sym.NOT); }
+"||"  { return symbol(sym.OR); }
+"&&"  { return symbol(sym.AND); }
+"="   { return symbol(sym.ASSIGN); }
+";"   { return symbol(sym.SEMI); }
+","   { return symbol(sym.COMMA); }
+"("   { return symbol(sym.LPAREN); }
+")"   { return symbol(sym.RPAREN); }
+"["   { return symbol(sym.LBRACKET); }
+"]"   { return symbol(sym.RBRACKET); }
+"{"   { return symbol(sym.LCURLY); }
+"}"   { return symbol(sym.RCURLY); }
 
 /* Special Tokens */
 {ID} {}

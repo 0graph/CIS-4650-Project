@@ -273,6 +273,10 @@ class Lexer implements java_cup.runtime.Scanner {
   private int zzFinalHighSurrogate = 0;
 
   /* user code: */
+  return null;
+$eofval};
+
+%{
   // Create Cup Symbol for parsing with no value object
   private Symbol symbol(int type){
     return new Symbol(type, yyline, yycolumn);
@@ -663,8 +667,7 @@ class Lexer implements java_cup.runtime.Scanner {
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
             zzDoEOF();
-          {   return null;
- }
+          { return new java_cup.runtime.Symbol(sym.EOF); }
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
