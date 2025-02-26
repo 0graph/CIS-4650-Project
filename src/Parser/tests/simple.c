@@ -1,3 +1,4 @@
-int main()
-{
+void main(void) {
+  int x;
+  x = 0;
 }
