@@ -12,4 +12,8 @@ public class DecList {
         this.head = head;
         this.tail = tail;
     }
+
+    public void accept( AstVisitor visitor, int level ) {
+        visitor.visit( this, level );
+    }
 }

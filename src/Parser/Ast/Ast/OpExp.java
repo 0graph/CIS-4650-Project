@@ -26,14 +26,15 @@ public class OpExp extends Exp {
     public Exp rhs;
     
     // Note: lhs may be filled with NilExp
-    public OpExp(int pos, Exp lhs, int Op, Exp rhs) {
-        this.pos = pos;
+    public OpExp(int row, int col, Exp lhs, int Op, Exp rhs) {
+        this.row = row;
+        this.col = col;
         this.lhs = lhs;
         this.Op = Op;
         this.rhs = rhs;
     }
 
-    public void accept( AbsynVisitor visitor, int level ) {
+    public void accept( AstVisitor visitor, int level ) {
         visitor.visit( this, level );
     }
 }

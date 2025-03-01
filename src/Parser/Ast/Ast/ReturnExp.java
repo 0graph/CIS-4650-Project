@@ -8,12 +8,14 @@ public class ReturnExp extends Exp {
     public Exp exp;
     
     // Note: exp may be filled with NilExp object
-    public ReturnExp(int pos, Exp exp) {
-        this.pos = pos;
+    public ReturnExp(int row, int col, Exp exp) {
+        this.row = row;
+        this.col = col;
         this.exp = exp;
     }
 
-    public void accept( AbsynVisitor visitor, int level ) {
+
+    public void accept(  visitor, int level ) {
         visitor.visit( this, level );
     }
 }

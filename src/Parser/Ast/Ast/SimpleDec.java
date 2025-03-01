@@ -8,13 +8,14 @@ public class SimpleDec extends Dec {
     public String name;
     public NameTy typ;
     
-    public SimpleDec(int pos, NameTy typ, String name) {
-        this.pos = pos;
+    public SimpleDec(int row, int col, NameTy typ, String name) {
+        this.row = row;
+        this.col = col;
         this.name = name;
         this.typ = typ;
     }
 
-    public void accept( AbsynVisitor visitor, int level ) {
+    public void accept( AstVisitor visitor, int level ) {
         visitor.visit( this, level );
     }
 }

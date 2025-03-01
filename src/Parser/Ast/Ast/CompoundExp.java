@@ -8,13 +8,15 @@ public class CompoundExp extends Exp {
     public VarListDec decs;
     public ExpList exps;
     
-    public CompoundExp(int pos, VarListDec decs, ExpList exps) {
-        this.pos = pos;
+    public CompoundExp(int row, int col, VarListDec decs, ExpList exps) {
+        this.row = row;
+        this.col = col;
         this.decs = decs;
         this.exps = exps;
     }
 
-    public void accept( AbsynVisitor visitor, int level ) {
+
+    public void accept( AstVisitor visitor, int level ) {
         visitor.visit( this, level );
     }
 }

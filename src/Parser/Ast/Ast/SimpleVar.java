@@ -7,12 +7,14 @@ package Ast;
 public class SimpleVar extends Var {
     public String name;
     
-    public SimpleVar(int pos, String name) {
-        this.pos = pos;
+    public SimpleVar(int row, int col, String name) {
+        this.row = row;
+        this.col = col;
         this.name = name;
     }
 
-    public void accept( AbsynVisitor visitor, int level ) {
+
+    public void accept( AstVisitor visitor, int level ) {
         visitor.visit( this, level );
     }
 }

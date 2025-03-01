@@ -8,13 +8,15 @@ public class AssignExp extends Exp {
     public VarExp lhs;
     public Exp rhs;
     
-    public AssignExp(int pos, VarExp lhs, Exp rhs) {
-        this.pos = pos;
+    public AssignExp(int row, int col, VarExp lhs, Exp rhs) {
+        this.row = row;
+        this.col = col;
         this.lhs = lhs;
         this.rhs = rhs;
     }
 
-    public void accept( AbsynVisitor visitor, int level ) {
+
+    public void accept( AstVisitor visitor, int level ) {
         visitor.visit( this, level );
     }
 }

@@ -8,13 +8,15 @@ public class IndexVar extends Var {
     public String name;
     public Exp index;
     
-    public IndexVar(int pos, String name, Exp index) {
-        this.pos = pos;
+    public IndexVar(int row, int col, String name, Exp index) {
+        this.row = row;
+        this.col = col;
         this.name = name;
         this.index = index;
     }
 
-    public void accept( AbsynVisitor visitor, int level ) {
+
+    public void accept( AstVisitor visitor, int level ) {
         visitor.visit( this, level );
     }
 }
