@@ -5,10 +5,10 @@ package Ast;
 */
 
 public class CompoundExp extends Exp {
-    public VarListDec decs;
+    public VarDecList decs;
     public ExpList exps;
     
-    public CompoundExp(int row, int col, VarListDec decs, ExpList exps) {
+    public CompoundExp(int row, int col, VarDecList decs, ExpList exps) {
         this.row = row;
         this.col = col;
         this.decs = decs;

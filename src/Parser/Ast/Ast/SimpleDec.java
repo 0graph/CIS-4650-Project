@@ -4,7 +4,7 @@ package Ast;
     SimpleDec type
 */
 
-public class SimpleDec extends Dec {
+public class SimpleDec extends VarDec {
     public String name;
     public NameTy typ;
     

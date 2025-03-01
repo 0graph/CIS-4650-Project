@@ -19,6 +19,8 @@ public interface AstVisitor {
 
   public void visit(ExpList exp, int level);
 
+  public void visit(FunctionDec exp, int level);
+
   public void visit(IfExp exp, int level);
 
   public void visit(IndexVar exp, int level);

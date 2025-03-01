@@ -9,7 +9,7 @@ JFLEX=jflex
 JAVAC=javac
 
 LEX_FILE=$(SCANNER_DIR)/lexer.l
-PAR_FILE=$(PARSE_DIR)/parser.l
+PAR_FILE=$(PARSE_DIR)/parserAST.cup
 SCANNER_FILES=$(wildcard $(SCANNER_DIR)/*.java)
 PARSER_FILES=$(wildcard $(PARSE_DIR)/*.java)
 

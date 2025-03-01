@@ -4,7 +4,7 @@ package Ast;
     ArrayDec type
 */
 
-public class ArrayDec extends Dec {
+public class ArrayDec extends VarDec {
     public String name;
     public NameTy typ;
     public int size;
