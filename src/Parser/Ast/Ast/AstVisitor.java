@@ -27,4 +27,8 @@ public interface AstVisitor {
 
   public void visit(CompoundExp exp, int level);
 
+  public void visit(IntExp exp, int level);
+
+  public void visit(BoolExp exp, int level);
+
 }
