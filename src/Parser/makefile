@@ -15,7 +15,7 @@ PARSER_FILES=$(wildcard $(PARSE_DIR)/*.java)
 
 all: $(BUILD_DIR)/ParserMain.class $(BUILD_DIR)/Scanner.class
 
-$(BUILD_DIR)/ParserMain.class: $(PARSE_DIR)/*.java $(PAR_FILE)
+$(BUILD_DIR)/ParserMain.class: $(PARSE_DIR)/*.java $(PAR_FILE) $(AST_DIR)/Ast/*.java
 	$(CUP) -parser Parser -symbols Sym -expect 3 $(PAR_FILE)
 	mv Parser.java $(PARSE_DIR)/Parser.java
 	mv Sym.java $(PARSE_DIR)/Sym.java
