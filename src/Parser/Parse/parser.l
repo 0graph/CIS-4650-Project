@@ -98,7 +98,9 @@ declaration_list ::= declaration_list:dl declaration:d1
 
 declaration ::= var_declaration:d
                 {: RESULT = d; :}
-                | fun_declaration | fun_prototype;
+                | fun_declaration:f
+                {: RESULT = f; :}
+                | fun_prototype;
 
 var_declaration ::= type_specifier:t ID:id SEMI 
                     {: RESULT = new  SimpleDec(tleft, tright, t, id); :}
