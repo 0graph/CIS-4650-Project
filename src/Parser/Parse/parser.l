@@ -65,12 +65,12 @@ terminal NOT, AND, OR, EQ, NEQ, UMINUS;
 terminal String ID, NUM;
 terminal ERROR;
 
+non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list, param_list;
 non terminal addop, mulop, relop;
-non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list;
 
-non terminal Dec declaration, var_declaration, fun_declaration;
+non terminal Dec declaration, var_declaration, fun_declaration, param;
 non terminal VarType type_specifier;
-non terminal fun_prototype, param_list, param;
+non terminal fun_prototype;
 non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor, term, signed_factor, additive_expression, abool_expression, ubool_expression, simple_expression, return_stmt;
 non terminal iteration_stmt, selection_stmt;
 
@@ -112,7 +112,7 @@ declaration ::= var_declaration:d
                 {: RESULT = f; :}
                 | fun_prototype;
 
-var_declaration ::= type_specifier:t ID:id SEMI 
+var_declaration ::= type_specifier:t ID:id SEMI
                     {: RESULT = new  SimpleDec(tleft, tright, t, id); :}
                     | type_specifier:t ID:id LBRACKET NUM:n RBRACKET SEMI
                     {: RESULT = new ArrayDec(tleft, tright, t, id, n); :}
@@ -131,17 +131,33 @@ fun_declaration   ::= type_specifier:t ID:id LPAREN params:p RPAREN compound_stm
                      ;
 
 fun_prototype     ::= type_specifier:t ID:i LPAREN params:p RPAREN SEMI
+                      {: RESULT = p;  :}
+                      ;
 
-                  ;
-
-params ::= param_list 
+params ::= param_list:l
+          {: RESULT = l; :}
           | VOID
           {: RESULT = new VarDecList(null, null); :}
           ;
 
-param_list ::= param_list COMMA param | param;
+param_list ::= param_list:l COMMA param:p
+              {: 
+                  ListAst t = l;
+                  while(t.tail != null)
+                    t = t.tail;
 
-param ::= type_specifier ID | type_specifier ID LBRACKET RBRACKET;
+                  t.tail = new VarDecList((VarDec) p, null);
+                  RESULT = l;
+              :}
+              | param:p
+              {: RESULT = new VarDecList((VarDec) p, null); :}
+              ;
+
+param ::= type_specifier:t ID:id
+          {: RESULT = new SimpleDec(tleft, tright, t, id); :}
+          | type_specifier:t ID:id LBRACKET RBRACKET
+          {: RESULT = new ArrayDec(tleft, tright, t, id, "0"); :}
+          ;
 
 compound_stmt ::= LCURLY local_declarations:d statement_list:s RCURLY
                   {: RESULT = new CompoundExp(dleft, dright, (VarDecList) d, (ExpList) s); :}
