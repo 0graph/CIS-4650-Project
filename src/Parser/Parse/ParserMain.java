@@ -15,7 +15,7 @@ public class ParserMain {
       Parser p = new Parser(new Lexer(new FileReader(argv[0])));
       Ast result = (Ast) p.parse().value;
 
-      AstVisitor visitor = new ShowTreeVisitor();
+      AstVisitor visitor = new DisplayTree();
 
       System.out.println("Parsing completed successfully!");
       System.out.println("Abstract Syntax Tree: ");

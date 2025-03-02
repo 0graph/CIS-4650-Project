@@ -65,10 +65,10 @@ terminal NOT, AND, OR, EQ, NEQ;
 terminal String ID, NUM;
 terminal ERROR;
 
-non terminal program;
+non terminal Dec program;
 non terminal return_stmt, expression, var, obool_expression, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor, call, args, arg_list;
 
-non terminal declaration_list, declaration, var_declaration, local_declarations, fun_declaration;
+non terminal Dec declaration_list, declaration, var_declaration, local_declarations, fun_declaration;
 non terminal type_specifier;
 non terminal fun_prototype, params, param_list, param;
 non terminal compound_stmt, iteration_stmt, selection_stmt, expression_stmt, statement, statement_list;
@@ -76,11 +76,17 @@ non terminal compound_stmt, iteration_stmt, selection_stmt, expression_stmt, sta
 /* Grammer Section */
 start with program; 
 
-program ::= declaration_list;
+program ::= declaration_list:d
+            {: RESULT = d; :}
+            ;
 
-declaration_list ::= declaration_list declaration | declaration;
+declaration_list ::= declaration_list:dl declaration:d
+                    {: RESULT = d;  :}
+                    | declaration ;
 
-declaration ::= var_declaration | fun_declaration | fun_prototype;
+declaration ::= var_declaration:d
+                {: RESULT = d; :}
+                | fun_declaration | fun_prototype;
 
 var_declaration ::= type_specifier:t ID:e SEMI 
                     {: RESULT = new  VarDec(tleft, tright, t, e); :}

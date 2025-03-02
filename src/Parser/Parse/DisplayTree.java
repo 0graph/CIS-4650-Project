@@ -9,7 +9,7 @@ public class DisplayTree implements AstVisitor {
   }
 
   @Override
-  public void visit(VarExp exp, int level) {
+  public void visit(VarDec exp, int level) {
     indent(level);
 
     System.out.println("Var Exp: " + exp.name);
