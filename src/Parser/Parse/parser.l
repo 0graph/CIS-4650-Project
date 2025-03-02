@@ -67,12 +67,12 @@ terminal ERROR;
 
 non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list;
 
-non terminal return_stmt, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor;
+non terminal return_stmt, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor;
 
 non terminal Dec declaration, var_declaration, fun_declaration;
 non terminal VarType type_specifier;
 non terminal fun_prototype, param_list, param;
-non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression;
+non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor;
 non terminal iteration_stmt, selection_stmt;
 
 
@@ -118,11 +118,13 @@ type_specifier ::= BOOL:b
                    {: RESULT = new VarType(vleft, vright, VarType.VOID); :}
                    ;
 
-fun_declaration ::= type_specifier:t ID:id LPAREN params:p RPAREN compound_stmt:c
-                    {: RESULT = new FunctionDec(tleft, tright, t, id, (VarDecList) p, c); :}
-                    ;
+fun_declaration   ::= type_specifier:t ID:id LPAREN params:p RPAREN compound_stmt:c
+                     {: RESULT = new FunctionDec(tleft, tright, t, id, (VarDecList) p, c); :}
+                     ;
 
-fun_prototype ::= type_specifier ID LPAREN params RPAREN SEMI;
+fun_prototype     ::= type_specifier:t ID:i LPAREN params:p RPAREN SEMI
+
+                  ;
 
 params ::= param_list 
           | VOID
@@ -217,12 +219,19 @@ signed_factor       ::= MINUS signed_factor
                         | factor
                         ;
 
-factor              ::= LPAREN expression RPAREN
-                        | var
-                        | call
-                        | NUM
-                        | TRUE
-                        | FALSE;
+factor              ::= LPAREN expression:e RPAREN
+                        {: RESULT = e; :}
+                        | var: v
+                        {: RESULT = v; :}
+                        | call:c
+                        {: RESULT = c; :}
+                        | NUM:n
+                        {: RESULT = new IntExp(nleft, nright, n); :}
+                        | TRUE:t
+                        {: RESULT = new BoolExp(tleft, tright, true); :}
+                        | FALSE:f 
+                        {: RESULT = new BoolExp(fleft, fright, false); :}
+                        ;
 
 call                ::= ID:i LPAREN args:a RPAREN
                         {:
