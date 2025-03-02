@@ -16,11 +16,9 @@ public class DecList extends Ast {
   public void visit(AstVisitor visitor, int level) {
     DecList node = this;
 
-    if (node != null) {
-      while (node != null) {
-        node.head.accept(visitor, level);
-        node = node.tail;
-      }
+    while (node != null) {
+      node.head.accept(visitor, level);
+      node = node.tail;
     }
   }
 }

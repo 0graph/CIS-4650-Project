@@ -89,10 +89,10 @@ declaration_list ::= declaration_list:dl declaration:d1
                       }
 
                       d.tail = new DecList(d1, null);
-                      RESULT = d;
+                      RESULT = dl;
                     :}
-                    | declaration:d2
-                    {: RESULT = new DecList(d2, null); :}
+                    | declaration:d
+                    {: RESULT = new DecList(d, null); :}
                     ;
 
 declaration ::= var_declaration:d

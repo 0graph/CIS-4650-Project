@@ -473,12 +473,15 @@ class CUP$Parser$actions {
 		 
                       DecList d = dl;
 
+                      System.out.println("DecList: " + d);
+
                       while(d.tail != null){
                         d = d.tail;
+                        System.out.println("DecList Recurse: " + d);
                       }
 
                       d.tail = new DecList(d1, null);
-                      RESULT = d;
+                      RESULT = dl;
                     
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("declaration_list",1, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
@@ -488,10 +491,10 @@ class CUP$Parser$actions {
           case 3: // declaration_list ::= declaration 
             {
               DecList RESULT =null;
-		int d2left = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
-		int d2right = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
-		Dec d2 = (Dec)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 RESULT = new DecList(d2, null); 
+		int dleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
+		int dright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
+		Dec d = (Dec)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
+		 RESULT = new DecList(d, null); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("declaration_list",1, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
