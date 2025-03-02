@@ -65,7 +65,7 @@ terminal NOT, AND, OR, EQ, NEQ;
 terminal String ID, NUM;
 terminal ERROR;
 
-non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list, statement_list;
+non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list;
 
 non terminal return_stmt, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor;
 
