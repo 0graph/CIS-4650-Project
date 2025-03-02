@@ -82,7 +82,9 @@ declaration_list ::= declaration_list declaration | declaration;
 
 declaration ::= var_declaration | fun_declaration | fun_prototype;
 
-var_declaration ::= type_specifier ID SEMI| type_specifier ID LBRACKET NUM RBRACKET SEMI;
+var_declaration ::= type_specifier:t ID:e SEMI 
+                    {: RESULT = new  VarDec(tleft, tright, t, e); :}
+                    | type_specifier ID LBRACKET NUM RBRACKET SEMI;
 
 type_specifier ::= BOOL | INT | VOID;
 

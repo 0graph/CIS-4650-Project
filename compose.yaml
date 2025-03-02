@@ -10,3 +10,4 @@ services:
       - ./src/Parser/Scanner:/app/Scanner
       - ./src/Parser/Parse:/app/Parse
       - ./src/Parser/tests:/app/tests
+      - ./src/Parser/Ast/:/app/Ast
