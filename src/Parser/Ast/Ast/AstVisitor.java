@@ -17,4 +17,8 @@ public interface AstVisitor {
 
   public void visit(VarType type, int level);
 
+  public void visit(NilExp exp, int level);
+
+  public void visit(CompoundExp exp, int level);
+
 }

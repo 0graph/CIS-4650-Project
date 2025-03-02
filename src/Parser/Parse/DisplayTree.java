@@ -23,6 +23,7 @@ public class DisplayTree implements AstVisitor {
     System.out.println(dec);
 
     level++;
+
     dec.type.accept(this, level);
     dec.params.accept(this, level);
     dec.body.accept(this, level);
@@ -44,6 +45,10 @@ public class DisplayTree implements AstVisitor {
   }
 
   public void visit(ListAst list, int level) {
+    indent(level);
+
+    System.out.println(list);
+
     list.visit(this, level);
   }
 
@@ -56,5 +61,11 @@ public class DisplayTree implements AstVisitor {
 
     exp.decs.accept(this, level);
     // exp.exps.accept(this, level);
+  }
+
+  public void visit(NilExp exp, int level) {
+    indent(level);
+
+    System.out.println(exp);
   }
 }

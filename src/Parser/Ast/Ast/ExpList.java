@@ -5,4 +5,8 @@ public class ExpList extends ListAst {
     this.head = head;
     this.tail = tail;
   }
+
+  public String toString() {
+    return "ExpList:";
+  }
 }

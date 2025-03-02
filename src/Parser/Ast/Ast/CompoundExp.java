@@ -14,8 +14,6 @@ public class CompoundExp extends Exp {
   }
 
   public String toString() {
-    String result = String.format("CompoundExp:");
-
-    return result;
+    return "CompoundExp:";
   }
 }

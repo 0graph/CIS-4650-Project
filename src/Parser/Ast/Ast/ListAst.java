@@ -24,4 +24,8 @@ public class ListAst extends Ast {
       node = node.tail;
     }
   }
+
+  public String toString() {
+    return "ListAst:";
+  }
 }

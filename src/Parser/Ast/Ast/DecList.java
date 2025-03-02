@@ -6,4 +6,9 @@ public class DecList extends ListAst {
     this.head = head;
     this.tail = tail;
   }
+
+  @Override
+  public String toString() {
+    return "DecList:";
+  }
 }

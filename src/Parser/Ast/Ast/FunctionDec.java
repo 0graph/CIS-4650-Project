@@ -14,6 +14,14 @@ public class FunctionDec extends Dec {
     this.body = body;
   }
 
+  public FunctionDec(int row, int column, VarType type, String name, VarDecList params, NilExp body) {
+    this.type = type;
+    this.name = name;
+
+    this.params = params;
+    this.body = body;
+  }
+
   public void accept(AstVisitor visitor, int level) {
     visitor.visit(this, level);
   }

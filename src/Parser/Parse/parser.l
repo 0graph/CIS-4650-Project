@@ -65,14 +65,14 @@ terminal NOT, AND, OR, EQ, NEQ;
 terminal String ID, NUM;
 terminal ERROR;
 
-non terminal ListAst program, declaration_list, params;
+non terminal ListAst program, declaration_list, local_declarations, params, statement_list;
 non terminal return_stmt, expression, var, obool_expression, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor, call, args, arg_list;
 
-non terminal Dec declaration, var_declaration, local_declarations, fun_declaration;
+non terminal Dec declaration, var_declaration, fun_declaration;
 non terminal VarType type_specifier;
 non terminal fun_prototype, param_list, param;
-non terminal Exp compound_stmt;
-non terminal iteration_stmt, selection_stmt, expression_stmt, statement, statement_list;
+non terminal Exp compound_stmt, statement, expression_stmt;
+non terminal iteration_stmt, selection_stmt;
 
 /* Grammer Section */
 start with program; 
@@ -131,15 +131,27 @@ param_list ::= param_list COMMA param | param;
 
 param ::= type_specifier ID | type_specifier ID LBRACKET RBRACKET;
 
-compound_stmt ::= LCURLY local_declarations:d statement_list:s RCURLY;
+compound_stmt ::= LCURLY local_declarations:d statement_list:s RCURLY
+                  {: RESULT = new CompoundExp(dleft, dright, (VarDecList) d, (ExpList) s); :}
+                  ;
 
-local_declarations ::= local_declarations var_declaration | ;
+local_declarations ::= local_declarations:l var_declaration:v
+                       {: RESULT = new VarDecList((VarDec) v, (VarDecList) l); :}
+                       |
+                       ;
 
-statement_list ::= statement_list statement | ;
+statement_list ::= statement_list:l statement:s
+                   {: RESULT = new ExpList(s, (ExpList) l); :}
+                   | ;
 
-statement ::= expression_stmt | compound_stmt | selection_stmt | iteration_stmt | return_stmt;
+statement ::= expression_stmt:e
+              {: RESULT = e; :}
+              | compound_stmt | selection_stmt | iteration_stmt | return_stmt;
 
-expression_stmt ::= expression SEMI | SEMI;
+expression_stmt ::= expression SEMI 
+                    | SEMI:s
+                    {: RESULT = new NilExp(sleft, sright); :}
+                    ;
 
 selection_stmt ::= IF LPAREN expression RPAREN statement | IF LPAREN expression RPAREN statement ELSE statement;
 

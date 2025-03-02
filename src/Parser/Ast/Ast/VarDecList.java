@@ -8,4 +8,9 @@ public class VarDecList extends ListAst {
     this.head = head;
     this.tail = tail;
   }
+
+  @Override
+  public String toString() {
+    return "VarDecList:";
+  }
 }
