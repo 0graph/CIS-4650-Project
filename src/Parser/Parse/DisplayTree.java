@@ -20,6 +20,8 @@ public class DisplayTree implements AstVisitor {
   public void visit(FunctionDec dec, int level) {
     indent(level);
 
+    System.out.println(dec);
+
     level++;
     dec.type.accept(this, level);
     dec.params.accept(this, level);
