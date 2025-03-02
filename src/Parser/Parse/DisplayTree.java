@@ -133,4 +133,12 @@ public class DisplayTree implements AstVisitor {
 
     var.index.accept(this, level);
   }
+
+  public void visit(OpExp exp, int level) {
+    indent(level);
+    
+    System.out.println(exp);
+
+    level++;
+  }
 }
