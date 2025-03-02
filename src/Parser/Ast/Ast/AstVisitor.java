@@ -35,4 +35,8 @@ public interface AstVisitor {
 
   public void visit(OpExp exp, int level);
 
+  public void visit(IndexVar var, int level);
+
+  public void visit(ReturnExp exp, int level);
+
 }
