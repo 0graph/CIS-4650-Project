@@ -65,14 +65,15 @@ terminal NOT, AND, OR, EQ, NEQ;
 terminal String ID, NUM;
 terminal ERROR;
 
-non terminal ListAst program, declaration_list, params;
-non terminal return_stmt, expression, var, obool_expression, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor, call, args, arg_list;
+non terminal ListAst program, declaration_list, params, args, arg_list, statement_list;
+non terminal return_stmt, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor;
 
 non terminal Dec declaration, var_declaration, local_declarations, fun_declaration;
 non terminal VarType type_specifier;
 non terminal fun_prototype, param_list, param;
-non terminal Exp compound_stmt;
-non terminal iteration_stmt, selection_stmt, expression_stmt, statement, statement_list;
+non terminal Exp compound_stmt, call, expression, var, obool_expression, statement;
+non terminal iteration_stmt, selection_stmt, expression_stmt;
+
 
 /* Grammer Section */
 start with program; 
@@ -210,15 +211,32 @@ factor              ::= LPAREN expression RPAREN
                         | TRUE
                         | FALSE;
 
-call                ::= ID LPAREN args RPAREN
+call                ::= ID:i LPAREN args:a RPAREN
+                        {:
+                           RESULT = new CallExp(ileft,iright,i,(ExpList) a);
+                        :}
                         ;
 
-args                ::= arg_list 
-                        |
+args                ::= arg_list:a
+                     {:
+                        RESULT = (ExpList) a;
+                     :}
+                     |
+                     {:
+                        RESULT = new ExpList(null, null);
+                     :}
+                     ;
+
+arg_list            ::= arg_list:a COMMA expression:e
+                        {:
+                           ListAst t = a;
+                           while(t.tail != null)
+                              t = t.tail;
+                           t.tail = new ExpList(e,null);
+                           RESULT = a;
+                        :}
+                        | expression:e
+                        {:
+                           RESULT = new ExpList(e, null);
+                        :}
                         ;
-
-arg_list            ::= arg_list COMMA expression
-                        | expression
-                        ;
-
-
