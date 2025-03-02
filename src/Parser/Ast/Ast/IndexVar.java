@@ -1,16 +1,14 @@
 package Ast;
 
-/*
-    SimpleVar type
-*/
-
-public class SimpleVar extends Var {
+public class IndexVar extends Var {
   public String name;
+  public Exp index;
 
-  public SimpleVar(int row, int col, String name) {
+  public IndexVar(int row, int col, String name, Exp index) {
     this.row = row;
     this.col = col;
     this.name = name;
+    this.index = index;
   }
 
   public void accept(AstVisitor visitor, int level) {
@@ -18,7 +16,7 @@ public class SimpleVar extends Var {
   }
 
   public String toString() {
-    String result = String.format("SimpleVar %s:", this.name);
+    String result = String.format("IndexVar %s", this.name);
 
     return result;
   }

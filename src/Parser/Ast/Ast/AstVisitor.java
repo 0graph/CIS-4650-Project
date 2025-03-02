@@ -33,4 +33,5 @@ public interface AstVisitor {
 
   public void visit(BoolExp exp, int level);
 
+  public void visit(IndexVar var, int level);
 }
