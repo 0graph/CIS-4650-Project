@@ -67,15 +67,12 @@ terminal ERROR;
 
 non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list, param_list;
 non terminal addop, mulop, relop;
-non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list;
 
 non terminal return_stmt;
 
 non terminal Dec declaration, var_declaration, fun_declaration, param;
 non terminal VarType type_specifier;
 non terminal fun_prototype;
-non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor;
-non terminal fun_prototype, param_list, param;
 non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor, term, signed_factor, additive_expression, abool_expression, ubool_expression, simple_expression;
 non terminal iteration_stmt, selection_stmt;
 
