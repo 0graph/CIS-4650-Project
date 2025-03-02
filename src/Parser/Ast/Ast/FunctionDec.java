@@ -9,7 +9,7 @@ public class FunctionDec extends Dec {
   public FunctionDec(int row, int column, VarType type, String name, VarDecList params, Exp body) {
     this.type = type;
     this.name = name;
-
+    this.body = body;
     this.params = params;
     this.body = body;
   }
