@@ -65,13 +65,14 @@ terminal NOT, AND, OR, EQ, NEQ;
 terminal String ID, NUM;
 terminal ERROR;
 
-non terminal DecList program, declaration_list;
+non terminal ListAst program, declaration_list, params;
 non terminal return_stmt, expression, var, obool_expression, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor, call, args, arg_list;
 
 non terminal Dec declaration, var_declaration, local_declarations, fun_declaration;
 non terminal VarType type_specifier;
-non terminal fun_prototype, params, param_list, param;
-non terminal compound_stmt, iteration_stmt, selection_stmt, expression_stmt, statement, statement_list;
+non terminal fun_prototype, param_list, param;
+non terminal Exp compound_stmt;
+non terminal iteration_stmt, selection_stmt, expression_stmt, statement, statement_list;
 
 /* Grammer Section */
 start with program; 
@@ -82,7 +83,7 @@ program ::= declaration_list:d
 
 declaration_list ::= declaration_list:dl declaration:d1
                     {: 
-                      DecList d = dl;
+                      ListAst d = dl;
 
                       while(d.tail != null){
                         d = d.tail;
@@ -113,11 +114,16 @@ type_specifier ::= BOOL:b
                    {: RESULT = new VarType(vleft, vright, VarType.VOID); :}
                    ;
 
-fun_declaration ::= type_specifier ID LPAREN params RPAREN compound_stmt;
+fun_declaration ::= type_specifier:t ID:id LPAREN params:p RPAREN compound_stmt:c
+                    {: RESULT = new FunctionDec(tleft, tright, t, id, (VarDecList) p, c); :}
+                    ;
 
 fun_prototype ::= type_specifier ID LPAREN params RPAREN SEMI;
 
-params ::= param_list | VOID;
+params ::= param_list 
+          | VOID
+          {: RESULT = new VarDecList(null, null);  :}
+          ;
 
 param_list ::= param_list COMMA param | param;
 
