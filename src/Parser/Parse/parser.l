@@ -132,7 +132,7 @@ param_list ::= param_list COMMA param | param;
 
 param ::= type_specifier ID | type_specifier ID LBRACKET RBRACKET;
 
-compound_stmt ::= LCURLY local_declarations statement_list RCURLY;
+compound_stmt ::= LCURLY local_declarations:d statement_list:s RCURLY;
 
 local_declarations ::= local_declarations var_declaration | ;
 

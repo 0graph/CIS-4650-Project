@@ -11,6 +11,7 @@ public class FunctionDec extends Dec {
     this.name = name;
     this.body = body;
     this.params = params;
+    this.body = body;
   }
 
   public void accept(AstVisitor visitor, int level) {

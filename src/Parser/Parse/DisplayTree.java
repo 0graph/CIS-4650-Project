@@ -25,7 +25,11 @@ public class DisplayTree implements AstVisitor {
     level++;
     dec.type.accept(this, level);
     dec.params.accept(this, level);
+<<<<<<< HEAD
     //dec.body.accept(this, level);
+=======
+    dec.body.accept(this, level);
+>>>>>>> 334bdd3f4d1756d07d666f105d2413c98413def5
   }
 
   public void visit(SimpleDec dec, int level) {
