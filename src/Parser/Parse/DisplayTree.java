@@ -110,7 +110,7 @@ public class DisplayTree implements AstVisitor {
 
   public void visit(IntExp exp, int level) {
     indent(level);
-    
+
     System.out.println(exp);
 
     level++;
@@ -118,7 +118,7 @@ public class DisplayTree implements AstVisitor {
 
   public void visit(BoolExp exp, int level) {
     indent(level);
-    
+
     System.out.println(exp);
 
     level++;
