@@ -65,11 +65,11 @@ terminal NOT, AND, OR, EQ, NEQ;
 terminal String ID, NUM;
 terminal ERROR;
 
-non terminal Dec program;
+non terminal DecList program, declaration_list;
 non terminal return_stmt, expression, var, obool_expression, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor, factor, call, args, arg_list;
 
-non terminal Dec declaration_list, declaration, var_declaration, local_declarations, fun_declaration;
-non terminal type_specifier;
+non terminal Dec declaration, var_declaration, local_declarations, fun_declaration;
+non terminal VarType type_specifier;
 non terminal fun_prototype, params, param_list, param;
 non terminal compound_stmt, iteration_stmt, selection_stmt, expression_stmt, statement, statement_list;
 
@@ -80,19 +80,36 @@ program ::= declaration_list:d
             {: RESULT = d; :}
             ;
 
-declaration_list ::= declaration_list:dl declaration:d
-                    {: RESULT = d;  :}
-                    | declaration ;
+declaration_list ::= declaration_list:dl declaration:d1
+                    {: 
+                      DecList d = dl;
+
+                      while(d.tail != null){
+                        d = d.tail;
+                      }
+
+                      d.tail = new DecList(d1, null);
+                      RESULT = d;
+                    :}
+                    | declaration:d2
+                    {: RESULT = new DecList(d2, null); :}
+                    ;
 
 declaration ::= var_declaration:d
                 {: RESULT = d; :}
                 | fun_declaration | fun_prototype;
 
 var_declaration ::= type_specifier:t ID:e SEMI 
-                    {: RESULT = new  VarDec(tleft, tright, t, e); :}
+                    {: RESULT = new  SimpleDec(tleft, tright, t, e); :}
                     | type_specifier ID LBRACKET NUM RBRACKET SEMI;
 
-type_specifier ::= BOOL | INT | VOID;
+type_specifier ::= BOOL:b
+                   {: RESULT = new VarType(bleft, bright, VarType.BOOL); :}
+                   | INT:i
+                   {: RESULT = new VarType(ileft, iright, VarType.INT); :}
+                   | VOID:v
+                   {: RESULT = new VarType(vleft, vright, VarType.VOID); :}
+                   ;
 
 fun_declaration ::= type_specifier ID LPAREN params RPAREN compound_stmt;
 

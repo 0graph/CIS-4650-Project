@@ -5,7 +5,11 @@ package Ast;
  */
 public interface AstVisitor {
 
-  // Variable
-  public void visit(VarDec exp, int level);
+  // Declaration List:
+  public void visit(DecList decList, int level);
 
+  // Variable: int x;
+  public void visit(SimpleDec dec, int level);
+
+  public void visit(VarType type, int level);
 }

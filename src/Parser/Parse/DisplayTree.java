@@ -8,10 +8,22 @@ public class DisplayTree implements AstVisitor {
       System.out.print(" ");
   }
 
-  @Override
-  public void visit(VarDec exp, int level) {
+  public void visit(DecList list, int level) {
+    list.visit(this, level);
+  }
+
+  public void visit(SimpleDec dec, int level) {
     indent(level);
 
-    System.out.println("Var Exp: " + exp.name);
+    System.out.println(dec);
+
+    level++;
+    dec.type.accept(this, level);
+  }
+
+  public void visit(VarType type, int level) {
+    indent(level);
+
+    System.out.println(type);
   }
 }
