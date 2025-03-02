@@ -10,7 +10,7 @@ public class CompoundExp extends Exp {
   }
 
   public void accept(AstVisitor visitor, int level) {
-    visitor.visit(this.decs, level);
+    visitor.visit(this, level);
   }
 
   public String toString() {

@@ -641,7 +641,7 @@ class CUP$Parser$actions {
           case 15: // params ::= VOID 
             {
               ListAst RESULT =null;
-		 RESULT = new VarDecList(null, null);  
+		 RESULT = new VarDecList(null, null); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("params",3, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

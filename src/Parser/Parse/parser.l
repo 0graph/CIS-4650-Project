@@ -126,7 +126,7 @@ fun_prototype ::= type_specifier ID LPAREN params RPAREN SEMI;
 
 params ::= param_list 
           | VOID
-          {: RESULT = new VarDecList(null, null);  :}
+          {: RESULT = new VarDecList(null, null); :}
           ;
 
 param_list ::= param_list COMMA param | param;

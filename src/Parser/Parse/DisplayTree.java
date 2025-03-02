@@ -49,6 +49,7 @@ public class DisplayTree implements AstVisitor {
 
     System.out.println(list);
 
+    level++;
     list.visit(this, level);
   }
 
