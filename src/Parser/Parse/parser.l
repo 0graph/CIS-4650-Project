@@ -65,14 +65,15 @@ terminal NOT, AND, OR, EQ, NEQ;
 terminal String ID, NUM;
 terminal ERROR;
 
+non terminal addop, mulop, relop;
 non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list;
 
-non terminal return_stmt, abool_expression, ubool_expression, simple_expression, relop, additive_expression, addop, term, mulop, signed_factor;
+non terminal return_stmt, abool_expression, ubool_expression, simple_expression;
 
 non terminal Dec declaration, var_declaration, fun_declaration;
 non terminal VarType type_specifier;
 non terminal fun_prototype, param_list, param;
-non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor;
+non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor, term, signed_factor, additive_expression;
 non terminal iteration_stmt, selection_stmt;
 
 
@@ -191,32 +192,49 @@ simple_expression   ::= additive_expression relop additive_expression
                         | additive_expression
                         ;
 
-relop               ::= LTE 
+relop                ::= LTE
+                        {: RESULT = OpExp.LE; :}
                         | LT
+                        {: RESULT = OpExp.LT; :}
                         | GT
+                        {: RESULT = OpExp.GT; :}
                         | GTE
+                        {: RESULT = OpExp.GE; :}
                         | EQ
+                        {: RESULT = OpExp.EQ; :}
                         | NEQ
+                        {: RESULT = OpExp.NE; :}
                         ;
 
-additive_expression ::= additive_expression addop term
-                        | term
+
+additive_expression ::= additive_expression:e addop:a term:t
+                        {: RESULT = new OpExp(eleft, eright, e, (int)a, t); :}
+                        | term:t
+                        {: RESULT = t; :}
                         ;
 
 addop               ::= PLUS
+                        {: RESULT = OpExp.PLUS; :}
                         | MINUS
+                        {: RESULT = OpExp.MINUS; :}
                         ;
 
-term                ::= term mulop signed_factor
-                        | signed_factor
+term                ::= term:t mulop:m signed_factor:f
+                        {: RESULT = new OpExp(tleft, tright, t, (int)m, f); :}
+                        | signed_factor:f
+                        {: RESULT = f; :}
                         ;
 
 mulop               ::= TIMES
+                        {: RESULT = OpExp.MUL; :}
                         | DIVIDE
+                        {: RESULT = OpExp.DIV; :}
                         ;
 
-signed_factor       ::= MINUS signed_factor
-                        | factor
+signed_factor       ::= MINUS signed_factor:f
+                        {: RESULT = new OpExp(fleft,fright, new NilExp(fleft, fright), OpExp.UMINUS, f); :}
+                        | factor:f
+                        {: RESULT = f; :}
                         ;
 
 factor              ::= LPAREN expression:e RPAREN
