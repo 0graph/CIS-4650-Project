@@ -99,9 +99,11 @@ declaration ::= var_declaration:d
                 {: RESULT = d; :}
                 | fun_declaration | fun_prototype;
 
-var_declaration ::= type_specifier:t ID:e SEMI 
-                    {: RESULT = new  SimpleDec(tleft, tright, t, e); :}
-                    | type_specifier ID LBRACKET NUM RBRACKET SEMI;
+var_declaration ::= type_specifier:t ID:id SEMI 
+                    {: RESULT = new  SimpleDec(tleft, tright, t, id); :}
+                    | type_specifier:t ID:id LBRACKET NUM:n RBRACKET SEMI
+                    {: RESULT = new ArrayDec(tleft, tright, t, id, n); :}
+                    ;
 
 type_specifier ::= BOOL:b
                    {: RESULT = new VarType(bleft, bright, VarType.BOOL); :}

@@ -11,5 +11,7 @@ public interface AstVisitor {
   // Variable: int x;
   public void visit(SimpleDec dec, int level);
 
+  public void visit(ArrayDec dec, int level);
+
   public void visit(VarType type, int level);
 }
