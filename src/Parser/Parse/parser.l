@@ -103,6 +103,11 @@ declaration_list ::= declaration_list:dl declaration:d1
                     :}
                     | declaration:d
                     {: RESULT = new DecList(d, null); :}
+                    | error declaration:d 
+                    {:
+                        parser.report_error("invalid item in declaration list", null);
+                        RESULT = new DecList(d, null);
+                    :}
                     ;
 
 declaration ::= var_declaration:d
