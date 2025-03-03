@@ -53,7 +53,7 @@ parser code {:
        'message' and then exit.*/
     public void report_fatal_error(String message, Object info) {
         report_error(message, info);
-        System.exit(1);
+        //System.exit(1);
     }
 
 :};
@@ -81,6 +81,7 @@ precedence left LT, GT, LTE, GTE;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 precedence right UMINUS, NOT;
+precedence left RCURLY;
 
 
 /* Grammer Section */
@@ -120,6 +121,11 @@ var_declaration ::= type_specifier:t ID:id SEMI
                     {: RESULT = new  SimpleDec(tleft, tright, t, id); :}
                     | type_specifier:t ID:id LBRACKET NUM:n RBRACKET SEMI
                     {: RESULT = new ArrayDec(tleft, tright, t, id, n); :}
+                    | type_specifier:t ID:id error:e SEMI
+                    {:
+                        parser.report_error("Invalid Variable Declaration",e);
+                        RESULT = new SimpleDec(tleft, tright, t, id);
+                    :}
                     ;
 
 type_specifier ::= BOOL:b
@@ -161,9 +167,19 @@ param ::= type_specifier:t ID:id
           {: RESULT = new SimpleDec(tleft, tright, t, id); :}
           | type_specifier:t ID:id LBRACKET RBRACKET
           {: RESULT = new ArrayDec(tleft, tright, t, id, "0"); :}
+          | type_specifier:t ID:id error:e
+          {:
+            parser.report_error("Invalid Parameter", null);
+            RESULT = new SimpleDec(tleft, tright, t, id);
+          :}
           ;
 
-compound_stmt ::= LCURLY local_declarations:d statement_list:s RCURLY
+compound_stmt ::= LCURLY local_declarations:d error:e
+                 {: 
+                     parser.report_error("Missing parentheses", null);
+                     RESULT = new CompoundExp(eleft, eright, (VarDecList) d, (ExpList) null); 
+                 :}
+                 | LCURLY local_declarations:d statement_list:s RCURLY
                   {: RESULT = new CompoundExp(dleft, dright, (VarDecList) d, (ExpList) s); :}
                   ;
 
@@ -277,11 +293,6 @@ additive_expression ::= additive_expression:e addop:a term:t
                         {: RESULT = new OpExp(eleft, eright, e, (int)a, t); :}
                         | term:t
                         {: RESULT = t; :}
-                        | error:e term:t
-                        {:
-                           parser.report_error("Invalid values before term in additive expression",null);
-                           RESULT = t;
-                        :}
                         ;
 
 addop               ::= PLUS
@@ -307,6 +318,11 @@ signed_factor       ::= MINUS:m signed_factor:f
                         %prec UMINUS
                         | factor:f
                         {: RESULT = f; :}
+                        | error:e
+                        {:
+                           parser.report_error("Invalid value for factor" , e);
+                           RESULT = new NilExp(eleft,eright);
+                        :}
                         ;
 
 factor              ::= LPAREN expression:e RPAREN
@@ -321,11 +337,6 @@ factor              ::= LPAREN expression:e RPAREN
                         {: RESULT = new BoolExp(tleft, tright, true); :}
                         | FALSE:f 
                         {: RESULT = new BoolExp(fleft, fright, false); :}
-                        | LPAREN error:e RPAREN
-                        {:
-                           parser.report_error("Invalid Expression in Factor",null);
-                           RESULT = new NilExp(eleft,eright);
-                        :}
                         ;
 
 call                ::= ID:i LPAREN args:a RPAREN
@@ -354,6 +365,11 @@ arg_list            ::= arg_list:a COMMA expression:e
                         :}
                         | expression:e
                         {:
+                           RESULT = new ExpList(e, null);
+                        :}
+                        | error:er expression:e
+                        {:
+                           parser.report_error("Invalid expression in function argument list", er);
                            RESULT = new ExpList(e, null);
                         :}
                         ;
