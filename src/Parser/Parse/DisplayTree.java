@@ -61,7 +61,7 @@ public class DisplayTree implements AstVisitor {
     level++;
 
     exp.decs.accept(this, level);
-    // exp.exps.accept(this, level);
+    exp.exps.accept(this, level);
   }
 
   public void visit(NilExp exp, int level) {
@@ -126,7 +126,7 @@ public class DisplayTree implements AstVisitor {
 
   public void visit(OpExp exp, int level) {
     indent(level);
-    
+
     System.out.println(exp);
 
     level++;
@@ -134,7 +134,7 @@ public class DisplayTree implements AstVisitor {
 
   public void visit(IndexVar var, int level) {
     indent(level);
-    
+
     System.out.println(var);
 
     level++;
@@ -143,7 +143,7 @@ public class DisplayTree implements AstVisitor {
 
   public void visit(ReturnExp exp, int level) {
     indent(level);
-    
+
     System.out.println(exp);
 
     level++;

@@ -1,1 +1,4 @@
-int func(int t) { int x; }
+int func(int t) {
+  int x;
+  x = 0;
+}

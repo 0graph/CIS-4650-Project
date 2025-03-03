@@ -174,9 +174,12 @@ statement_list ::= statement_list:l statement:s
 
 statement ::= expression_stmt:e
               {: RESULT = e; :}
-              | compound_stmt | selection_stmt | iteration_stmt | return_stmt;
+              | compound_stmt:c
+              {: RESULT = c; :}
+              | selection_stmt | iteration_stmt | return_stmt;
 
-expression_stmt ::= expression SEMI 
+expression_stmt ::= expression:e SEMI 
+                    {: RESULT = e; :}
                     | SEMI:s
                     {: RESULT = new NilExp(sleft, sright); :}
                     ;
