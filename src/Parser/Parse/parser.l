@@ -61,20 +61,27 @@ parser code {:
 /* Declare Terminals and Non-Terminals */
 terminal BOOL, IF, ELSE, INT, RETURN, VOID, WHILE, TRUE, FALSE;
 terminal PLUS, MINUS, TIMES, DIVIDE, LT, GT, LTE, GTE, ASSIGN, LPAREN, RPAREN, SEMI, LBRACKET, RBRACKET, LCURLY, RCURLY, COMMA;
-terminal NOT, AND, OR, EQ, NEQ;
+terminal NOT, AND, OR, EQ, NEQ, UMINUS;
 terminal String ID, NUM;
 terminal ERROR;
 
 non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list, param_list;
 non terminal addop, mulop, relop;
 
-non terminal return_stmt;
-
 non terminal Dec declaration, var_declaration, fun_declaration, param;
 non terminal VarType type_specifier;
 non terminal fun_prototype;
-non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor, term, signed_factor, additive_expression, abool_expression, ubool_expression, simple_expression;
+non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor, term, signed_factor, additive_expression, abool_expression, ubool_expression, simple_expression, return_stmt;
 non terminal iteration_stmt, selection_stmt;
+
+precedence right ASSIGN;
+precedence left OR;
+precedence left AND;
+precedence left EQ, NEQ;
+precedence left LT, GT, LTE, GTE;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+precedence right UMINUS, NOT;
 
 
 /* Grammer Section */
@@ -181,16 +188,22 @@ iteration_stmt ::= WHILE LPAREN expression RPAREN statement;
 
 /* 18-34 */
 
-return_stmt         ::= RETURN expression SEMI
-                        | RETURN SEMI
+return_stmt         ::= RETURN expression:e SEMI
+                        {: RESULT = new ReturnExp(eleft, eright, e); :}
+                        | RETURN:r SEMI
+                        {: RESULT = new ReturnExp(rleft, rright, new NilExp(rleft, rright)); :}
                         ;
 
-expression          ::= var ASSIGN expression
-                        | obool_expression
+expression          ::= var:v ASSIGN expression:e
+                        {: RESULT = new AssignExp(vleft, vright, (VarExp)v, e); :}
+                        | obool_expression:o
+                        {: RESULT = o; :}
                         ;
 
-var                 ::= ID 
-                        | ID LBRACKET expression RBRACKET
+var                 ::= ID:i 
+                        {: RESULT = new VarExp(ileft, iright, new SimpleVar(ileft, iright, i)); :}
+                        | ID:i LBRACKET expression:e RBRACKET
+                        {: RESULT = new VarExp(ileft, iright, new IndexVar(ileft, iright, i, e)); :}
                         ;
 
 obool_expression    ::= obool_expression:o1 OR abool_expression:o2
@@ -207,6 +220,7 @@ abool_expression    ::= abool_expression:a1 AND ubool_expression:a2
 
 ubool_expression    ::= NOT ubool_expression:u
                         {: RESULT = new OpExp(uleft, uright, new NilExp(uleft, uright), OpExp.NOT, u); :}
+                        %prec NOT
                         | simple_expression:s
                         {: RESULT = s; :}
                         ;
@@ -256,15 +270,16 @@ mulop               ::= TIMES
                         {: RESULT = OpExp.DIV; :}
                         ;
 
-signed_factor       ::= MINUS signed_factor:f
-                        {: RESULT = new OpExp(fleft,fright, new NilExp(fleft, fright), OpExp.UMINUS, f); :}
+signed_factor       ::= MINUS:m signed_factor:f
+                        {: RESULT = new OpExp(mleft,mright, new NilExp(fleft, fright), OpExp.UMINUS, f); :}
+                        %prec UMINUS
                         | factor:f
                         {: RESULT = f; :}
                         ;
 
 factor              ::= LPAREN expression:e RPAREN
                         {: RESULT = e; :}
-                        | var: v
+                        | var:v
                         {: RESULT = v; :}
                         | call:c
                         {: RESULT = c; :}

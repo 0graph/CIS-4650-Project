@@ -9,6 +9,7 @@ public class Sym {
   public static final int DIVIDE = 14;
   public static final int LTE = 17;
   public static final int LBRACKET = 23;
+  public static final int UMINUS = 33;
   public static final int LPAREN = 20;
   public static final int SEMI = 22;
   public static final int INT = 5;
@@ -20,11 +21,11 @@ public class Sym {
   public static final int OR = 30;
   public static final int BOOL = 2;
   public static final int COMMA = 27;
-  public static final int NUM = 34;
+  public static final int NUM = 35;
   public static final int PLUS = 11;
   public static final int ASSIGN = 19;
   public static final int IF = 3;
-  public static final int ID = 33;
+  public static final int ID = 34;
   public static final int EOF = 0;
   public static final int RETURN = 6;
   public static final int RBRACKET = 24;
@@ -34,7 +35,7 @@ public class Sym {
   public static final int NEQ = 32;
   public static final int VOID = 7;
   public static final int EQ = 31;
-  public static final int ERROR = 35;
+  public static final int ERROR = 36;
   public static final int GTE = 18;
   public static final int RCURLY = 26;
   public static final int TIMES = 13;
@@ -76,6 +77,7 @@ public class Sym {
   "OR",
   "EQ",
   "NEQ",
+  "UMINUS",
   "ID",
   "NUM",
   "ERROR"
