@@ -771,7 +771,15 @@ class CUP$Parser$actions {
 		int sleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int sright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		Exp s = (Exp)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 RESULT = new ExpList(s, (ExpList) l); 
+		 
+                      ListAst t = l;
+
+                      while(t.tail != null)
+                        t = t.tail;
+
+                      t.tail = new ExpList(s, null);
+                      RESULT = l;
+                   
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("statement_list",4, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-1)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -780,7 +788,7 @@ class CUP$Parser$actions {
           case 24: // statement_list ::= 
             {
               ListAst RESULT =null;
-
+		 RESULT = new ExpList(null, null); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("statement_list",4, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

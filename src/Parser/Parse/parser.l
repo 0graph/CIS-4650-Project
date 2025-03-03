@@ -168,8 +168,16 @@ local_declarations ::= local_declarations:l var_declaration:v
                        ;
 
 statement_list ::= statement_list:l statement:s
-                   {: RESULT = new ExpList(s, (ExpList) l); :}
-                   | ;
+                   {: 
+                      ListAst t = l;
+
+                      while(t.tail != null)
+                        t = t.tail;
+
+                      t.tail = new ExpList(s, null);
+                      RESULT = l;
+                   :}
+                   | {: RESULT = new ExpList(null, null); :};
 
 statement ::= expression_stmt:e
               {: RESULT = e; :}
