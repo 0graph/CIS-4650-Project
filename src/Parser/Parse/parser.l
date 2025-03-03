@@ -277,6 +277,11 @@ additive_expression ::= additive_expression:e addop:a term:t
                         {: RESULT = new OpExp(eleft, eright, e, (int)a, t); :}
                         | term:t
                         {: RESULT = t; :}
+                        | error:e term:t
+                        {:
+                           parser.report_error("Invalid values before term in additive expression",null);
+                           RESULT = t;
+                        :}
                         ;
 
 addop               ::= PLUS
@@ -316,6 +321,11 @@ factor              ::= LPAREN expression:e RPAREN
                         {: RESULT = new BoolExp(tleft, tright, true); :}
                         | FALSE:f 
                         {: RESULT = new BoolExp(fleft, fright, false); :}
+                        | LPAREN error:e RPAREN
+                        {:
+                           parser.report_error("Invalid Expression in Factor",null);
+                           RESULT = new NilExp(eleft,eright);
+                        :}
                         ;
 
 call                ::= ID:i LPAREN args:a RPAREN
