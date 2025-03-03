@@ -134,6 +134,11 @@ type_specifier ::= BOOL:b
                    {: RESULT = new VarType(ileft, iright, VarType.INT); :}
                    | VOID:v
                    {: RESULT = new VarType(vleft, vright, VarType.VOID); :}
+                   | error:e
+                   {:
+                     parser.report_error("Invalid variable type",e);
+                     RESULT = new VarType(eleft, eright, VarType.VOID);
+                   :}
                    ;
 
 fun_declaration   ::= type_specifier:t ID:id LPAREN params:p RPAREN compound_stmt:c
@@ -161,6 +166,11 @@ param_list ::= param_list:l COMMA param:p
               :}
               | param:p
               {: RESULT = new VarDecList((VarDec) p, null); :}
+              | param_list:l COMMA error:e
+              {:
+                  parser.report_error("Extra comma in parameter list",e);
+                  RESULT = l;
+              :}
               ;
 
 param ::= type_specifier:t ID:id
@@ -174,12 +184,7 @@ param ::= type_specifier:t ID:id
           :}
           ;
 
-compound_stmt ::= LCURLY local_declarations:d error:e
-                 {: 
-                     parser.report_error("Missing parentheses", null);
-                     RESULT = new CompoundExp(eleft, eright, (VarDecList) d, (ExpList) null); 
-                 :}
-                 | LCURLY local_declarations:d statement_list:s RCURLY
+compound_stmt ::= LCURLY local_declarations:d statement_list:s RCURLY
                   {: RESULT = new CompoundExp(dleft, dright, (VarDecList) d, (ExpList) s); :}
                   ;
 
