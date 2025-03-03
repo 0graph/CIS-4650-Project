@@ -71,8 +71,8 @@ non terminal addop, mulop, relop;
 non terminal Dec declaration, var_declaration, fun_declaration, param;
 non terminal VarType type_specifier;
 non terminal fun_prototype;
-non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor, term, signed_factor, additive_expression, abool_expression, ubool_expression, simple_expression, return_stmt;
-non terminal iteration_stmt, selection_stmt;
+non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor, term, signed_factor, additive_expression, abool_expression, ubool_expression, simple_expression, return_stmt, selection_stmt;
+non terminal iteration_stmt;
 
 precedence right ASSIGN;
 precedence left OR;
@@ -176,7 +176,9 @@ statement ::= expression_stmt:e
               {: RESULT = e; :}
               | compound_stmt:c
               {: RESULT = c; :}
-              | selection_stmt | iteration_stmt | return_stmt;
+              | selection_stmt:s
+              {: RESULT = s; :}
+              | iteration_stmt | return_stmt;
 
 expression_stmt ::= expression:e SEMI 
                     {: RESULT = e; :}
@@ -184,7 +186,11 @@ expression_stmt ::= expression:e SEMI
                     {: RESULT = new NilExp(sleft, sright); :}
                     ;
 
-selection_stmt ::= IF LPAREN expression RPAREN statement | IF LPAREN expression RPAREN statement ELSE statement;
+selection_stmt ::= IF LPAREN expression:e RPAREN statement:s
+               {: RESULT = new IfExp(eleft, eright, e, s, new NilExp(sleft, sright)); :}
+               | IF LPAREN expression:e RPAREN statement:s ELSE statement:_e
+               {: RESULT = new IfExp(eleft, eright, e, s, _e); :}
+               ;
 
 iteration_stmt ::= WHILE LPAREN expression RPAREN statement;
 

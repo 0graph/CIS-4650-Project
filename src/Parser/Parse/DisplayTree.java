@@ -149,4 +149,16 @@ public class DisplayTree implements AstVisitor {
     level++;
     exp.exp.accept(this, level);
   }
+
+  public void visit(IfExp exp, int level) {
+    indent(level);
+
+    System.out.println(exp);
+
+    level++;
+
+    exp.test.accept(this, level);
+    exp.then.accept(this, level);
+    exp._else.accept(this, level);
+  }
 }

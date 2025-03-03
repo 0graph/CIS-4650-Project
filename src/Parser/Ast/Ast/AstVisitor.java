@@ -1,5 +1,7 @@
 package Ast;
 
+import Ast.IfExp;
+
 /**
  * Visitor model for moving through a syntax tree, checking changes
  */
@@ -38,4 +40,6 @@ public interface AstVisitor {
   public void visit(ReturnExp exp, int level);
 
   public void visit(OpExp exp, int level);
+
+  public void visit(IfExp exp, int level);
 }
