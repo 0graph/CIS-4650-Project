@@ -31,7 +31,6 @@ import java_cup.runtime.*;
 
 ID = [_a-zA-Z][_a-zA-Z0-9]*
 NUM = [0-9]+
-TRUTH = false|true
 
 WHITESPACE = [\r|\n|\r\n]|[ \t\f]
 COMMENTS = (\/*({ID}|{NUM})+*\/)

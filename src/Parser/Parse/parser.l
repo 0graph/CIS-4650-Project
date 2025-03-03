@@ -81,7 +81,7 @@ precedence left EQ, NEQ;
 precedence left LT, GT, LTE, GTE;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
-precedence right UMINUS;
+precedence right UMINUS, NOT;
 
 
 /* Grammer Section */
@@ -191,11 +191,11 @@ iteration_stmt ::= WHILE LPAREN expression RPAREN statement;
 return_stmt         ::= RETURN expression:e SEMI
                         {: RESULT = new ReturnExp(eleft, eright, e); :}
                         | RETURN:r SEMI
-                        {: RESULT = new ReturnExp(eleft, eright, new NilExp(rleft, rright)); :}
+                        {: RESULT = new ReturnExp(rleft, rright, new NilExp(rleft, rright)); :}
                         ;
 
 expression          ::= var:v ASSIGN expression:e
-                        {: RESULT = new AssignExp(vleft, vright, v, e); :}
+                        {: RESULT = new AssignExp(vleft, vright, (VarExp)v, e); :}
                         | obool_expression:o
                         {: RESULT = o; :}
                         ;
@@ -203,7 +203,7 @@ expression          ::= var:v ASSIGN expression:e
 var                 ::= ID:i 
                         {: RESULT = new VarExp(ileft, iright, new SimpleVar(ileft, iright, i)); :}
                         | ID:i LBRACKET expression:e RBRACKET
-                        {: RESULT = new VarExp(ileft, iright, new IndexVar(ileft, iright, i, e)); }
+                        {: RESULT = new VarExp(ileft, iright, new IndexVar(ileft, iright, i, e)); :}
                         ;
 
 obool_expression    ::= obool_expression:o1 OR abool_expression:o2
@@ -279,7 +279,7 @@ signed_factor       ::= MINUS:m signed_factor:f
 
 factor              ::= LPAREN expression:e RPAREN
                         {: RESULT = e; :}
-                        | var: v
+                        | var:v
                         {: RESULT = v; :}
                         | call:c
                         {: RESULT = c; :}
