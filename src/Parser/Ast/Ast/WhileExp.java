@@ -1,18 +1,15 @@
 package Ast;
 
-public class IfExp extends Exp {
+public class WhileExp extends Exp {
   public Exp test;
-  public Exp then;
+  public Exp body;
 
-  public Exp _else;
-
-  public IfExp(int row, int column, Exp test, Exp then, Exp _else) {
+  public WhileExp(int row, int column, Exp test, Exp body) {
     this.row = row;
     this.col = column;
 
     this.test = test;
-    this.then = then;
-    this._else = _else;
+    this.body = body;
   }
 
   public void accept(AstVisitor visitor, int level) {
@@ -20,8 +17,9 @@ public class IfExp extends Exp {
   }
 
   public String toString() {
-    String result = String.format("IfExp:");
+    String result = String.format("WhileExp:");
 
     return result;
   }
+
 }

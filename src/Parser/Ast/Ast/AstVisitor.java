@@ -42,4 +42,6 @@ public interface AstVisitor {
   public void visit(OpExp exp, int level);
 
   public void visit(IfExp exp, int level);
+
+  public void visit(WhileExp exp, int level);
 }

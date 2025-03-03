@@ -825,7 +825,10 @@ class CUP$Parser$actions {
           case 28: // statement ::= iteration_stmt 
             {
               Exp RESULT =null;
-
+		int ileft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
+		int iright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
+		Exp i = (Exp)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
+		 RESULT = i; 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("statement",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -834,7 +837,10 @@ class CUP$Parser$actions {
           case 29: // statement ::= return_stmt 
             {
               Exp RESULT =null;
-
+		int rleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
+		int rright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
+		Exp r = (Exp)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
+		 RESULT = r; 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("statement",18, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -899,8 +905,14 @@ class CUP$Parser$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 34: // iteration_stmt ::= WHILE LPAREN expression RPAREN statement 
             {
-              Object RESULT =null;
-
+              Exp RESULT =null;
+		int eleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).left;
+		int eright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).right;
+		Exp e = (Exp)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
+		int sleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
+		int sright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
+		Exp s = (Exp)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
+		 RESULT = new WhileExp(eleft, eright, e, s); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("iteration_stmt",33, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
