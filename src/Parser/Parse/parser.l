@@ -129,8 +129,8 @@ fun_declaration   ::= type_specifier:t ID:id LPAREN params:p RPAREN compound_stm
                      {: RESULT = new FunctionDec(tleft, tright, t, id, (VarDecList) p, c); :}
                      ;
 
-fun_prototype     ::= type_specifier:t ID:i LPAREN params:p RPAREN SEMI
-                      {: RESULT = p;  :}
+fun_prototype     ::= type_specifier:t ID:id LPAREN params:p RPAREN SEMI
+                      {: RESULT = new FunctionDec(tleft, tright, t, id, (VarDecList) p, new NilExp(tleft, tright));  :}
                       ;
 
 params ::= param_list:l

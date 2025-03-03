@@ -33,10 +33,12 @@ ID = [_a-zA-Z][_a-zA-Z0-9]*
 NUM = [0-9]+
 
 WHITESPACE = [\r|\n|\r\n]|[ \t\f]
-COMMENTS = (\/*({ID}|{NUM})+*\/)
+COMMENTS = "/\*" ([^*]|\*+[^*/])* "\*/"
 %%
 
 /* Lexical Rules Section */
+
+{COMMENTS} {/*Ignore Comments*/}
 
 /* Reserved Keywords */
 "bool"    { return symbol(Sym.BOOL); }
@@ -76,5 +78,5 @@ COMMENTS = (\/*({ID}|{NUM})+*\/)
 /* Special Tokens */
 {ID} {return symbol(Sym.ID, yytext());}
 {NUM} {return symbol(Sym.NUM, yytext());}
-{COMMENTS} {/*Ignore Comments*/}
 {WHITESPACE} {/*Ignore Whitespace*/}
+. { return symbol(Sym.ERROR, yytext()); }
