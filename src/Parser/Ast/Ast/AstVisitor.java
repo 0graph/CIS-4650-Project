@@ -39,4 +39,5 @@ public interface AstVisitor {
 
   public void visit(ReturnExp exp, int level);
 
+  public void visit(OpExp exp, int level);
 }
