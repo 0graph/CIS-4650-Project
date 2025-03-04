@@ -1,5 +1,5 @@
 services:
-  scanner: # Makefile
+  parser: # Makefile
     build: ./src/Parser
     command: "bash"
     stdin_open: true
