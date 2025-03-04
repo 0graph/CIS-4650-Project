@@ -82,6 +82,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 precedence right UMINUS, NOT;
 precedence left RCURLY;
+precedence left ELSE;
 
 
 /* Grammer Section */
@@ -221,6 +222,11 @@ expression_stmt ::= expression:e SEMI
                     {: RESULT = e; :}
                     | SEMI:s
                     {: RESULT = new NilExp(sleft, sright); :}
+                    | expression:exp error:e
+                    {: 
+                       parser.report_error("Expression must end with semi colon", e);
+                       RESULT = new NilExp(expleft, expright); 
+                    :}
                     ;
 
 selection_stmt ::= IF LPAREN expression:e RPAREN statement:s
@@ -240,6 +246,11 @@ return_stmt         ::= RETURN expression:e SEMI
                         {: RESULT = new ReturnExp(eleft, eright, e); :}
                         | RETURN:r SEMI
                         {: RESULT = new ReturnExp(rleft, rright, new NilExp(rleft, rright)); :}
+                        | RETURN expression:exp error:e
+                        {: 
+                            parser.report_error("Expression must end with semi colon", e);
+                            RESULT = new NilExp(expleft, expright); 
+                        :}
                         ;
 
 expression          ::= var:v ASSIGN expression:e
