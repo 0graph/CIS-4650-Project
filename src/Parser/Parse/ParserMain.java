@@ -17,7 +17,6 @@ public class ParserMain {
 
       AstVisitor visitor = new DisplayTree();
 
-      System.out.println("Parsing completed successfully!");
       System.out.println("Abstract Syntax Tree: ");
 
       result.accept(visitor, 0);
