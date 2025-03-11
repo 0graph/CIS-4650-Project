@@ -1,7 +1,12 @@
 int x;
 
-int x[0];
+int main(void)
+{
+    int x;
+    int y;
 
-int y[2];
-
-int w;
+    if (x == 1)
+    {
+        int x = y;
+    }
+}

@@ -5,10 +5,10 @@ import java.util.*;
 public class SemanticAnalyser implements AstVisitor {
     final static int SPACES = 4;
     public static boolean error = false;
-    //HashMap<String, ArrayList<NodeType>> table;
+    HashMap<String, ArrayList<NodeType>> table;
 
     public SemanticAnalyser() {
-        //this.table = new HashMap<String, ArrayList<NodeType>>();
+        this.table = new HashMap<String, ArrayList<NodeType>>();
 
     }
 
@@ -26,17 +26,15 @@ public class SemanticAnalyser implements AstVisitor {
     // use level to detect scope
 
     public void visit(ListAst list, int level) {
-        indent(level);
-
         if(level == 0) {
+            indent(level);
             System.out.println("Entering the global scope.");
         }
 
-
         list.visit(this, level+1);
 
-
         if(level == 0) {
+            indent(level);
             System.out.println("Exiting the global scope.");
         }
     }
@@ -45,24 +43,32 @@ public class SemanticAnalyser implements AstVisitor {
         indent(level);
         System.out.println("Entering the scope for function " + dec.name);
 
+        dec.type.accept(this, level); // function type (same level as function)
+        dec.params.accept(this, level+1); // function parameter types (same level as function scope)
+        if (dec.body instanceof NilExp) {
+            // this is a function prototype, we store it so later we can check if the function declaration matches
+        } else {
+            dec.body.accept(this, level+1); // function expression (same level as function scope)
+        }
 
+        indent(level);
         System.out.println("Exiting the scope for function " + dec.name);
     }
 
     public void visit(SimpleDec dec, int level) {
-
+        // add to hashmap at level
     }
 
     public void visit(ArrayDec dec, int level) {
-
+        // add to hashmap at level
     }
 
     public void visit(VarType type, int level) {
-
+        // dont think we need to implement anything here, type should be accesed at the declaration itself
     }
 
     public void visit(NilExp exp, int level){
-    
+        
     }
 
     public void visit(CallExp exp, int level){
@@ -82,7 +88,11 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     public void visit(CompoundExp exp, int level){
-        
+        indent(level);
+        System.out.println("Entering a new block");
+
+        indent(level);
+        System.out.println("Exiting the block");
     }
 
     public void visit(IntExp exp, int level){
