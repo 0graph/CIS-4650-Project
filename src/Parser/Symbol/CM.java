@@ -1,7 +1,6 @@
 import java.io.*;
 import java_cup.runtime.*;
 import Ast.*;
-import Symbol.*;
 
 // C Minus Compiler
 

@@ -27,7 +27,7 @@ parse() {
 }
 
 compile() {
-  java -cp "$CUP_PATH:$BUILD_DIR:$PARSE_DIR:$SCANNER_DIR:$SYM_DIR" CM $1 $2
+  java -cp "$CUP_PATH:$BUILD_DIR:$PARSE_DIR:$SCANNER_DIR:$SYM_DIR" CM "$1" "$2"
 }
 
 while getopts "s:p:c:h" option; do
@@ -48,7 +48,7 @@ while getopts "s:p:c:h" option; do
     ;;
 
   c)
-    compile "$OPTARG"
+    compile "$OPTARG" "$3"
     exit
     ;;
   esac

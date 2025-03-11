@@ -1,4 +1,3 @@
-package Symbol;
 import Ast.*;
 //import Symbol.NodeType;
 import java.util.*;

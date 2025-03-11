@@ -1,4 +1,3 @@
-package Symbol;
 
 
 public class NodeType {
@@ -7,7 +6,7 @@ public class NodeType {
     int level;
 
     public NodeType() {
-        
+
     }
 
     public NodeType(String name, Dec def, int level) {

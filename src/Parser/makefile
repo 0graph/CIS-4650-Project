@@ -23,7 +23,7 @@ $(BUILD_DIR)/ParserMain.class: $(PARSE_DIR)/*.java $(PAR_FILE) $(AST_DIR)/Ast/*.
 	$(JAVAC) -cp "$(CUP_CLASSPATH):$(PARSE_DIR):$(SCANNER_DIR):$(AST_DIR)" $(PARSE_DIR)/ParserMain.java -d $(BUILD_DIR)
 
 $(BUILD_DIR)/CM.class: $(SYM_DIR)/*.java
-	$(JAVAC) -cp "$(CUP_CLASSPATH):$(SYM_DIR):$(PARSE_DIR):$(SCANNER_DIR):$(AST_DIR)" CM.java -d $(BUILD_DIR)
+	$(JAVAC) -cp "$(CUP_CLASSPATH):$(SYM_DIR):$(PARSE_DIR):$(SCANNER_DIR):$(AST_DIR)" $(SYM_DIR)/CM.java -d $(BUILD_DIR)
 
 $(BUILD_DIR)/Scanner.class: $(SCANNER_DIR)/*.java $(LEX_FILE)
 	$(JFLEX) $(LEX_FILE)
