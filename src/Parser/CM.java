@@ -1,6 +1,7 @@
 import java.io.*;
 import java_cup.runtime.*;
 import Ast.*;
+import Symbol.*;
 
 // C Minus Compiler
 
@@ -12,12 +13,12 @@ public class CM {
 
     static public void main(String args[]) {
         // no args
-        if(args.length() < 1){
+        if(args.length < 1){
             System.out.println("No Args Specified. Use -a <filepath> or -s <filepath>");
             return;
         }
         //1 arg
-        if(args.length() < 2){
+        if(args.length < 2){
             System.out.println("No File Specified. Use -a <filepath> or -s <filepath>");
             return;
         }
@@ -40,7 +41,7 @@ public class CM {
         try {
             Parser p = new Parser(new Lexer(new FileReader(file)));
             Ast result = (Ast) p.parse().value;
-
+            
             AstVisitor visitor = new SemanticAnalyser();
 
             System.out.println("Symbol Table: ");

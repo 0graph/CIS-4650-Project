@@ -1,10 +1,14 @@
-package SymbolTable;
+package Symbol;
 
 
 public class NodeType {
     String name;
     Dec def;
     int level;
+
+    public NodeType() {
+        
+    }
 
     public NodeType(String name, Dec def, int level) {
         this.name = name;

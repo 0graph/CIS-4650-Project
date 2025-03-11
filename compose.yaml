@@ -11,3 +11,4 @@ services:
       - ./src/Parser/Parse:/app/Parse
       - ./src/Parser/tests:/app/tests
       - ./src/Parser/Ast/:/app/Ast
+      - ./src/Parser/Symbol/:/app/Symbol
