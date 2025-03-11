@@ -7,6 +7,6 @@ int main(void)
 
     if (x == 1)
     {
-        int x = y;
+        int x;
     }
 }
