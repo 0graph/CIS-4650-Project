@@ -5,6 +5,7 @@ DIR=$(pwd)
 CUP_PATH=/usr/share/java/cup.jar
 BUILD_DIR=$(pwd)/Build
 SCANNER_DIR=$(pwd)/Scanner
+SYM_DIR=$(pwd)/Symbol
 PARSE_DIR=$(pwd)/Parse
 AST_DIR=$(pwd)/Ast
 
@@ -25,7 +26,11 @@ parse() {
   java -cp "$CUP_PATH:$BUILD_DIR:$PARSE_DIR:$SCANNER_DIR" ParserMain $1
 }
 
-while getopts "s:p:h" option; do
+compile() {
+  java -cp "$CUP_PATH:$BUILD_DIR:$PARSE_DIR:$SCANNER_DIR:$SYM_DIR" CM $1 $2
+}
+
+while getopts "s:p:c:h" option; do
   case "$option" in
   s)
     scan "$OPTARG"
@@ -39,6 +44,11 @@ while getopts "s:p:h" option; do
 
   h)
     help
+    exit
+    ;;
+
+  c)
+    compile "$OPTARG"
     exit
     ;;
   esac
