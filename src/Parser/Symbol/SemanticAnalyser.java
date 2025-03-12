@@ -27,29 +27,101 @@ public class SemanticAnalyser implements AstVisitor {
     // check if node is in hash map and
     // check if node in hash map is from same or deeper scope before deleting
     private boolean node_delete(NodeType node) {
+        ArrayList<NodeType> nodeList = this.table.get(node.name);
+        if(nodeList == null) { // nothing to delete
+            return false;
+        }
+        
+        // node from less deep scope -> dont delete
+        if(nodeList.get(0).level < node.level) {
+            System.out.println("Warning: trying to delete node from less deep scope");
+            return false;
+        }
 
+        nodeList.remove(0);
+
+        // delete key if array is empty;
+        if(nodeList.isEmpty()) {
+            this.table.remove(node.name);
+        } else if (nodeList.get(0).level >= node.level) {
+            System.out.println("Warning: after deleting there are still nodes with >= scope in map");
+        }
+
+        return true;
     }
 
     // insert node to hash map
-    private void node_insert(NodeType node) {
+    // return false if issue
+    private boolean node_insert(NodeType node) {
+        ArrayList<NodeType> nodeList = this.table.get(node.name);
+        if(nodeList == null) { // insert new ArrayList
+            nodeList = new ArrayList<NodeType>();
+            nodeList.add(node);
+            this.table.put(node.name, nodeList);
+        } else { // add to front of list
+            // for now if node already exists at same level just ignore the new one
+            if(nodeList.get(0).level == node.level) {
+                System.out.println("Warning: Node already exists at same scope");
+                return false;
+            }
+            nodeList.add(0, node);
+        }
+        return true;
+    }
 
+    // print variables and types before deleting them and exiting scope
+    private void print_scope(int level) {
+        // for each variable
+        for(ArrayList<NodeType> list : this.table.values()) {
+
+            if(list == null || list.isEmpty()) {
+                System.out.println("Error: HashMap contains key with empty value");
+                continue;
+            }
+
+            if(list.get(0).level > level) {
+                System.out.println("Warning: Found node from greater level still in list");
+                continue;
+            }
+
+            // print node and then delete it
+            if(list.get(0).level == level) {
+                indent(level+1);
+                System.out.println(list.get(0).def);
+                this.node_delete(list.get(0));
+            }
+        }
     }
 
     // check if node is in hashmap and depth is not greater then the node to look for
     // otherwise return null
-    private Optional<NodeType> node_lookup(NodeType node) {
+    private NodeType node_lookup(NodeType node) {
+        ArrayList<NodeType> nodeList = this.table.get(node.name);
 
+        // node not found
+        if(nodeList == null) {
+            return null;
+        }
+
+        // I think this shouldent happen
+        if(nodeList.get(0).level > node.level) {
+            System.out.println("Warning: during lookup encountered top node with higher level");
+            return null;
+        }
+
+        // return the top node (should be most recent scope)
+        return nodeList.get(0);
     }
 
     // used for expression and variable type compatibility checking
-    private boolean isCompatible(VarType lhs, VarType rhs) {
-        
+    // check type
+    // check if array index being accessed is valid
+    // etc.
+    private boolean isCompatible(Dec lhs, Dec rhs) {
+        // use instanceof to convert lhs and rhs to ArrayDec/SimpleDec
+        return true;
     }
 
-
-    public boolean TypeEqual(VarType ty1, VarType ty2) {
-        return ty1.type == ty2.type;
-    }
 
     // add visitor methods here in postorder traversal
     // use level to detect scope
@@ -62,7 +134,9 @@ public class SemanticAnalyser implements AstVisitor {
 
         list.visit(this, level+1);
 
+
         if(level == 0) {
+            this.print_scope(level);
             indent(level);
             System.out.println("Exiting the global scope.");
         }
@@ -80,16 +154,22 @@ public class SemanticAnalyser implements AstVisitor {
             dec.body.accept(this, level+1); // function expression (same level as function scope)
         }
 
+        this.print_scope(level);
+
         indent(level);
         System.out.println("Exiting the scope for function " + dec.name);
     }
 
     public void visit(SimpleDec dec, int level) {
         // add to hashmap at level
+        NodeType newNode = new NodeType(dec.name,dec,level);
+        this.node_insert(newNode);
     }
 
     public void visit(ArrayDec dec, int level) {
         // add to hashmap at level
+        NodeType newNode = new NodeType(dec.name, dec, level);
+        this.node_insert(newNode);
     }
 
     public void visit(VarType type, int level) {
@@ -120,6 +200,7 @@ public class SemanticAnalyser implements AstVisitor {
         indent(level);
         System.out.println("Entering a new block");
 
+        this.print_scope(level);
         indent(level);
         System.out.println("Exiting the block");
     }
