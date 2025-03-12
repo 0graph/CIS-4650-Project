@@ -7,6 +7,8 @@ public class FunctionDec extends Dec {
   public Exp body;
 
   public FunctionDec(int row, int column, VarType type, String name, VarDecList params, Exp body) {
+    this.row = row;
+    this.col = column;
     this.type = type;
     this.name = name;
     this.body = body;
@@ -15,6 +17,8 @@ public class FunctionDec extends Dec {
   }
 
   public FunctionDec(int row, int column, VarType type, String name, VarDecList params, NilExp body) {
+    this.row = row;
+    this.col = column;
     this.type = type;
     this.name = name;
 

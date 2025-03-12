@@ -6,7 +6,8 @@ import java.util.*;
 // when visiting expressions, set it's Dec to the evaluated type based
 // on the LHS and RHS of the expression, if incompatible set to false
 
-// 
+// ISSUES:
+
 
 public class SemanticAnalyser implements AstVisitor {
     final static int SPACES = 4;
@@ -61,7 +62,8 @@ public class SemanticAnalyser implements AstVisitor {
         } else { // add to front of list
             // for now if node already exists at same level just ignore the new one
             if(nodeList.get(0).level == node.level) {
-                System.out.println("Warning: Node " + node.name + " already exists at scope level " + node.level);
+                System.out.println("Warning: variable " + node.name + " already exists at same scope level (" + node.level + ")");
+                this.error = true;
                 return false;
             }
             nodeList.add(0, node);
@@ -71,6 +73,7 @@ public class SemanticAnalyser implements AstVisitor {
 
     // print variables and types before deleting them and exiting scope
     private void print_scope(int level) {
+        ArrayList<NodeType> toDelete = new ArrayList<NodeType>();
 
         // for each variable
         for(ArrayList<NodeType> list : this.table.values()) {
@@ -95,10 +98,18 @@ public class SemanticAnalyser implements AstVisitor {
                     System.out.println(" " + ((SimpleDec)def).type);
                 } else if(def instanceof ArrayDec) {
                     System.out.println(" " + ((ArrayDec)def).type);
+                } else if(def instanceof FunctionDec) {
+                    System.out.println(" " + ((FunctionDec)def).type);
+                } else {
+                    System.out.println("");
                 }
 
-                this.node_delete(list.get(0));
+                toDelete.add(list.get(0));
             }
+        }
+
+        for(NodeType node : toDelete) {
+            this.node_delete(node);
         }
     }
 
@@ -152,6 +163,32 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     public void visit(FunctionDec dec, int level) {
+        NodeType newNode = new NodeType(dec.name,dec,level);
+        NodeType lNode = this.node_lookup(newNode);
+        if(lNode == null) { // not declared before
+            this.node_insert(newNode);
+        } else {
+            // check if previous node was a prototype or a decl
+            // and update accordingly
+            FunctionDec fDec = (FunctionDec)lNode.def;
+            if(fDec.body instanceof NilExp) {
+
+                // if previous node was a prototype, update the node to be a declaration
+                // so that future redeclarations can be detected
+                if(dec.body instanceof NilExp) {
+                    System.out.println("Warning: Function prototype declared twice");
+                } else {
+                    // TODO: Check if declaration and prototype types are matching
+                    // TODO: Check if parameter types are matching
+
+                    // update
+                    lNode.def = dec;
+                }
+            } else {
+                System.out.println("Warning: Redeclared function detected at row " + dec.row + " and column " + dec.col);
+            }
+        }
+
         indent(level+1);
         System.out.println("Entering the scope for function " + dec.name + ":");
 
