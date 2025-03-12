@@ -133,7 +133,7 @@ public class SemanticAnalyser implements AstVisitor {
             System.out.println("Entering the global scope.");
         }
 
-        list.visit(this, level+1);
+        list.visit(this, level); // function, and variable decs are level 0 in global scope
 
 
         if(level == 0) {
@@ -147,7 +147,7 @@ public class SemanticAnalyser implements AstVisitor {
         indent(level);
         System.out.println("Entering the scope for function " + dec.name);
 
-        dec.type.accept(this, level); // function type (same level as function)
+        dec.type.accept(this, level); // function type (same level as global)
         dec.params.accept(this, level+1); // function parameter types (same level as function scope)
         if (dec.body instanceof NilExp) {
             // this is a function prototype, we store it so later we can check if the function declaration matches
@@ -207,20 +207,27 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     public void visit(CompoundExp exp, int level){
-        indent(level);
-        System.out.println("Entering a new block");
+        int newLevel = level; // if level is 1 then its function scope so we dont increment
+        if(level > 1) {
+            newLevel++;
+            indent(level);
+            System.out.println("Entering a new block");
+        }
 
         if (exp.decs != null) {
-            exp.decs.accept(this, level+1);
+            exp.decs.accept(this, newLevel);
         }
 
         if (exp.exps != null) {
-            exp.exps.accept(this, level+1);
+            exp.exps.accept(this, newLevel);
         }
 
         this.print_scope(level);
-        indent(level);
-        System.out.println("Exiting the block");
+        if(level > 1) {
+            indent(level);
+            System.out.println("Exiting the block");
+        }
+        
     }
 
     public void visit(IntExp exp, int level){
