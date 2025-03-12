@@ -61,7 +61,7 @@ public class SemanticAnalyser implements AstVisitor {
         } else { // add to front of list
             // for now if node already exists at same level just ignore the new one
             if(nodeList.get(0).level == node.level) {
-                System.out.println("Warning: Node already exists at same scope");
+                System.out.println("Warning: Node " + node.name + " already exists at scope level " + node.level);
                 return false;
             }
             nodeList.add(0, node);
@@ -81,7 +81,7 @@ public class SemanticAnalyser implements AstVisitor {
             }
 
             if(list.get(0).level > level) {
-                System.out.println("Warning: Found node from greater level still in list");
+                System.out.println("Warning: Found node from level " + list.get(0).level + " still in list when checking level " + level);
                 continue;
             }
 
@@ -160,10 +160,10 @@ public class SemanticAnalyser implements AstVisitor {
         if (dec.body instanceof NilExp) {
             // this is a function prototype, we store it so later we can check if the function declaration matches
         } else {
-            dec.body.accept(this, level+1); // function expression (same level as function scope)
+            dec.body.accept(this, level); // function expression (same level as function scope)
         }
 
-        this.print_scope(level);
+        this.print_scope(level+1); // print the stuff inside the function (+1)
 
         indent(level+1);
         System.out.println("Exiting the scope for function " + dec.name + ":");
@@ -214,23 +214,21 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     public void visit(CompoundExp exp, int level){
-        int newLevel = level; // if level is 1 then its function scope so we dont increment
-        if(level > 1) {
-            newLevel++;
+        if(level > 0) {
             indent(level);
             System.out.println("Entering a new block");
         }
 
         if (exp.decs != null) {
-            exp.decs.accept(this, newLevel);
+            exp.decs.accept(this, level+1);
         }
 
         if (exp.exps != null) {
-            exp.exps.accept(this, newLevel);
+            exp.exps.accept(this, level+1);
         }
 
-        this.print_scope(level);
-        if(level > 1) {
+        this.print_scope(level+1); // print the stuff inside the expression (+1)
+        if(level > 0) {
             indent(level);
             System.out.println("Exiting the block");
         }
