@@ -71,6 +71,7 @@ public class SemanticAnalyser implements AstVisitor {
 
     // print variables and types before deleting them and exiting scope
     private void print_scope(int level) {
+
         // for each variable
         for(ArrayList<NodeType> list : this.table.values()) {
 
@@ -164,41 +165,58 @@ public class SemanticAnalyser implements AstVisitor {
         // add to hashmap at level
         NodeType newNode = new NodeType(dec.name,dec,level);
         this.node_insert(newNode);
+        dec.type.accept(this, level);
     }
 
     public void visit(ArrayDec dec, int level) {
         // add to hashmap at level
         NodeType newNode = new NodeType(dec.name, dec, level);
         this.node_insert(newNode);
+        dec.type.accept(this, level);
     }
 
     public void visit(VarType type, int level) {
-        // dont think we need to implement anything here, type should be accesed at the declaration itself
+        System.out.print(" ");
+        System.out.println(type);
     }
 
     public void visit(NilExp exp, int level){
-        
+        // dont think anything needs to be done here
     }
 
     public void visit(CallExp exp, int level){
-        
+        // TODO: Set Dec for type compatibility checking
+        exp.args.accept(this, level);
     }
 
     public void visit(AssignExp exp, int level){
-        
+        // TODO: Set Dec for type compatibility checking
+        // TODO: Check type compatibility
+        exp.lhs.accept(this, level);
+        exp.rhs.accept(this, level);
     }
 
     public void visit(VarExp exp, int level){
-        
+        // find if var's name exists in map at level
+        // if it dosent -> error
+        // if it does we're good -> set exp dec to the one in the map
     }
 
     public void visit(SimpleVar var, int level){
-        
+        // dont think if anything needs to be done
     }
 
     public void visit(CompoundExp exp, int level){
         indent(level);
         System.out.println("Entering a new block");
+
+        if (exp.decs != null) {
+            exp.decs.accept(this, level+1);
+        }
+
+        if (exp.exps != null) {
+            exp.exps.accept(this, level+1);
+        }
 
         this.print_scope(level);
         indent(level);
@@ -206,30 +224,40 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     public void visit(IntExp exp, int level){
-        
+        // TODO: Set Dec for type compatibility checking
     }
 
     public void visit(BoolExp exp, int level){
-        
+        // TODO: Set Dec for type compatibility checking
     }
 
     public void visit(IndexVar var, int level){
-        
+        // dont think anything needs to be done
     }
 
     public void visit(ReturnExp exp, int level){
-        
+        // TODO: Set Dec for type compatibility checking
+        // TODO: Check type compatibility with function's type
+        exp.exp.accept(this, level);
     }
 
     public void visit(OpExp exp, int level){
-        
+        // TODO: Set Dec for type compatibility checking
+        // TODO: Check type compatibility
+        exp.lhs.accept(this, level);
+        exp.rhs.accept(this, level);
     }
 
     public void visit(IfExp exp, int level){
-        
+        // TODO: Set Dec for type compatibility checking
+        exp.test.accept(this, level);
+        exp.then.accept(this, level);
+        exp._else.accept(this, level);
     }
 
     public void visit(WhileExp exp, int level){
-
+        // TODO: Set Dec for type compatibility checking
+        exp.test.accept(this, level);
+        exp.body.accept(this, level);
     }
 }
