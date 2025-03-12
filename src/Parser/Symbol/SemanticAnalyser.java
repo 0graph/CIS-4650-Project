@@ -41,6 +41,11 @@ public class SemanticAnalyser implements AstVisitor {
 
     }
 
+    // used for expression and variable type compatibility checking
+    private boolean isCompatible(VarType lhs, VarType rhs) {
+        
+    }
+
 
     public boolean TypeEqual(VarType ty1, VarType ty2) {
         return ty1.type == ty2.type;
