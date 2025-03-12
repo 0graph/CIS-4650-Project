@@ -241,9 +241,26 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     public void visit(VarExp exp, int level){
-        // find if var's name exists in map at level
-        // if it dosent -> error
-        // if it does we're good -> set exp dec to the one in the map
+        String name = "";
+        Exp idx = null;
+
+        if(exp.variable instanceof SimpleVar) {
+            name = ((SimpleVar)exp.variable).name;
+        } else if (exp.variable instanceof IndexVar) {
+            name = ((IndexVar)exp.variable).name;
+            idx = ((IndexVar)exp.variable).index;
+        }
+
+        NodeType newNode = new NodeType(name, null, level);
+        NodeType foundNode = this.node_lookup(newNode);
+        if(foundNode == null) { // variable is undeclared
+            System.out.println("Warning: reference to undeclared variable " + name + " at row " + exp.row + " and column " + exp.col);
+            this.error = true;
+        }
+
+        // check if index being accessed is valid
+        // not sure how to do that since index is an expression
+
     }
 
     public void visit(SimpleVar var, int level){
