@@ -11,6 +11,8 @@ int func1(int a); /* multiple prototypes */
 int func1(int a)
 {
     int a; /* redefintion in same scope */
+    func1(a);
+    func7();
 }
 
 void func2(int a, int b)

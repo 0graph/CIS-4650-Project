@@ -230,6 +230,12 @@ public class SemanticAnalyser implements AstVisitor {
 
     public void visit(CallExp exp, int level){
         // TODO: Set Dec for type compatibility checking
+        NodeType newNode = new NodeType(exp.func, null, level);
+        NodeType foundNode = this.node_lookup(newNode);
+        if(foundNode == null) { // function not declared
+            // Note: might need to check if function is actually declared or just a prototype
+            System.out.println("Warning: undeclared function " + exp.func + " being called at row " + exp.row + " and column " + exp.col);
+        }
         exp.args.accept(this, level);
     }
 
