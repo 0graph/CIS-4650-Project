@@ -2,6 +2,12 @@ import Ast.*;
 //import Symbol.NodeType;
 import java.util.*;
 
+// NOTES:
+// when visiting expressions, set it's Dec to the evaluated type based
+// on the LHS and RHS of the expression, if incompatible set to false
+
+// 
+
 public class SemanticAnalyser implements AstVisitor {
     final static int SPACES = 4;
     public static boolean error = false;
