@@ -87,8 +87,16 @@ public class SemanticAnalyser implements AstVisitor {
 
             // print node and then delete it
             if(list.get(0).level == level) {
-                indent(level+1);
-                System.out.println(list.get(0).def);
+                indent(level);
+                Dec def = list.get(0).def;
+                System.out.print(def);
+
+                if(def instanceof SimpleDec) {
+                    System.out.println(" " + ((SimpleDec)def).type);
+                } else if(def instanceof ArrayDec) {
+                    System.out.println(" " + ((ArrayDec)def).type);
+                }
+
                 this.node_delete(list.get(0));
             }
         }
@@ -144,8 +152,8 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     public void visit(FunctionDec dec, int level) {
-        indent(level);
-        System.out.println("Entering the scope for function " + dec.name);
+        indent(level+1);
+        System.out.println("Entering the scope for function " + dec.name + ":");
 
         dec.type.accept(this, level); // function type (same level as global)
         dec.params.accept(this, level+1); // function parameter types (same level as function scope)
@@ -157,8 +165,8 @@ public class SemanticAnalyser implements AstVisitor {
 
         this.print_scope(level);
 
-        indent(level);
-        System.out.println("Exiting the scope for function " + dec.name);
+        indent(level+1);
+        System.out.println("Exiting the scope for function " + dec.name + ":");
     }
 
     public void visit(SimpleDec dec, int level) {
@@ -176,8 +184,7 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     public void visit(VarType type, int level) {
-        System.out.print(" ");
-        System.out.println(type);
+        // dont print anything here
     }
 
     public void visit(NilExp exp, int level){
