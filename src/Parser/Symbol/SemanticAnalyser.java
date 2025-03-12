@@ -18,9 +18,27 @@ public class SemanticAnalyser implements AstVisitor {
 
     }
 
+    // for printing scopes
     private void indent(int level) {
         for (int i = 0; i < level * SPACES; i++)
         System.out.print(" ");
+    }
+
+    // check if node is in hash map and
+    // check if node in hash map is from same or deeper scope before deleting
+    private boolean node_delete(NodeType node) {
+
+    }
+
+    // insert node to hash map
+    private void node_insert(NodeType node) {
+
+    }
+
+    // check if node is in hashmap and depth is not greater then the node to look for
+    // otherwise return null
+    private Optional<NodeType> node_lookup(NodeType node) {
+
     }
 
 
