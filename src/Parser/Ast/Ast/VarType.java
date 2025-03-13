@@ -1,9 +1,9 @@
 package Ast;
 
 public class VarType extends Ast {
-  public final static int BOOL = 0;
-  public final static int INT = 1;
-  public final static int VOID = 2;
+  public final static int BOOL = Type.BOOLEAN.ordinal();
+  public final static int INT = Type.INT.ordinal();
+  public final static int VOID = Type.VOID.ordinal();
 
   public int type;
 
@@ -21,7 +21,7 @@ public class VarType extends Ast {
     String typeName = "";
 
     switch (this.type) {
-      case 0: // BOOL
+      case 0:
         typeName = "BOOL";
         break;
 
@@ -38,5 +38,18 @@ public class VarType extends Ast {
     String result = String.format("TYPE(%s)", typeName);
 
     return result;
+  }
+
+  /**
+   * Return the type value assigned as a value from the enum
+   */
+  public Type getTypeValue() {
+    if (type == BOOL) {
+      return Type.BOOLEAN;
+    } else if (type == INT) {
+      return Type.INT;
+    } else {
+      return Type.VOID;
+    }
   }
 }

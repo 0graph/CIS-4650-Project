@@ -123,6 +123,16 @@ public class SymbolTable {
   }
 
   /**
+   * Compares an assignment expression based on the types
+   * 
+   * @param lhs the left hand side variable type
+   * @param rhs The right hands side expression
+   */
+  public boolean compareAssignExp(VarExp lhs, Exp rhs) {
+    return true;
+  }
+
+  /**
    * Print the symbol table in a root structure
    */
   public String toString() {

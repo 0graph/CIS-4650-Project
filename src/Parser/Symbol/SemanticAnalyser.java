@@ -305,6 +305,7 @@ public class SemanticAnalyser implements AstVisitor {
     // x = 0;
     if (exp.variable instanceof SimpleVar) {
       name = ((SimpleVar) exp.variable).name;
+
     } else if (exp.variable instanceof IndexVar) { // x[3 + 2];
       name = ((IndexVar) exp.variable).name;
       idx = ((IndexVar) exp.variable).index;
@@ -315,6 +316,9 @@ public class SemanticAnalyser implements AstVisitor {
     if (node == null) {
       System.out.println(
           "Warning: reference to undeclared variable " + name + " at row " + exp.row + " and column " + exp.col);
+    } else {
+      // Check type for the expression
+      // exp.dec.expressionType = node.def.expressionType;
     }
 
     // Check Index validity through expression
@@ -342,7 +346,16 @@ public class SemanticAnalyser implements AstVisitor {
    * Visit Int expresion
    */
   public void visit(IntExp exp, SymbolTable table) {
-    // Dec compatability checking
+    // All Int expressions are integers
+    // exp.dec.expressionType = Type.INT;
+  }
+
+  /**
+   * Visit a simple boolean
+   */
+  public void visit(BoolExp exp, SymbolTable table) {
+    // All boolean expressions are booleans
+    // exp.dec.expressionType = Type.BOOLEAN;
   }
 
   /**
