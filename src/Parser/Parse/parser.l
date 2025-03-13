@@ -68,9 +68,8 @@ terminal ERROR;
 non terminal ListAst program, declaration_list, local_declarations, params, statement_list, args, arg_list, param_list;
 non terminal addop, mulop, relop;
 
-non terminal Dec declaration, var_declaration, fun_declaration, param;
+non terminal Dec declaration, var_declaration, fun_declaration, param, fun_prototype;
 non terminal VarType type_specifier;
-non terminal fun_prototype;
 non terminal Exp compound_stmt, statement, expression_stmt, call, expression, var, obool_expression, factor, term, signed_factor, additive_expression, abool_expression, ubool_expression, simple_expression, return_stmt, selection_stmt, iteration_stmt;
 
 precedence right ASSIGN;
@@ -116,7 +115,9 @@ declaration ::= var_declaration:d
                 {: RESULT = d; :}
                 | fun_declaration:f
                 {: RESULT = f; :}
-                | fun_prototype;
+                | fun_prototype:f
+                {: RESULT = f; :}
+                ;
 
 var_declaration ::= type_specifier:t ID:id SEMI
                     {: RESULT = new  SimpleDec(tleft, tright, t, id); :}
