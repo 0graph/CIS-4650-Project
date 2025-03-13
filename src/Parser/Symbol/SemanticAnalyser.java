@@ -189,6 +189,12 @@ public class SemanticAnalyser implements AstVisitor {
       visit((CompoundExp) ast, table);
     } else if (ast instanceof AssignExp) {
       visit((AssignExp) ast, table);
+    } else if (ast instanceof IfExp) {
+      visit((IfExp) ast, table);
+    } else if (ast instanceof ReturnExp) {
+      visit((ReturnExp) ast, table);
+    } else if (ast instanceof IntExp) {
+      visit((IntExp) ast, table);
     }
 
     else {
@@ -311,6 +317,37 @@ public class SemanticAnalyser implements AstVisitor {
 
     // Check Index validity through expression
 
+  }
+
+  /**
+   * Visit If Expression
+   */
+  public void visit(IfExp exp, SymbolTable table) {
+
+    // Create new SymbolTable
+    SymbolTable ifTable = table.createInnerScope();
+    visit(exp.test, ifTable);
+    visit(exp.then, ifTable);
+
+    // Else Symbol Table
+    SymbolTable elseTable = table.createInnerScope();
+    visit(exp._else, elseTable);
+
+    // Set Dec for type compatibility checking
+  }
+
+  /**
+   * Visit Int expresion
+   */
+  public void visit(IntExp exp, SymbolTable table) {
+    // Dec compatability checking
+  }
+
+  /**
+   * Return expreesion "return (x == 1)"
+   */
+  public void visit(ReturnExp exp, SymbolTable table) {
+    visit(exp.exp, table);
   }
 
   public void visit(ListAst list, int level) {
