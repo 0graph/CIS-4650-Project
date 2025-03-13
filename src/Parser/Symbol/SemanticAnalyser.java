@@ -138,13 +138,16 @@ public class SemanticAnalyser implements AstVisitor {
     return nodeList.get(0);
   }
 
-  // used for expression and variable type compatibility checking
-  // check type
-  // check if array index being accessed is valid
-  // etc.
-  private boolean isCompatible(Dec lhs, Dec rhs) {
-    // use instanceof to convert lhs and rhs to ArrayDec/SimpleDec
-    return true;
+  /**
+   * used for expression and variable type compatibility checking
+   * check type
+   * check if array index being accessed is valid
+   * 
+   * @param lhs Light hand side
+   * @param rhs Right hand side
+   */
+  private boolean isCompatible(Type lhs, Type rhs) {
+    return lhs == rhs;
   }
 
   // add visitor methods here in postorder traversal
@@ -278,7 +281,24 @@ public class SemanticAnalyser implements AstVisitor {
     visit(lhs, table);
     visit(rhs, table);
 
-    // TODO: Set Dec for type compatibility
+    // Check for the right expressions
+    try {
+      Type left = table.getExpressionType(lhs);
+      Type right = table.getExpressionType(rhs);
+
+      if (isCompatible(left, right)) {
+        table.addExpression(exp, left);
+      } else {
+        // TODO: Make the Error better
+        System.out.println("Expressions are not compatible!");
+      }
+
+    } catch (NoSuchExpressionElement e) {
+      System.out.println("Cannot Assign!");
+      System.out.println(e);
+    } catch (ExpressionExistsException e) {
+      System.out.println(e);
+    }
   }
 
   /**
@@ -317,8 +337,14 @@ public class SemanticAnalyser implements AstVisitor {
       System.out.println(
           "Warning: reference to undeclared variable " + name + " at row " + exp.row + " and column " + exp.col);
     } else {
-      // Check type for the expression
-      // exp.dec.expressionType = node.def.expressionType;
+      // Update the type to this expression
+      Type type = node.def.type.getTypeValue();
+
+      try {
+        table.addExpression(exp, type);
+      } catch (ExpressionExistsException e) {
+        System.out.println(e);
+      }
     }
 
     // Check Index validity through expression
@@ -346,8 +372,12 @@ public class SemanticAnalyser implements AstVisitor {
    * Visit Int expresion
    */
   public void visit(IntExp exp, SymbolTable table) {
-    // All Int expressions are integers
-    // exp.dec.expressionType = Type.INT;
+    // All Int expressions are integers so we just add that to the expression
+    try {
+      table.addExpression(exp, Type.INT);
+    } catch (ExpressionExistsException e) {
+      System.out.println(e);
+    }
   }
 
   /**
@@ -355,7 +385,11 @@ public class SemanticAnalyser implements AstVisitor {
    */
   public void visit(BoolExp exp, SymbolTable table) {
     // All boolean expressions are booleans
-    // exp.dec.expressionType = Type.BOOLEAN;
+    try {
+      table.addExpression(exp, Type.BOOLEAN);
+    } catch (ExpressionExistsException e) {
+      System.out.println(e);
+    }
   }
 
   /**

@@ -38,6 +38,9 @@ public class SymbolTable {
     // Create empty symbol table
     this.symbols = new HashMap<String, NodeType>();
 
+    // Create Empty expressions table
+    this.expressions = new HashMap<Exp, Type>();
+
     // Set the parent (if any)
     this.outerScope = outerScope;
 
@@ -144,6 +147,11 @@ public class SymbolTable {
 
   /**
    * Add an expression to the current scope
+   * 
+   * @param exp  The expression as the key
+   * @param type The type of this expression
+   * @throws ExpressionExistsException Throws an expression exists if the
+   *                                   expression has already been added
    */
   public void addExpression(Exp exp, Type type) throws ExpressionExistsException {
     try {
