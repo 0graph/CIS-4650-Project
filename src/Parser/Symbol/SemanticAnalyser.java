@@ -292,7 +292,6 @@ public class SemanticAnalyser implements AstVisitor {
         // TODO: Make the Error better
         System.out.println("Expressions are not compatible!");
       }
-
     } catch (NoSuchExpressionElement e) {
       System.out.println("Cannot Assign!");
       System.out.println(e);
