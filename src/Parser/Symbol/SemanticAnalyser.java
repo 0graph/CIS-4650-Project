@@ -502,4 +502,18 @@ public class SemanticAnalyser implements AstVisitor {
     exp.test.accept(this, level);
     exp.body.accept(this, level);
   }
+
+  /**
+   * Go through symbol tables and print them out
+   */
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    SymbolTable current = table;
+
+    builder.append("Entering global scope:\n");
+    builder.append(current.toString());
+    builder.append("Exiting global scope.\n");
+
+    return builder.toString();
+  }
 }

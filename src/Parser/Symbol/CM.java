@@ -47,6 +47,8 @@ public class CM {
       // result.accept(visitor, 0);
       SemanticAnalyser bruh = (SemanticAnalyser) visitor;
       bruh.symbolTable((DecList) result);
+
+      System.out.println(bruh);
     } catch (Exception e) {
       /* do cleanup here -- possibly rethrow e */
       e.printStackTrace();

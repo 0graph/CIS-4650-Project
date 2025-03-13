@@ -8,6 +8,8 @@ import Ast.*;
  * All node values can be read from here
  */
 public class SymbolTable {
+  private final static int SPACES = 4;
+
   // All child Scopes
   public ArrayList<SymbolTable> innerScopes;
 
@@ -118,5 +120,52 @@ public class SymbolTable {
     innerScopes.add(table);
 
     return table;
+  }
+
+  /**
+   * Print the symbol table in a root structure
+   */
+  public String toString() {
+    return toStringHelper(this.level);
+  }
+
+  /**
+   * for printing in the toString
+   */
+  private String indent(int level) {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < level * SPACES; i++)
+      builder.append(" ");
+
+    return builder.toString();
+  }
+
+  /**
+   * String helper function
+   */
+  private String toStringHelper(int level) {
+    StringBuilder result = new StringBuilder();
+    SymbolTable current = this;
+
+    // Go through tree
+    result.append(indent(level));
+    result.append("Entering Scope:\n");
+
+    // Go through all Symbols
+    for (NodeType node : current.symbols.values()) {
+      String declaration = String.format("Dec: %s\n", node.name);
+      result.append(indent(level + 1) + declaration);
+    }
+
+    // Recurse inner scopes
+    for (SymbolTable scope : innerScopes) {
+      // result.append(indent(level));
+      result.append(scope.toStringHelper(scope.level + 1));
+    }
+
+    result.append(indent(level));
+    result.append("Exiting Scope\n");
+
+    return result.toString();
   }
 }
