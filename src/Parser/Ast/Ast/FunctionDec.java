@@ -1,7 +1,6 @@
 package Ast;
 
 public class FunctionDec extends Dec {
-  public VarType type;
   public String name;
   public VarDecList params;
   public Exp body;
@@ -21,7 +20,6 @@ public class FunctionDec extends Dec {
     this.col = column;
     this.type = type;
     this.name = name;
-
     this.params = params;
     this.body = body;
   }

@@ -1,7 +1,6 @@
 package Ast;
 
 public class ArrayDec extends VarDec {
-  public VarType type;
   public String name;
   public int size;
 

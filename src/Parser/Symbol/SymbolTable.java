@@ -20,7 +20,10 @@ public class SymbolTable {
   public Integer level;
 
   // All symbols within this scope
-  public HashMap<String, NodeType> symbols;
+  private HashMap<String, NodeType> symbols;
+
+  // Expressions in current scope and their types
+  private HashMap<Exp, Type> expressions;
 
   /**
    * Create a new symbol table within a scope
@@ -123,13 +126,34 @@ public class SymbolTable {
   }
 
   /**
-   * Compares an assignment expression based on the types
+   * Get the type for the expression saved in the scope
    * 
-   * @param lhs the left hand side variable type
-   * @param rhs The right hands side expression
+   * @param exp The pointer to an expression to check
+   * @throws NoSuchExpressionElement Throws an error if the expression does not
+   *                                 exit in the scope
    */
-  public boolean compareAssignExp(VarExp lhs, Exp rhs) {
-    return true;
+  public Type getExpressionType(Exp exp) throws NoSuchExpressionElement {
+    Type type = expressions.get(exp);
+
+    if (type == null) {
+      throw new NoSuchExpressionElement("Expression was never created");
+    }
+
+    return type;
+  }
+
+  /**
+   * Add an expression to the current scope
+   */
+  public void addExpression(Exp exp, Type type) throws ExpressionExistsException {
+    try {
+      getExpressionType(exp);
+
+      throw new ExpressionExistsException("Expression already exists!");
+    } catch (NoSuchExpressionElement e) {
+      // Can successfully add the expression
+      expressions.put(exp, type);
+    }
   }
 
   /**
