@@ -9,6 +9,7 @@ import Ast.*;
  */
 public class SymbolTable {
   private final static int SPACES = 4;
+  private String name; // The name given to this Symbol Table if in a particular place
 
   // All child Scopes
   public ArrayList<SymbolTable> innerScopes;
@@ -46,6 +47,36 @@ public class SymbolTable {
 
     // Set the level
     this.level = level;
+
+    // Set the name to the level
+    this.name = level.toString();
+  }
+
+  /**
+   * Create a new symbol table within a scope
+   * 
+   * @param outerScope The parent scope (can be null if global scope)
+   * @param level      The level of the scopeness
+   * @param name       The name of the scope
+   */
+  public SymbolTable(SymbolTable outerScope, Integer level, String name) {
+    // Create empty sub scope
+    this.innerScopes = new ArrayList<SymbolTable>();
+
+    // Create empty symbol table
+    this.symbols = new HashMap<String, NodeType>();
+
+    // Create Empty expressions table
+    this.expressions = new HashMap<Exp, Type>();
+
+    // Set the parent (if any)
+    this.outerScope = outerScope;
+
+    // Set the level
+    this.level = level;
+
+    // Set the name to the level
+    this.name = name;
   }
 
   /**
@@ -129,6 +160,20 @@ public class SymbolTable {
   }
 
   /**
+   * Creates and returns a reference to the innerscope table, already connected to
+   * parent table
+   * 
+   * @param name The name of the scope
+   */
+  public SymbolTable createInnerScope(String name) {
+    SymbolTable table = new SymbolTable(this, this.level + 1, name);
+
+    innerScopes.add(table);
+
+    return table;
+  }
+
+  /**
    * Get the type for the expression saved in the scope
    * 
    * @param exp The pointer to an expression to check
@@ -190,12 +235,14 @@ public class SymbolTable {
     SymbolTable current = this;
 
     // Go through tree
-    result.append(indent(level));
-    result.append("Entering Scope:\n");
+    if (level > 0) {
+      result.append(indent(level));
+      result.append(String.format("Entering Scope %s:\n", name));
+    }
 
     // Go through all Symbols
     for (NodeType node : current.symbols.values()) {
-      String declaration = String.format("Dec: %s | Class: %s\n", node.name, node.def.getClass());
+      String declaration = String.format("Symbol: %s\n", node.def.toString());
       result.append(indent(level + 1) + declaration);
     }
 
@@ -205,8 +252,10 @@ public class SymbolTable {
       result.append(scope.toStringHelper(scope.level + 1));
     }
 
-    result.append(indent(level));
-    result.append("Exiting Scope\n");
+    if (level > 0) {
+      result.append(indent(level));
+      result.append("Exiting Scope\n");
+    }
 
     return result.toString();
   }

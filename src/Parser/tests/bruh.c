@@ -3,9 +3,7 @@ int y;
 int c;
 
 int main(void) {
-  if (x > 2) {
-  }
+  int u;
 
-  while (x > 2) {
-  }
+  x = 2;
 }

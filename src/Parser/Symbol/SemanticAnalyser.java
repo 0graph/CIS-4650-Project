@@ -118,7 +118,7 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     // Visit the symbols in function, create new symbol table
-    table = table.createInnerScope();
+    table = table.createInnerScope(node.name);
 
     visit(dec.params, table);
     visit(dec.body, table);
@@ -129,9 +129,6 @@ public class SemanticAnalyser implements AstVisitor {
    * and expression lists
    */
   public void visit(CompoundExp exp, SymbolTable table) {
-    // Create the inner scope
-    table = table.createInnerScope();
-
     if (exp.decs != null) {
       visit(exp.decs, table);
     }
