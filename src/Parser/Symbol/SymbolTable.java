@@ -47,7 +47,8 @@ public class SymbolTable {
     NodeType node = symbols.get(symbol.name);
 
     if (node != null) {
-      String message = String.format("Symbol with name %s already exists in this scope!", symbol.name);
+      String message = String.format("Symbol with name %s and nested level %d already exists in this scope!",
+          symbol.name, symbol.level);
       throw new SymbolExistsException(message);
     }
 
@@ -102,5 +103,17 @@ public class SymbolTable {
     symbols.entrySet().stream().forEach(entry -> symbolArray.add(entry.getValue()));
 
     return symbolArray;
+  }
+
+  /**
+   * Creates and returns a reference to the innerscope table, already connected to
+   * parent table
+   */
+  public SymbolTable createInnerScope() {
+    SymbolTable table = new SymbolTable(this, this.level + 1);
+
+    innerScopes.add(table);
+
+    return table;
   }
 }
