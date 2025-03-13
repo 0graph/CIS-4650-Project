@@ -9,6 +9,9 @@ public class ArrayDec extends VarDec {
     this.name = name;
 
     this.size = Integer.parseInt(size);
+
+    this.row = row;
+    this.col = column;
   }
 
   public void accept(AstVisitor visitor, int level) {

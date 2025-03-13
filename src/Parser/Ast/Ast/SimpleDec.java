@@ -6,6 +6,9 @@ public class SimpleDec extends VarDec {
   public SimpleDec(int row, int column, VarType type, String name) {
     this.type = type;
     this.name = name;
+
+    this.row = row;
+    this.col = column;
   }
 
   public void accept(AstVisitor visitor, int level) {
