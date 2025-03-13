@@ -200,6 +200,10 @@ public class SemanticAnalyser implements AstVisitor {
       visit((IntExp) ast, table);
     } else if (ast instanceof ArrayDec) {
       visit((ArrayDec) ast, table);
+    } else if (ast instanceof OpExp) {
+      visit((OpExp) ast, table);
+    } else if (ast instanceof BoolExp) {
+      visit((BoolExp) ast, table);
     }
 
     else {
@@ -295,8 +299,12 @@ public class SemanticAnalyser implements AstVisitor {
     } catch (NoSuchExpressionElement e) {
       System.out.println("Cannot Assign!");
       System.out.println(e);
+
+      e.printStackTrace();
     } catch (ExpressionExistsException e) {
       System.out.println(e);
+
+      e.printStackTrace();
     }
   }
 
@@ -343,6 +351,7 @@ public class SemanticAnalyser implements AstVisitor {
         table.addExpression(exp, type);
       } catch (ExpressionExistsException e) {
         System.out.println(e);
+        e.printStackTrace();
       }
     }
 
@@ -376,6 +385,8 @@ public class SemanticAnalyser implements AstVisitor {
       table.addExpression(exp, Type.INT);
     } catch (ExpressionExistsException e) {
       System.out.println(e);
+
+      e.printStackTrace();
     }
   }
 
@@ -388,6 +399,8 @@ public class SemanticAnalyser implements AstVisitor {
       table.addExpression(exp, Type.BOOLEAN);
     } catch (ExpressionExistsException e) {
       System.out.println(e);
+
+      e.printStackTrace();
     }
   }
 
@@ -396,6 +409,41 @@ public class SemanticAnalyser implements AstVisitor {
    */
   public void visit(ReturnExp exp, SymbolTable table) {
     visit(exp.exp, table);
+  }
+
+  /**
+   * Operations such as 1 + 1
+   */
+  public void visit(OpExp exp, SymbolTable table) {
+    Exp lhs = exp.lhs;
+    Exp rhs = exp.rhs;
+
+    // Visit first to get symbols before checking types
+    visit(lhs, table);
+    visit(rhs, table);
+
+    // Check for the right expressions
+    try {
+      Type left = table.getExpressionType(lhs);
+      Type right = table.getExpressionType(rhs);
+
+      if (isCompatible(left, right)) {
+        table.addExpression(exp, left);
+      } else {
+        // TODO: Make the error better
+        System.out.println("Expressions are not compatible");
+      }
+    } catch (NoSuchExpressionElement e) {
+      System.out.println("Cannot Assign!");
+      System.out.println(e);
+
+      e.printStackTrace();
+    } catch (ExpressionExistsException e) {
+      System.out.println(e);
+
+      e.printStackTrace();
+    }
+
   }
 
   public void visit(ListAst list, int level) {
@@ -547,7 +595,6 @@ public class SemanticAnalyser implements AstVisitor {
       indent(level);
       System.out.println("Exiting the block");
     }
-
   }
 
   public void visit(IntExp exp, int level) {

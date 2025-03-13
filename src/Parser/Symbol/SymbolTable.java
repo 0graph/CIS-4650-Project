@@ -157,7 +157,7 @@ public class SymbolTable {
     try {
       getExpressionType(exp);
 
-      throw new ExpressionExistsException("Expression already exists!");
+      throw new ExpressionExistsException("Expression already exists! Expression: " + exp);
     } catch (NoSuchExpressionElement e) {
       // Can successfully add the expression
       expressions.put(exp, type);
