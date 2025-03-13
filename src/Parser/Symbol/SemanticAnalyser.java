@@ -151,15 +151,21 @@ public class SemanticAnalyser implements AstVisitor {
   // use level to detect scope
 
   /**
+   * Create a symbol table based on the results parsed
+   */
+  public void symbolTable(Ast ast) {
+    visit(ast, table);
+  }
+
+  /**
    * Visit a list structure and add to symbol table
    */
   public void visit(ListAst list, SymbolTable table) {
     ListAst node = list;
-    System.out.println("Enter the global scope");
 
     // Visit each component in the list
     while (node != null) {
-      Ast ast = list.head;
+      Ast ast = node.head;
 
       if (ast != null) {
         visit(ast, table);
@@ -169,8 +175,25 @@ public class SemanticAnalyser implements AstVisitor {
     }
   }
 
+  /**
+   * Generic ast object visitor
+   */
   public void visit(Ast ast, SymbolTable table) {
-    System.out.println("Implement for " + ast.getClass());
+    if (ast instanceof ListAst) {
+      visit((ListAst) ast, table);
+    } else if (ast instanceof SimpleDec) {
+      visit((SimpleDec) ast, table);
+    } else if (ast instanceof FunctionDec) {
+      visit((FunctionDec) ast, table);
+    } else if (ast instanceof CompoundExp) {
+      visit((CompoundExp) ast, table);
+    } else if (ast instanceof AssignExp) {
+      visit((AssignExp) ast, table);
+    }
+
+    else {
+      System.out.println("Implement: " + ast.getClass());
+    }
   }
 
   /**
@@ -234,6 +257,60 @@ public class SemanticAnalyser implements AstVisitor {
     } catch (SymbolExistsException e) {
       System.out.println(e);
     }
+  }
+
+  /**
+   * Visit an assign exp: x = 10;
+   */
+  public void visit(AssignExp exp, SymbolTable table) {
+    VarExp lhs = exp.lhs;
+    Exp rhs = exp.rhs;
+
+    // Visit to get the symbols before checking the types
+    visit(lhs, table);
+    visit(rhs, table);
+
+    // TODO: Set Dec for type compatibility
+  }
+
+  /**
+   * Visit a call to a function bruh()
+   */
+  public void visit(CallExp exp, SymbolTable table) {
+    NodeType node = table.symbolInAllScopes(exp.func);
+
+    if (node == null) {
+      System.out.println(
+          "Warning: undeclared function " + exp.func + " being called at row " + exp.row + " and column " + exp.col);
+    }
+
+    visit(exp.args, table);
+  }
+
+  /**
+   * Visit an expression for a var: x { / something /}
+   */
+  public void visit(VarExp exp, SymbolTable table) {
+    String name = "";
+    Exp idx = null;
+
+    // x = 0;
+    if (exp.variable instanceof SimpleVar) {
+      name = ((SimpleVar) exp.variable).name;
+    } else if (exp.variable instanceof IndexVar) { // x[3 + 2];
+      name = ((IndexVar) exp.variable).name;
+      idx = ((IndexVar) exp.variable).index;
+    }
+
+    // Look up variable
+    NodeType node = table.symbolInAllScopes(name);
+    if (node == null) {
+      System.out.println(
+          "Warning: reference to undeclared variable " + name + " at row " + exp.row + " and column " + exp.col);
+    }
+
+    // Check Index validity through expression
+
   }
 
   public void visit(ListAst list, int level) {

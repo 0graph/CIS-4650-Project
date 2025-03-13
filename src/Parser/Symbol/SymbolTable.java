@@ -35,6 +35,9 @@ public class SymbolTable {
 
     // Set the parent (if any)
     this.outerScope = outerScope;
+
+    // Set the level
+    this.level = level;
   }
 
   /**
