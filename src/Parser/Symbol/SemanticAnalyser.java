@@ -195,6 +195,8 @@ public class SemanticAnalyser implements AstVisitor {
       visit((ReturnExp) ast, table);
     } else if (ast instanceof IntExp) {
       visit((IntExp) ast, table);
+    } else if (ast instanceof ArrayDec) {
+      visit((ArrayDec) ast, table);
     }
 
     else {
