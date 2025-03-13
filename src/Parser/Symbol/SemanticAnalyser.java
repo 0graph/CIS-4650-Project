@@ -139,6 +139,15 @@ public class SemanticAnalyser implements AstVisitor {
   }
 
   /**
+   * Print the error given the by the expection and stack trace (now)
+   * 
+   * @param e The exception to print out
+   */
+  private void printError(Exception e) {
+    e.printStackTrace();
+  }
+
+  /**
    * used for expression and variable type compatibility checking
    * check type
    * check if array index being accessed is valid
@@ -158,24 +167,6 @@ public class SemanticAnalyser implements AstVisitor {
    */
   public void symbolTable(Ast ast) {
     visit(ast, table);
-  }
-
-  /**
-   * Visit a list structure and add to symbol table
-   */
-  public void visit(ListAst list, SymbolTable table) {
-    ListAst node = list;
-
-    // Visit each component in the list
-    while (node != null) {
-      Ast ast = node.head;
-
-      if (ast != null) {
-        visit(ast, table);
-      }
-
-      node = node.tail;
-    }
   }
 
   /**
@@ -204,10 +195,32 @@ public class SemanticAnalyser implements AstVisitor {
       visit((OpExp) ast, table);
     } else if (ast instanceof BoolExp) {
       visit((BoolExp) ast, table);
+    } else if (ast instanceof VarExp) {
+      visit((VarExp) ast, table);
+    } else if (ast instanceof WhileExp) {
+      visit((WhileExp) ast, table);
     }
 
     else {
       System.out.println("Implement: " + ast.getClass());
+    }
+  }
+
+  /**
+   * Visit a list structure and add to symbol table
+   */
+  public void visit(ListAst list, SymbolTable table) {
+    ListAst node = list;
+
+    // Visit each component in the list
+    while (node != null) {
+      Ast ast = node.head;
+
+      if (ast != null) {
+        visit(ast, table);
+      }
+
+      node = node.tail;
     }
   }
 
@@ -297,14 +310,9 @@ public class SemanticAnalyser implements AstVisitor {
         System.out.println("Expressions are not compatible!");
       }
     } catch (NoSuchExpressionElement e) {
-      System.out.println("Cannot Assign!");
-      System.out.println(e);
-
-      e.printStackTrace();
+      printError(e);
     } catch (ExpressionExistsException e) {
-      System.out.println(e);
-
-      e.printStackTrace();
+      printError(e);
     }
   }
 
@@ -350,8 +358,7 @@ public class SemanticAnalyser implements AstVisitor {
       try {
         table.addExpression(exp, type);
       } catch (ExpressionExistsException e) {
-        System.out.println(e);
-        e.printStackTrace();
+        printError(e);
       }
     }
 
@@ -363,17 +370,32 @@ public class SemanticAnalyser implements AstVisitor {
    * Visit If Expression
    */
   public void visit(IfExp exp, SymbolTable table) {
+    Exp test = exp.test;
+    Exp body = exp.then;
+    Exp _else = exp._else;
 
     // Create new SymbolTable
     SymbolTable ifTable = table.createInnerScope();
-    visit(exp.test, ifTable);
-    visit(exp.then, ifTable);
+    visit(test, ifTable);
+    visit(body, ifTable);
 
     // Else Symbol Table
     SymbolTable elseTable = table.createInnerScope();
-    visit(exp._else, elseTable);
+    visit(_else, elseTable);
 
-    // Set Dec for type compatibility checking
+    // Check compatability type in test expression part
+    try {
+      Type type = ifTable.getExpressionType(test);
+
+      // Make sure that the return type is a boolean
+      if (isCompatible(type, Type.BOOLEAN)) {
+        table.addExpression(exp, Type.BOOLEAN);
+      }
+    } catch (NoSuchExpressionElement e) {
+      printError(e);
+    } catch (ExpressionExistsException e) {
+      printError(e);
+    }
   }
 
   /**
@@ -384,9 +406,7 @@ public class SemanticAnalyser implements AstVisitor {
     try {
       table.addExpression(exp, Type.INT);
     } catch (ExpressionExistsException e) {
-      System.out.println(e);
-
-      e.printStackTrace();
+      printError(e);
     }
   }
 
@@ -398,9 +418,7 @@ public class SemanticAnalyser implements AstVisitor {
     try {
       table.addExpression(exp, Type.BOOLEAN);
     } catch (ExpressionExistsException e) {
-      System.out.println(e);
-
-      e.printStackTrace();
+      printError(e);
     }
   }
 
@@ -428,22 +446,44 @@ public class SemanticAnalyser implements AstVisitor {
       Type right = table.getExpressionType(rhs);
 
       if (isCompatible(left, right)) {
-        table.addExpression(exp, left);
+        // The type from an operation expression will always be a boolean
+        table.addExpression(exp, Type.BOOLEAN);
       } else {
         // TODO: Make the error better
         System.out.println("Expressions are not compatible");
       }
     } catch (NoSuchExpressionElement e) {
-      System.out.println("Cannot Assign!");
-      System.out.println(e);
-
-      e.printStackTrace();
+      printError(e);
     } catch (ExpressionExistsException e) {
-      System.out.println(e);
-
-      e.printStackTrace();
+      printError(e);
     }
+  }
 
+  /**
+   * while(x > 0)...
+   */
+  public void visit(WhileExp exp, SymbolTable table) {
+    Exp test = exp.test;
+    Exp body = exp.body;
+
+    // Create new symbol table for the inner scope
+    SymbolTable testTable = table.createInnerScope();
+    visit(test, testTable);
+    visit(body, testTable);
+
+    // Check Compatability types
+    try {
+      Type type = testTable.getExpressionType(test);
+
+      // Make sure that the return type is a boolean
+      if (isCompatible(type, Type.BOOLEAN)) {
+        table.addExpression(exp, Type.BOOLEAN);
+      }
+    } catch (NoSuchExpressionElement e) {
+      printError(e);
+    } catch (ExpressionExistsException e) {
+      printError(e);
+    }
   }
 
   public void visit(ListAst list, int level) {

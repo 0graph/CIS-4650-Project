@@ -139,7 +139,7 @@ public class SymbolTable {
     Type type = expressions.get(exp);
 
     if (type == null) {
-      throw new NoSuchExpressionElement("Expression was never created");
+      throw new NoSuchExpressionElement("Expression was never created: " + exp.getClass());
     }
 
     return type;
