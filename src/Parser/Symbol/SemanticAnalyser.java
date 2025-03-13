@@ -320,6 +320,8 @@ public class SemanticAnalyser implements AstVisitor {
    * Visit a call to a function bruh()
    */
   public void visit(CallExp exp, SymbolTable table) {
+    // TODO: That the functions that already exists are output and input, make sure
+    // to add
     NodeType node = table.symbolInAllScopes(exp.func);
 
     if (node == null) {
@@ -427,6 +429,18 @@ public class SemanticAnalyser implements AstVisitor {
    */
   public void visit(ReturnExp exp, SymbolTable table) {
     visit(exp.exp, table);
+
+    // Get the type for this return expression
+    // NOTE: We could probably make sure that the return matches the function
+    // return?
+    try {
+      Type type = table.getExpressionType(exp);
+      table.addExpression(exp, type);
+    } catch (ExpressionExistsException e) {
+      printError(e);
+    } catch (NoSuchExpressionElement e) {
+      printError(e);
+    }
   }
 
   /**
@@ -484,195 +498,6 @@ public class SemanticAnalyser implements AstVisitor {
     } catch (ExpressionExistsException e) {
       printError(e);
     }
-  }
-
-  public void visit(ListAst list, int level) {
-    if (level == 0) {
-      indent(level);
-      System.out.println("Entering the global scope.");
-    }
-
-    list.visit(this, level); // function, and variable decs are level 0 in global scope
-
-    if (level == 0) {
-      this.print_scope(level);
-      indent(level);
-      System.out.println("Exiting the global scope.");
-    }
-  }
-
-  public void visit(FunctionDec dec, int level) {
-    NodeType newNode = new NodeType(dec.name, dec, level);
-    NodeType lNode = this.node_lookup(newNode);
-    if (lNode == null) { // not declared before
-      this.node_insert(newNode);
-    } else {
-      // check if previous node was a prototype or a decl
-      // and update accordingly
-      FunctionDec fDec = (FunctionDec) lNode.def;
-      if (fDec.body instanceof NilExp) {
-
-        // if previous node was a prototype, update the node to be a declaration
-        // so that future redeclarations can be detected
-        if (dec.body instanceof NilExp) {
-          System.out.println("Warning: Function prototype declared twice");
-        } else {
-          // TODO: Check if declaration and prototype types are matching
-          // TODO: Check if parameter types are matching
-
-          // update
-          lNode.def = dec;
-        }
-      } else {
-        System.out.println("Warning: Redeclared function detected at row " + dec.row + " and column " + dec.col);
-      }
-    }
-
-    indent(level + 1);
-    System.out.println("Entering the scope for function " + dec.name + ":");
-
-    dec.type.accept(this, level); // function type (same level as global)
-    dec.params.accept(this, level + 1); // function parameter types (same level as function scope)
-    if (dec.body instanceof NilExp) {
-      // this is a function prototype, we store it so later we can check if the
-      // function declaration matches
-    } else {
-      dec.body.accept(this, level); // function expression (same level as function scope)
-    }
-
-    this.print_scope(level + 1); // print the stuff inside the function (+1)
-
-    indent(level + 1);
-    System.out.println("Exiting the scope for function " + dec.name + ":");
-  }
-
-  public void visit(SimpleDec dec, int level) {
-    // add to hashmap at level
-    NodeType newNode = new NodeType(dec.name, dec, level);
-    this.node_insert(newNode);
-    dec.type.accept(this, level);
-  }
-
-  public void visit(ArrayDec dec, int level) {
-    // add to hashmap at level
-    NodeType newNode = new NodeType(dec.name, dec, level);
-    this.node_insert(newNode);
-    dec.type.accept(this, level);
-  }
-
-  public void visit(VarType type, int level) {
-    // dont print anything here
-  }
-
-  public void visit(NilExp exp, int level) {
-    // dont think anything needs to be done here
-  }
-
-  public void visit(CallExp exp, int level) {
-    // TODO: Set Dec for type compatibility checking
-    NodeType newNode = new NodeType(exp.func, null, level);
-    NodeType foundNode = this.node_lookup(newNode);
-    if (foundNode == null) { // function not declared
-      // Note: might need to check if function is actually declared or just a
-      // prototype
-      System.out.println(
-          "Warning: undeclared function " + exp.func + " being called at row " + exp.row + " and column " + exp.col);
-    }
-    exp.args.accept(this, level);
-  }
-
-  public void visit(AssignExp exp, int level) {
-    // TODO: Set Dec for type compatibility checking
-    // TODO: Check type compatibility
-    exp.lhs.accept(this, level);
-    exp.rhs.accept(this, level);
-  }
-
-  public void visit(VarExp exp, int level) {
-    String name = "";
-    Exp idx = null;
-
-    if (exp.variable instanceof SimpleVar) {
-      name = ((SimpleVar) exp.variable).name;
-    } else if (exp.variable instanceof IndexVar) {
-      name = ((IndexVar) exp.variable).name;
-      idx = ((IndexVar) exp.variable).index;
-    }
-
-    NodeType newNode = new NodeType(name, null, level);
-    NodeType foundNode = this.node_lookup(newNode);
-    if (foundNode == null) { // variable is undeclared
-      System.out.println(
-          "Warning: reference to undeclared variable " + name + " at row " + exp.row + " and column " + exp.col);
-      this.error = true;
-    }
-
-    // check if index being accessed is valid
-    // not sure how to do that since index is an expression
-
-  }
-
-  public void visit(SimpleVar var, int level) {
-    // dont think if anything needs to be done
-  }
-
-  public void visit(CompoundExp exp, int level) {
-    if (level > 0) {
-      indent(level);
-      System.out.println("Entering a new block");
-    }
-
-    if (exp.decs != null) {
-      exp.decs.accept(this, level + 1);
-    }
-
-    if (exp.exps != null) {
-      exp.exps.accept(this, level + 1);
-    }
-
-    this.print_scope(level + 1); // print the stuff inside the expression (+1)
-    if (level > 0) {
-      indent(level);
-      System.out.println("Exiting the block");
-    }
-  }
-
-  public void visit(IntExp exp, int level) {
-    // TODO: Set Dec for type compatibility checking
-  }
-
-  public void visit(BoolExp exp, int level) {
-    // TODO: Set Dec for type compatibility checking
-  }
-
-  public void visit(IndexVar var, int level) {
-    // dont think anything needs to be done
-  }
-
-  public void visit(ReturnExp exp, int level) {
-    // TODO: Set Dec for type compatibility checking
-    // TODO: Check type compatibility with function's type
-    exp.exp.accept(this, level);
-  }
-
-  public void visit(OpExp exp, int level) {
-    // TODO: Set Dec for type compatibility checking
-    // TODO: Check type compatibility
-    exp.lhs.accept(this, level);
-    exp.rhs.accept(this, level);
-  }
-
-  public void visit(IfExp exp, int level) {
-    // TODO: Set Dec for type compatibility checking
-    exp.test.accept(this, level);
-    exp.then.accept(this, level);
-    exp._else.accept(this, level);
-  }
-
-  public void visit(WhileExp exp, int level) {
-    // TODO: Set Dec for type compatibility checking
-    exp.test.accept(this, level);
-    exp.body.accept(this, level);
   }
 
   /**
