@@ -2,6 +2,8 @@ int x;
 
 void bruh(int x);
 int main(void) {
-  int c = 5;
-  x = c * 2;
+  int y;
+  int x;
+  int y;
+  y = 0;
 }

@@ -11,11 +11,14 @@ import java.util.*;
 public class SemanticAnalyser implements AstVisitor {
   final static int SPACES = 4;
   public static boolean error = false;
-  SymbolTable table;
+
+  private SymbolTable table;
+  private SymbolErrors errors;
 
   public SemanticAnalyser() {
     // Initialize the global scope
     this.table = new SymbolTable(null, 0);
+    this.errors = new SymbolErrors();
   }
 
   /**
@@ -113,7 +116,7 @@ public class SemanticAnalyser implements AstVisitor {
     try {
       table.addSymbol(node);
     } catch (SymbolExistsException e) { // Symbol Declared before
-      System.out.println(e);
+      errors.addRedeclaredFunctionError(dec.name, dec.row, dec.col);
     }
 
     // Visit the symbols in function, create new symbol table
@@ -146,7 +149,7 @@ public class SemanticAnalyser implements AstVisitor {
     try {
       table.addSymbol(node);
     } catch (SymbolExistsException e) {
-      System.out.println(e);
+      errors.addRedeclaredVariableError(dec.name, dec.row, dec.col);
     }
   }
 
@@ -182,8 +185,7 @@ public class SemanticAnalyser implements AstVisitor {
       if (isCompatible(left, right)) {
         table.addExpression(exp, left);
       } else {
-        // TODO: Make the Error better
-        System.out.println("Expressions are not compatible!");
+        errors.addAssignExpressionError(lhs, left, right);
       }
     } catch (NoSuchExpressionElement e) {
       printError(e);
@@ -201,8 +203,7 @@ public class SemanticAnalyser implements AstVisitor {
     NodeType node = table.symbolInAllScopes(exp.func);
 
     if (node == null) {
-      System.out.println(
-          "Warning: undeclared function " + exp.func + " being called at row " + exp.row + " and column " + exp.col);
+      errors.addUndeclaredFunctionError(exp.func, exp.row, exp.col);
     }
 
     // Make Sure Params match types
@@ -273,8 +274,7 @@ public class SemanticAnalyser implements AstVisitor {
     // Look up variable
     NodeType node = table.symbolInAllScopes(name);
     if (node == null) {
-      System.out.println(
-          "Warning: reference to undeclared variable " + name + " at row " + exp.row + " and column " + exp.col);
+      errors.addUndeclaredVariableError(name, exp.row, exp.col);
     } else {
       // Update the type to this expression
       Type type = node.def.type.getTypeValue();
@@ -295,7 +295,7 @@ public class SemanticAnalyser implements AstVisitor {
         Type type = table.getExpressionType(idx);
 
         if (!isCompatible(type, Type.INT)) {
-          System.out.println("Not Cool Array");
+          errors.addArrayIndexError(name, exp.row, exp.col);
         }
       } catch (Exception e) {
         printError(e);
@@ -328,6 +328,8 @@ public class SemanticAnalyser implements AstVisitor {
       // Make sure that the return type is a boolean
       if (isCompatible(type, Type.BOOLEAN)) {
         table.addExpression(exp, Type.BOOLEAN);
+      } else {
+        errors.addTestError(exp.row, exp.col);
       }
     } catch (NoSuchExpressionElement e) {
       printError(e);
@@ -398,8 +400,7 @@ public class SemanticAnalyser implements AstVisitor {
       if (isCompatible(left, right)) {
         table.addExpression(exp, left);
       } else {
-        // TODO: Make the error better
-        System.out.println("Expressions are not compatible");
+        errors.addOperationError(left, right, exp.row, exp.col);
       }
     } catch (NoSuchExpressionElement e) {
       printError(e);
@@ -427,6 +428,8 @@ public class SemanticAnalyser implements AstVisitor {
       // Make sure that the return type is a boolean
       if (isCompatible(type, Type.BOOLEAN)) {
         table.addExpression(exp, Type.BOOLEAN);
+      } else {
+        errors.addTestError(exp.row, exp.col);
       }
     } catch (NoSuchExpressionElement e) {
       printError(e);
@@ -440,11 +443,23 @@ public class SemanticAnalyser implements AstVisitor {
    */
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    SymbolTable current = table;
 
+    // Symbol Table
+    SymbolTable current = table;
     builder.append("Entering global scope:\n");
     builder.append(current.toString());
     builder.append("Exiting global scope.\n");
+
+    // Errors
+    ArrayList<SymbolErrors.Error> errs = errors.getErrors();
+    if (errs.size() > 0) {
+      builder.append("\nErrors:\n");
+
+      // The errors accumulated while analyzing
+      for (SymbolErrors.Error err : errs) {
+        builder.append(err + "\n");
+      }
+    }
 
     return builder.toString();
   }
