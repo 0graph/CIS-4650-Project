@@ -241,12 +241,10 @@ public class SemanticAnalyser implements AstVisitor {
           Type paramType = params.get(i);
 
           if (!isCompatible(paramType, argType)) {
-            System.out.println("Parameters are not compatible!!!");
+            errors.addArgumentsError(exp.func, argType, paramType, ast.row, ast.col);
           }
         } catch (Exception e) {
-          System.out.println("Seems like they are not the same size");
-
-          printError(e);
+          errors.addIncorrectCallsError(exp.func, ast.row, ast.col);
         }
       }
 

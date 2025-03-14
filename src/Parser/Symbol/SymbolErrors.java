@@ -168,4 +168,34 @@ public class SymbolErrors {
 
     addError(text, row, col);
   }
+
+  /**
+   * Add an error when an argument passed down to a function does not match
+   *
+   * @param function The name of the function
+   * @param expected The expected type
+   * @param type     The type that was passed
+   * @param row      The row
+   * @param column   The column
+   */
+  public void addArgumentsError(String function, Type expected, Type type, Integer row, Integer column) {
+    String text = String.format("Warning: call to function %s has an unexpected type argument. Expected %s, Passed: %s",
+        function, expected, type);
+
+    addError(text, row, column);
+  }
+
+  /**
+   * Add an error when there are more/less arguments than required in function
+   * call
+   *
+   * @param function The name of the function
+   * @param row
+   * @param column
+   */
+  public void addIncorrectCallsError(String function, Integer row, Integer column) {
+    String text = String.format("Warning: call to function %s does not match function declaration");
+
+    addError(text, row, column);
+  }
 }
