@@ -242,6 +242,20 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     // Check Index validity through expression
+    if (idx != null) {
+      // Visit First
+      visit(idx, table);
+
+      try {
+        Type type = table.getExpressionType(idx);
+
+        if (!isCompatible(type, Type.INT)) {
+          System.out.println("Not Cool Array");
+        }
+      } catch (Exception e) {
+        printError(e);
+      }
+    }
 
   }
 
@@ -337,8 +351,7 @@ public class SemanticAnalyser implements AstVisitor {
       Type right = table.getExpressionType(rhs);
 
       if (isCompatible(left, right)) {
-        // The type from an operation expression will always be a boolean
-        table.addExpression(exp, Type.BOOLEAN);
+        table.addExpression(exp, left);
       } else {
         // TODO: Make the error better
         System.out.println("Expressions are not compatible");

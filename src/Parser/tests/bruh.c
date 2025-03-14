@@ -1,9 +1,3 @@
-int x;
-int y;
-int c;
+int x[8];
 
-int main(void) {
-  int u;
-
-  x = 2;
-}
+int main(void) { x[4 + 3] = false; }

@@ -5,5 +5,6 @@ package Ast;
 */
 
 abstract public class Var extends Ast {
+  public String name;
 
 }
