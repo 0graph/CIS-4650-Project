@@ -1,3 +1,4 @@
-int x[8];
+void x;
 
-int main(void) { x[4 + 3] = false; }
+void bruh(int x);
+int main(void) { bruh(x); }

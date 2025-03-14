@@ -1,8 +1,6 @@
 package Ast;
 
 public class SimpleDec extends VarDec {
-  public String name;
-
   public SimpleDec(int row, int column, VarType type, String name) {
     this.type = type;
     this.name = name;

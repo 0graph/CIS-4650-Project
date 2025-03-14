@@ -11,12 +11,9 @@ import java.util.*;
 public class SemanticAnalyser implements AstVisitor {
   final static int SPACES = 4;
   public static boolean error = false;
-  HashMap<String, ArrayList<NodeType>> _table;
   SymbolTable table;
 
   public SemanticAnalyser() {
-    this._table = new HashMap<String, ArrayList<NodeType>>();
-
     // Initialize the global scope
     this.table = new SymbolTable(null, 0);
   }
@@ -79,6 +76,8 @@ public class SemanticAnalyser implements AstVisitor {
       visit((VarExp) ast, table);
     } else if (ast instanceof WhileExp) {
       visit((WhileExp) ast, table);
+    } else if (ast instanceof CallExp) {
+      visit((CallExp) ast, table);
     }
 
     else {
@@ -206,7 +205,53 @@ public class SemanticAnalyser implements AstVisitor {
           "Warning: undeclared function " + exp.func + " being called at row " + exp.row + " and column " + exp.col);
     }
 
-    visit(exp.args, table);
+    // Make Sure Params match types
+    ListAst list;
+
+    ExpList args = exp.args;
+    visit(args, table);
+
+    // The parameters that are required in the function call
+    ArrayList<Type> params = new ArrayList<Type>();
+    FunctionDec declaration = (FunctionDec) node.def;
+
+    // Add a reference to all parameters so that we can check if they match calls
+    list = declaration.params;
+    while (list != null) {
+      Dec var = (Dec) list.head;
+
+      if (var != null) {
+        params.add(var.type.getTypeValue());
+      }
+
+      list = list.tail;
+    }
+
+    // Visit each component in the list
+    list = args;
+    int i = 0;
+    while (list != null) {
+      Exp ast = (Exp) list.head;
+
+      if (ast != null) {
+        try {
+          Type argType = table.getExpressionType((Exp) ast);
+
+          Type paramType = params.get(i);
+
+          if (!isCompatible(paramType, argType)) {
+            System.out.println("Parameters are not compatible!!!");
+          }
+        } catch (Exception e) {
+          System.out.println("Seems like they are not the same size");
+
+          printError(e);
+        }
+      }
+
+      i++;
+      list = list.tail;
+    }
   }
 
   /**
