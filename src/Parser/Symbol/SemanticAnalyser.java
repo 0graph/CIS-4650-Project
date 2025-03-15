@@ -230,6 +230,7 @@ public class SemanticAnalyser implements AstVisitor {
 
     // Visit each component in the list
     list = args;
+
     int i = 0;
     while (list != null) {
       Exp ast = (Exp) list.head;
@@ -250,6 +251,11 @@ public class SemanticAnalyser implements AstVisitor {
 
       i++;
       list = list.tail;
+    }
+
+    // Check if there are an equal amount of params and arguments
+    if (i != params.size()) {
+      errors.addIncorrectCallsError(exp.func, exp.row, exp.col);
     }
   }
 

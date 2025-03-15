@@ -194,7 +194,7 @@ public class SymbolErrors {
    * @param column
    */
   public void addIncorrectCallsError(String function, Integer row, Integer column) {
-    String text = String.format("Warning: call to function %s does not match function declaration");
+    String text = String.format("Warning: call to function %s does not match function declaration", function);
 
     addError(text, row, column);
   }
