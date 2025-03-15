@@ -228,8 +228,6 @@ public class SemanticAnalyser implements AstVisitor {
    * Visit a call to a function bruh()
    */
   public void visit(CallExp exp, SymbolTable table) {
-    // TODO: That the functions that already exists are output and input, make sure
-    // to add
     NodeType node = table.symbolInAllScopes(exp.func);
 
     if (node == null) {
