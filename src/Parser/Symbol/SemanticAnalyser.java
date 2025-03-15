@@ -7,7 +7,6 @@ import java.util.*;
  */
 public class SemanticAnalyser implements AstVisitor {
   final static int SPACES = 4;
-  public static boolean error = false;
 
   private SymbolTable table;
   private SymbolErrors errors;
