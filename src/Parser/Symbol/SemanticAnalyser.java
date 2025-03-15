@@ -113,7 +113,12 @@ public class SemanticAnalyser implements AstVisitor {
     try {
       table.addSymbol(node);
     } catch (SymbolExistsException e) { // Symbol Declared before
-      errors.addRedeclaredFunctionError(dec.name, dec.row, dec.col);
+      // Check if the function declared before was a prototype
+      FunctionDec prev = (FunctionDec) table.symbolInScope(dec.name).def;
+
+      if (prev != null && (!(prev.body instanceof NilExp))) {
+        errors.addRedeclaredFunctionError(dec.name, dec.row, dec.col);
+      }
     }
 
     // Visit the symbols in function, create new symbol table
