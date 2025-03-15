@@ -198,4 +198,20 @@ public class SymbolErrors {
 
     addError(text, row, column);
   }
+
+  /**
+   * Add an error when the type of a variable does not make sense (e.g.: void x;)
+   *
+   * @param name     The name of the variable
+   * @param type     The type that the variable was declared as
+   * @param expected The new type the variable will be
+   * @param row      The row
+   * @param column   The column
+   */
+  public void addVariableTypeError(String name, Type type, Type expected, Integer row, Integer column) {
+    String text = String.format(
+        "Warning: variable %s has been declared as type %s. Variable will be updated to type %s", name, type, expected);
+
+    addError(text, row, column);
+  }
 }

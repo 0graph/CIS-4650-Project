@@ -177,6 +177,12 @@ public class SemanticAnalyser implements AstVisitor {
     NodeType node = new NodeType(dec.name, dec, table.level);
 
     try {
+      // Check that the type is not void
+      if (dec.type.getTypeValue() == Type.VOID) {
+        errors.addVariableTypeError(dec.name, Type.VOID, Type.INT, dec.row, dec.col);
+        node.def.type.type = Type.INT.ordinal();
+      }
+
       table.addSymbol(node);
     } catch (SymbolExistsException e) {
       errors.addRedeclaredVariableError(dec.name, dec.row, dec.col);
