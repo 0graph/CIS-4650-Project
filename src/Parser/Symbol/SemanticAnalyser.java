@@ -16,6 +16,32 @@ public class SemanticAnalyser implements AstVisitor {
     // Initialize the global scope
     this.table = new SymbolTable(null, 0);
     this.errors = new SymbolErrors();
+
+    // Add input/output functions
+    setupSystemSymbols(this.table);
+  }
+
+  /**
+   * Setup the symbols that already belong to the language
+   * An example would be function definitions defined by the language such as
+   * "input"
+   */
+  private void setupSystemSymbols(SymbolTable table) {
+    // Function Declarations
+    NodeType input = new NodeType("input", null, 0);
+    input.def = new FunctionDec(0, 0, new VarType(0, 0, Type.VOID.ordinal()), "input",
+        new VarDecList(new SimpleDec(0, 0, new VarType(0, 0, Type.VOID.ordinal()), "input"), null), null);
+
+    NodeType output = new NodeType("output", null, 0);
+    output.def = new FunctionDec(0, 0, new VarType(0, 0, Type.VOID.ordinal()), "output",
+        new VarDecList(new SimpleDec(0, 0, new VarType(0, 0, Type.VOID.ordinal()), "output"), null), null);
+
+    try {
+      table.addSymbol(input);
+      table.addSymbol(output);
+    } catch (Exception e) {
+      System.err.print("Input or output has been initialized before and program will shutdown");
+    }
   }
 
   /**
@@ -80,9 +106,11 @@ public class SemanticAnalyser implements AstVisitor {
       visit((CallExp) ast, table);
     }
 
-    else {
-      System.out.println("Implement: " + ast.getClass());
-    }
+    // DEBUG: This is used for debugging if there is an expression that has not been
+    // implemented
+    // else {
+    // System.out.println("Implement: " + ast.getClass());
+    // }
   }
 
   /**
