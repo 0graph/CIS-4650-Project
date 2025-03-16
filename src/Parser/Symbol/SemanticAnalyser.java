@@ -134,7 +134,7 @@ public class SemanticAnalyser implements AstVisitor {
    * Visit a function declarations
    */
   public void visit(FunctionDec dec, SymbolTable table) {
-    NodeType node = new NodeType(dec.name, dec, table.level);
+    NodeType node = new NodeType(dec.name, dec, table.level, NodeType.SymbolType.FUNCTION);
 
     // Add symbol to scope
     try {
@@ -176,7 +176,7 @@ public class SemanticAnalyser implements AstVisitor {
    * Visit a simple variable declaration: int x;
    */
   public void visit(SimpleDec dec, SymbolTable table) {
-    NodeType node = new NodeType(dec.name, dec, table.level);
+    NodeType node = new NodeType(dec.name, dec, table.level, NodeType.SymbolType.VARIABLE);
 
     try {
       // Check that the type is not void
@@ -195,7 +195,7 @@ public class SemanticAnalyser implements AstVisitor {
    * Visit a simple array declaration: int x[2];
    */
   public void visit(ArrayDec dec, SymbolTable table) {
-    NodeType node = new NodeType(dec.name, dec, table.level);
+    NodeType node = new NodeType(dec.name, dec, table.level, NodeType.SymbolType.ARRAY);
 
     try {
       table.addSymbol(node);
@@ -326,6 +326,25 @@ public class SemanticAnalyser implements AstVisitor {
       // Update the type to this expression
       Type type = node.def.type.getTypeValue();
 
+      // Check if the variable called matches the one that is being used
+      switch (node.type) {
+        case VARIABLE:
+          if (!(exp.variable instanceof SimpleVar)) {
+            errors.addVariableMisuseError(name, node.type, exp.row, exp.col);
+          }
+          break;
+
+        case ARRAY:
+          if (!(exp.variable instanceof IndexVar)) {
+            errors.addVariableMisuseError(name, node.type, exp.row, exp.col);
+          }
+          break;
+
+        default:
+          errors.addVariableMisuseError(name, node.type, exp.row, exp.col);
+          break;
+      }
+
       try {
         table.addExpression(exp, type);
       } catch (ExpressionExistsException e) {
@@ -421,9 +440,11 @@ public class SemanticAnalyser implements AstVisitor {
     try {
       Type type = table.getExpressionType(exp.exp);
       table.addExpression(exp, type);
+
       NodeType funcTy = table.getFunctionSymbol();
       if (funcTy != null) {
         Type funcType = funcTy.def.type.getTypeValue();
+
         if (!isCompatible(type, funcType)) {
           errors.addReturnTypeError(funcTy.name, funcType, type, exp.row, exp.col);
         }

@@ -230,4 +230,22 @@ public class SymbolErrors {
 
     addError(text, row, column);
   }
+
+  /**
+   * Add an error when a variable is being used in an inappropriate way
+   * e.g. int x; x[0] = 5; <- wrong!
+   *
+   * @param name     The name of the variable
+   * @param expected The expected type use for this variable
+   * @param row      The row
+   * @param column   The column
+   */
+  public void addVariableMisuseError(String name, NodeType.SymbolType expected, Integer row,
+      Integer column) {
+    String text = String.format(
+        "Warning: Variable %s is being used in a way it was not declared. Expected use: %s", name,
+        expected);
+
+    addError(text, row, column);
+  }
 }
