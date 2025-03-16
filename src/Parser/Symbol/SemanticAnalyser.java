@@ -235,8 +235,9 @@ public class SemanticAnalyser implements AstVisitor {
   public void visit(CallExp exp, SymbolTable table) {
     NodeType node = table.symbolInAllScopes(exp.func);
 
-    if (node == null || node.def == null) {
+    if (node == null) {
       errors.addUndeclaredFunctionError(exp.func, exp.row, exp.col);
+      return;
     }
 
     // Make Sure Params match types
