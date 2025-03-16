@@ -146,7 +146,7 @@ public class SemanticAnalyser implements AstVisitor {
       if (prev != null && (!(prev.body instanceof NilExp))) {
         errors.addRedeclaredFunctionError(dec.name, dec.row, dec.col);
       }
-      if(prev != null && dec.body instanceof NilExp) {
+      if (prev != null && dec.body instanceof NilExp) {
         errors.addRedeclaredFunctionError(dec.name, dec.row, dec.col);
       }
     }
@@ -422,21 +422,18 @@ public class SemanticAnalyser implements AstVisitor {
       Type type = table.getExpressionType(exp.exp);
       table.addExpression(exp, type);
       NodeType funcTy = table.getFunctionSymbol();
-        if (funcTy != null) {
-            Type funcType = funcTy.def.type.getTypeValue();
-            if (!isCompatible(type, funcType)) {
-                errors.addReturnTypeError(funcTy.name, funcType, type, exp.row, exp.col);
-            }
+      if (funcTy != null) {
+        Type funcType = funcTy.def.type.getTypeValue();
+        if (!isCompatible(type, funcType)) {
+          errors.addReturnTypeError(funcTy.name, funcType, type, exp.row, exp.col);
         }
-
+      }
 
     } catch (ExpressionExistsException e) {
       printError(e);
     } catch (NoSuchExpressionElement e) {
       printError(e);
     }
-
-
 
   }
 
@@ -457,7 +454,12 @@ public class SemanticAnalyser implements AstVisitor {
       Type right = table.getExpressionType(rhs);
 
       if (isCompatible(left, right)) {
-        table.addExpression(exp, left);
+        // Check what kind of check it is
+        if (exp.Op <= OpExp.DIV) { // Arithmetic expression
+          table.addExpression(exp, Type.INT);
+        } else { // Boolean expression
+          table.addExpression(exp, Type.BOOLEAN);
+        }
       } else {
         errors.addOperationError(left, right, exp.row, exp.col);
       }
