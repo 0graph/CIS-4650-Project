@@ -97,7 +97,7 @@ public class SymbolErrors {
    * @param column
    */
   public void addUndeclaredFunctionError(String function, Integer row, Integer column) {
-    String text = String.format("Warning: undeclared function %s");
+    String text = String.format("Warning: undeclared function %s", function);
 
     addError(text, row, column);
   }
