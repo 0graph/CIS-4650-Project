@@ -146,6 +146,9 @@ public class SemanticAnalyser implements AstVisitor {
       if (prev != null && (!(prev.body instanceof NilExp))) {
         errors.addRedeclaredFunctionError(dec.name, dec.row, dec.col);
       }
+      if(prev != null && dec.body instanceof NilExp) {
+        errors.addRedeclaredFunctionError(dec.name, dec.row, dec.col);
+      }
     }
 
     // Visit the symbols in function, create new symbol table
