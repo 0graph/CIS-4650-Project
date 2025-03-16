@@ -413,13 +413,27 @@ public class SemanticAnalyser implements AstVisitor {
     // NOTE: We could probably make sure that the return matches the function
     // return?
     try {
-      Type type = table.getExpressionType(exp);
+      Type type = table.getExpressionType(exp.exp);
       table.addExpression(exp, type);
+      NodeType funcTy = table.getFunctionSymbol();
+        System.out.println("functy:"+funcTy);
+        if (funcTy != null) {
+            Type funcType = funcTy.def.type.getTypeValue();
+            System.out.println("functype:"+funcType);
+            if (!isCompatible(type, funcType)) {
+                errors.addReturnTypeError(funcTy.name, funcType, type, exp.row, exp.col);
+            }
+        }
+
+
     } catch (ExpressionExistsException e) {
       printError(e);
     } catch (NoSuchExpressionElement e) {
       printError(e);
     }
+
+
+
   }
 
   /**

@@ -110,6 +110,18 @@ public class SymbolTable {
     return node;
   }
 
+  public NodeType getFunctionSymbol() {
+    SymbolTable current = this;
+    while(current != null) {
+      if(current.name.isEmpty()) {
+        current = current.outerScope;
+      } else {
+        return current.symbolInAllScopes(current.name);
+      }
+    } 
+    return null;
+  }
+
   /**
    * Traverses up the tree to check if the symbol is in any of the scopes
    * This returns the nearest variable within the scope if it exists
