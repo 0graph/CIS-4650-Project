@@ -1,10 +1,14 @@
 /*
-Error 1: invalid parameter
-Error 2: invalid variable 
-Error 3:
+Error 1: function redeclaration
+Error 2: call to undelcared function
 */
 
-void main(int x, int y = 0)
+int func(int b)
 {
-    int x = 0;
+    return sqrt(b);
+}
+
+int func(int b)
+{
+    return b;
 }

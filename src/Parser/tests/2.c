@@ -1,12 +1,11 @@
 /*
-Error 1:    Invalid character in expression
-Error 2:    Invalid assignment in expression           
+Error 1: Variable 'a' is not declared
+Error 2: Variable 'b is redeclared
 */
 
-
-int func(int t)
+int func(int b)
 {
-    int x;
-    x = 0++5;
-    x = (t > a = 5);
+  int a;
+  int b;
+  return a + b;
 }
