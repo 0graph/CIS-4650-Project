@@ -28,12 +28,12 @@ public class SemanticAnalyser implements AstVisitor {
   private void setupSystemSymbols(SymbolTable table) {
     // Function Declarations
     NodeType input = new NodeType("input", null, 0);
-    input.def = new FunctionDec(0, 0, new VarType(0, 0, Type.VOID.ordinal()), "input",
-        new VarDecList(new SimpleDec(0, 0, new VarType(0, 0, Type.VOID.ordinal()), "input"), null), null);
+    input.def = new FunctionDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "input",
+        new VarDecList(new SimpleDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "input"), null), null);
 
     NodeType output = new NodeType("output", null, 0);
-    output.def = new FunctionDec(0, 0, new VarType(0, 0, Type.VOID.ordinal()), "output",
-        new VarDecList(new SimpleDec(0, 0, new VarType(0, 0, Type.VOID.ordinal()), "output"), null), null);
+    output.def = new FunctionDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "output",
+        new VarDecList(new SimpleDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "output"), null), null);
 
     try {
       table.addSymbol(input);
@@ -243,6 +243,12 @@ public class SemanticAnalyser implements AstVisitor {
       return;
     }
 
+    try {
+      table.addExpression(exp, node.def.type.getTypeValue());
+    } catch (ExpressionExistsException e) {
+      printError(e);
+    }
+
     // Make Sure Params match types
     ListAst list;
 
@@ -416,10 +422,8 @@ public class SemanticAnalyser implements AstVisitor {
       Type type = table.getExpressionType(exp.exp);
       table.addExpression(exp, type);
       NodeType funcTy = table.getFunctionSymbol();
-        System.out.println("functy:"+funcTy);
         if (funcTy != null) {
             Type funcType = funcTy.def.type.getTypeValue();
-            System.out.println("functype:"+funcType);
             if (!isCompatible(type, funcType)) {
                 errors.addReturnTypeError(funcTy.name, funcType, type, exp.row, exp.col);
             }
