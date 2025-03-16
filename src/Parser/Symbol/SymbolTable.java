@@ -242,7 +242,7 @@ public class SymbolTable {
 
     // Go through all Symbols
     for (NodeType node : current.symbols.values()) {
-      String declaration = String.format("Symbol: %s\n", node.def.toString());
+      String declaration = String.format("Symbol: %s | %s\n", node.def.toString(), node.def.type);
       result.append(indent(level + 1) + declaration);
     }
 
