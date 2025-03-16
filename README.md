@@ -45,4 +45,11 @@ To parse a file with the AST run:
 ./run -p file.txt
 ```
 
+To show the Symbol Tree of a file:
+```bash
+./run -c -s tests/bruh # Show the symbol tree
+
+./run -c -a tests/bruh # Show the parse tree
+```
+
 Credits to the given **Sample Parser** as it was used as a starting point for the parser implementation of the assignment.

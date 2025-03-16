@@ -44,11 +44,10 @@ public class CM {
 
       System.out.println("Symbol Table: ");
 
-      // result.accept(visitor, 0);
-      SemanticAnalyser bruh = (SemanticAnalyser) visitor;
-      bruh.symbolTable((DecList) result);
+      SemanticAnalyser analyser = (SemanticAnalyser) visitor;
+      analyser.symbolTable((DecList) result);
 
-      System.out.println(bruh);
+      System.out.println(analyser);
     } catch (Exception e) {
       /* do cleanup here -- possibly rethrow e */
       e.printStackTrace();
