@@ -137,7 +137,7 @@ public class SymbolErrors {
    * @param col  The column where the error occurs
    */
   public void addArrayIndexError(String name, Integer row, Integer col) {
-    String text = String.format("Warning: Array %s cannot be indexed correctly. The index is not an integer.");
+    String text = String.format("Warning: Array %s cannot be indexed correctly. The index is not an integer.", name);
 
     addError(text, row, col);
   }
