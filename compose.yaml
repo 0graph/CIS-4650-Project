@@ -12,3 +12,13 @@ services:
       - ./src/Parser/tests:/app/tests
       - ./src/Parser/Ast/:/app/Ast
       - ./src/Parser/Symbol/:/app/Symbol
+
+  assembly: # Simulator
+    image: socsguelph/socslinux:latest
+    volumes:
+      - ./src/Assembly:/app
+    command: "bash"
+    stdin_open: true
+    tty: true
+    working_dir: /app
+
