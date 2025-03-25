@@ -15,6 +15,21 @@ public class CodeGen implements AstVisitor {
     this.lineNumber = 0;
   }
 
-  public void visit(Ast ast) {
+  /**
+   * Generic visitor for ast
+   *
+   * @param ast  The ast we are traversing through
+   * @param line The line number
+   * @param flag Whether the expression is an address or not
+   */
+  public void visit(Ast ast, int line, boolean flag) {
+    if (ast instanceof ListAst) {
+      visit((ListAst) ast, line, flag);
+    }
+
+    System.out.println("Implement: " + ast.getClass());
+  }
+
+  public void visit() {
   }
 }
