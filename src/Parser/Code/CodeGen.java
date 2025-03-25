@@ -1,3 +1,4 @@
+
 /**
  * Generates the intermediate code based on the symbols parsed
  */
@@ -5,6 +6,9 @@ public class CodeGen implements AstVisitor {
   public int globalOffset; // The global offset in memory
   public int frameOffset; // The frame offset for the next function in memory
   public int lineNumber; // The line number of the next instruction
+
+  // The symbol table that keeps track of the position
+  private SymbolTable table;
 
   /**
    * Setup runtime environment for code
