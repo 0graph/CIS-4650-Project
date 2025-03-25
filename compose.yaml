@@ -12,6 +12,7 @@ services:
       - ./src/Parser/tests:/app/tests
       - ./src/Parser/Ast/:/app/Ast
       - ./src/Parser/Symbol/:/app/Symbol
+      - ./src/Parser/Code/:/app/Code
 
   assembly: # Simulator
     image: socsguelph/socslinux:latest
