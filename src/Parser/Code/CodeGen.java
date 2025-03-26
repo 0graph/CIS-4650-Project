@@ -1,3 +1,4 @@
+import Ast.*;
 
 /**
  * Generates the intermediate code based on the symbols parsed
@@ -7,7 +8,7 @@ public class CodeGen implements AstVisitor {
   public int frameOffset; // The frame offset for the next function in memory
   public int lineNumber; // The line number of the next instruction
 
-  // The symbol table that keeps track of the position
+  // The symbol table that keeps track of extra things
   private SymbolTable table;
 
   /**
@@ -17,6 +18,14 @@ public class CodeGen implements AstVisitor {
     this.globalOffset = 0;
     this.frameOffset = this.globalOffset;
     this.lineNumber = 0;
+  }
+
+  /**
+   * Create a symbol table given the parsing object
+   */
+  public void CreateSymbolTable() {
+    // semanticAnalyser.
+    System.out.println("TODO");
   }
 
   /**
