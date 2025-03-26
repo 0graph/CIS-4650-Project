@@ -34,8 +34,6 @@ public final class CodeGen implements AstVisitor {
   public void compile(Ast ast) {
     // Create the Global Block
     Block block = new Block();
-    String code = block.createInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
-    addInstruction(code);
 
     visit(ast, block, false);
   }
@@ -61,6 +59,8 @@ public final class CodeGen implements AstVisitor {
       // visit((ListAst) ast, line, flag);
     } else if (ast instanceof FunctionDec) {
       visit((FunctionDec) ast, block, flag);
+    } else if (ast instanceof SimpleDec) {
+      visit((SimpleDec) ast, block);
     }
 
     System.out.println("Implement: " + ast.getClass());
@@ -97,13 +97,18 @@ public final class CodeGen implements AstVisitor {
    * @param flag     Flag for info
    */
   public void visit(FunctionDec function, Block block, boolean flag) {
+    // The name of the function
+    String name = function.name;
+
     // Create a new block
-    Block functionBlock = new Block();
+    buffer.addComment(String.format("Entering Function Declaration (%s)", name));
+    Block functionBlock = block.createNewBlock(name, line);
+
+    // Create Initialize the block
+    String code = functionBlock.createInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
+    addInstruction(code);
 
     /**
-     * TODO: Add a way to save the address of the function block for later
-     * batckpatching
-     *
      * This will also have to be refactored a tad bit.
      * Two scenarios:
      * - This is a function prototype so backpatch by adding the function params
@@ -117,8 +122,6 @@ public final class CodeGen implements AstVisitor {
 
     // Add the function body to the function block
     visit(function.body, functionBlock, flag);
-
-    // TODO: Update the global offset with the length of the function
   }
 
   /**
@@ -128,18 +131,21 @@ public final class CodeGen implements AstVisitor {
    * @param block    The current block for a function
    * @param flag     Flag for info
    */
-  public void visit(SimpleDec variable, Block block, boolean flag) {
-    // TODO: Save the address of the variable declaration for later use
+  public void visit(SimpleDec variable, Block block) {
+    // Save the address of the variable within the block and globally
+    String name = variable.name;
 
-    // Increment the offset of where the function body starts at
-    block.incrementOffset();
-  }
+    try {
+      String comment = String.format("Making Space for variable (%s)", name);
+      buffer.addComment(comment);
+      block.createAddress(name, line);
 
-  /**
-   * Print out any information about code generation
-   */
-  public String toString() {
-    return buffer.toString();
+      updateLineNumber();
+
+    } catch (Exception e) { // This should never ever happen at this stage
+      e.printStackTrace();
+    }
+
   }
 
   /**
@@ -149,5 +155,19 @@ public final class CodeGen implements AstVisitor {
    */
   private void addInstruction(String code) {
     line = buffer.addInstruction(code);
+  }
+
+  /**
+   * Increment the line number
+   */
+  private void updateLineNumber() {
+    line = buffer.updateLineNumber();
+  }
+
+  /**
+   * Print out any information about code generation
+   */
+  public String toString() {
+    return buffer.toString();
   }
 }

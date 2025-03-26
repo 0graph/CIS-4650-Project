@@ -39,20 +39,36 @@ public class Buffer {
   }
 
   /**
+   * Add a comment to the buffer
+   * 
+   * @param comment The comment to add
+   */
+  public void addComment(String comment) {
+    String result = String.format("* %s\n", comment);
+
+    buffer.append(result);
+  }
+
+  /**
    * Update the line number after inserting an instruction
    */
-  private void updateLineNumber() {
+  public int updateLineNumber() {
     ++line;
 
     if (maxLine < line) {
       maxLine = line;
     }
+
+    return line;
   }
 
   /**
    * Return the whole instruction set as a string
    */
   public String toString() {
-    return buffer.toString();
+    String result = String.format("Instructions:\n%s\n\nLine Number: %d | Max Line Number: %d\n", buffer.toString(),
+        line, maxLine);
+
+    return result;
   }
 }
