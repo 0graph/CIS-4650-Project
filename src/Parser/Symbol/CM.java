@@ -22,17 +22,28 @@ public class CM {
       return;
     }
 
-    if (args[0].equals("-a")) {
-      System.out.println("Creating an Abstract Syntax Tree.");
-      doAstParse(args[1]);
-    } else if (args[0].equals("-s")) {
-      System.out.println("Creating a Symbol Table");
-      doSymbolParse(args[1]);
-    } else {
-      System.out.println("Invalid Args Specified. Use -a or -s");
-      return;
-    }
+    String flag = args[0];
 
+    switch (flag) {
+      case "-a":
+        System.out.println("Creating an Abstract Syntax Tree.");
+        doAstParse(args[1]);
+        break;
+
+      case "-s":
+        System.out.println("Creating a Symbol Table");
+        doSymbolParse(args[1]);
+        break;
+
+      case "-c":
+        System.out.println("Compiling...");
+        doCompile(args[1]);
+        break;
+
+      default:
+        System.out.println("Invalid Args Specified. Use -a or -s");
+        break;
+    }
   }
 
   static void doSymbolParse(String file) {
@@ -66,6 +77,23 @@ public class CM {
       result.accept(visitor, 0);
     } catch (Exception e) {
       /* do cleanup here -- possibly rethrow e */
+      e.printStackTrace();
+    }
+  }
+
+  static void doCompile(String file) {
+    try {
+      Parser p = new Parser(new Lexer(new FileReader(file)));
+      Ast result = (Ast) p.parse().value;
+
+      AstVisitor visitor = new CodeGen();
+
+      CodeGen compiler = (CodeGen) visitor;
+      compiler.compile((DecList) result);
+
+      System.out.println(compiler);
+
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }

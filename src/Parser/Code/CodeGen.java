@@ -28,6 +28,18 @@ public class CodeGen implements AstVisitor {
   }
 
   /**
+   * Compile the code given
+   */
+  public void compile(Ast ast) {
+    Block block = new Block();
+    String code = block.addInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
+
+    buffer.addInstruction(code);
+
+    visit(ast, block, false);
+  }
+
+  /**
    * Create a symbol table given the parsing object
    */
   public void CreateSymbolTable() {
@@ -42,14 +54,22 @@ public class CodeGen implements AstVisitor {
    * @param line The line number
    * @param flag Whether the expression is an address or not
    */
-  public void visit(Ast ast, int line, boolean flag) {
+  public void visit(Ast ast, Block block, boolean flag) {
     if (ast instanceof ListAst) {
-      visit((ListAst) ast, line, flag);
+      // visit((ListAst) ast, line, flag);
     }
 
     System.out.println("Implement: " + ast.getClass());
+
   }
 
   public void visit() {
+  }
+
+  /**
+   * Print out any information about code generation
+   */
+  public String toString() {
+    return buffer.toString();
   }
 }

@@ -7,16 +7,12 @@ public class Block {
 
   /**
    * Create a new frame with the offsets
-   *
-   * @param address        The current address for this frame
-   * @param oldFrameOffset The previous frame offset
-   * @param returnAddress  The return address for the caller
    */
-  public Block(int line, int oldFrameOffset, int returnAddress) {
+  public Block() {
     this.offset = -1;
 
     // Add the return instruction
-    addInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
+    // addInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
   }
 
   /**

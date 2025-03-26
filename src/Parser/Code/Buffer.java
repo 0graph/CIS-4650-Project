@@ -26,10 +26,14 @@ public class Buffer {
    * @param instruction
    * @param line        The current line number
    */
-  public int addInstruction(String instruction, int line) {
-
+  public void addInstruction(String instruction) {
     this.buffer.append(instruction);
+  }
 
-    return ++line;
+  /**
+   * Return the whole instruction set as a string
+   */
+  public String toString() {
+    return buffer.toString();
   }
 }
