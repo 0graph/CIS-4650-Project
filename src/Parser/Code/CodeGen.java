@@ -3,7 +3,7 @@ import Ast.*;
 /**
  * Generates the intermediate code based on the symbols parsed
  */
-public class CodeGen implements AstVisitor {
+public final class CodeGen implements AstVisitor {
   // The current instruction and max instruction number that can be accessed
   public static int LINENUM = 0;
   public static int MAXLINENUM = 0;
@@ -31,9 +31,9 @@ public class CodeGen implements AstVisitor {
    * Compile the code given
    */
   public void compile(Ast ast) {
+    // Create the Global Block
     Block block = new Block();
     String code = block.addInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
-
     buffer.addInstruction(code);
 
     visit(ast, block, false);
@@ -54,16 +54,83 @@ public class CodeGen implements AstVisitor {
    * @param line The line number
    * @param flag Whether the expression is an address or not
    */
-  public void visit(Ast ast, Block block, boolean flag) {
+  public static void visit(Ast ast, Block block, boolean flag) {
     if (ast instanceof ListAst) {
+      visit((ListAst) ast, block, flag);
       // visit((ListAst) ast, line, flag);
+    } else if (ast instanceof FunctionDec) {
+      visit((FunctionDec) ast, block, flag);
     }
 
     System.out.println("Implement: " + ast.getClass());
 
   }
 
-  public void visit() {
+  /**
+   * Go through a declaration list
+   *
+   * @param list  The declaration list
+   * @param block The current block for a function
+   * @param flag  Flag for info
+   */
+  public void visit(ListAst list, Block block, boolean flag) {
+    ListAst node = list;
+
+    // Visit each component in the list
+    while (node != null) {
+      Ast ast = node.head;
+
+      if (ast != null) {
+        visit(ast, block, flag);
+      }
+
+      node = node.tail;
+    }
+  }
+
+  /**
+   * Go through a function declaration
+   *
+   * @param function The declaration list
+   * @param block    The current block for a function
+   * @param flag     Flag for info
+   */
+  public void visit(FunctionDec function, Block block, boolean flag) {
+    // Create a new block
+    Block functionBlock = new Block();
+
+    /**
+     * TODO: Add a way to save the address of the function block for later
+     * batckpatching
+     *
+     * This will also have to be refactored a tad bit.
+     * Two scenarios:
+     * - This is a function prototype so backpatch by adding the function params
+     * later
+     * - This is the full function definition so we go through and generate the
+     * instructions
+     */
+
+    // Add the params to the function block
+    visit(function.params, functionBlock, flag);
+
+    // Add the function body to the function block
+    visit(function.body, functionBlock, flag);
+  }
+
+  /**
+   * Go through the declaration of a simple variable expression
+   *
+   * @param varaible The variable declared
+   * @param block    The current block for a function
+   * @param flag     Flag for info
+   */
+  public void visit(SimpleDec variable, Block block, boolean flag) {
+    // TODO: Save the address of the variable declaration for later use
+
+    // Increment the offset of where the function body starts at
+    block.incrementOffset();
+
   }
 
   /**

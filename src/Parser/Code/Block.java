@@ -1,12 +1,12 @@
 /**
- * The frame for a function in the stack
+ * The block for a function in the instruction space
  */
 public class Block {
   // The current offset given the instructions that have been
   private int offset;
 
   /**
-   * Create a new frame with the offsets
+   * Create a new block with the offsets
    */
   public Block() {
     this.offset = -1;
@@ -68,10 +68,17 @@ public class Block {
   }
 
   /**
-   * Get the offset for the frame
+   * Get the offset for the block
    */
   public int getOffset() {
     return offset;
+  }
+
+  /**
+   * Increment the offset of the block by one
+   */
+  public void incrementOffset() {
+    offset++;
   }
 
   /**
