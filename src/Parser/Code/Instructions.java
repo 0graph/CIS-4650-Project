@@ -15,7 +15,7 @@ public final class Instructions {
   public static final int R1 = 1;
 
   /**
-   * Create an RO instruction. Example: 1: MUL 6,0,0
+   * Create an RR instruction. Example: 1: MUL 6,0,0
    *
    * @param line      The line number
    * @param operation The instruction

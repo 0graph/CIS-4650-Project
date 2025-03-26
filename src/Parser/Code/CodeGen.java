@@ -4,12 +4,18 @@ import Ast.*;
  * Generates the intermediate code based on the symbols parsed
  */
 public class CodeGen implements AstVisitor {
+  // The current instruction and max instruction number that can be accessed
+  public static int LINENUM = 0;
+  public static int MAXLINENUM = 0;
+
   public int globalOffset; // The global offset in memory
   public int frameOffset; // The frame offset for the next function in memory
-  public int lineNumber; // The line number of the next instruction
 
   // The symbol table that keeps track of extra things
   private SymbolTable table;
+
+  // Buffer for the final file being created
+  private Buffer buffer;
 
   /**
    * Setup runtime environment for code
@@ -17,7 +23,8 @@ public class CodeGen implements AstVisitor {
   public CodeGen() {
     this.globalOffset = 0;
     this.frameOffset = this.globalOffset;
-    this.lineNumber = 0;
+
+    this.buffer = new Buffer("test.tm");
   }
 
   /**
