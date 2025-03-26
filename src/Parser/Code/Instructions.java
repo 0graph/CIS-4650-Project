@@ -20,15 +20,14 @@ public final class Instructions {
   /**
    * Create an RR instruction. Example: 1: MUL 6,0,0
    *
-   * @param line      The line number
    * @param operation The instruction
    * @param r         The register that this instruction is tied to
    * @param s         Parameter
    * @param t         Parameter
    * @param comment   comment
    */
-  public static String RR(int line, String operation, int r, int s, int t, String comment) {
-    String code = String.format("%d: %s %d,%d,%d %s\n", line, operation, r, s, t, comment);
+  public static String RR(String operation, int r, int s, int t, String comment) {
+    String code = String.format("%s %d,%d,%d %s\n", operation, r, s, t, comment);
 
     return code;
   }
@@ -36,15 +35,14 @@ public final class Instructions {
   /**
    * Create an RM instruction. Example: 1: LD 7,-1(5)
    *
-   * @param line      The line number
    * @param operation The instruction
    * @param r         The destination register
    * @param offset    The offset for address
    * @param address   The address in register
    * @param comment   comment
    */
-  public static String RM(int line, String operation, int r, int offset, int address, String comment) {
-    String code = String.format("%d: %s %d,%d(%d) %s\n", line, operation, r, offset, address, comment);
+  public static String RM(String operation, int r, int offset, int address, String comment) {
+    String code = String.format("%s %d,%d(%d) %s\n", operation, r, offset, address, comment);
 
     return code;
   }
@@ -53,7 +51,6 @@ public final class Instructions {
    * Create an RM instruction with a relative address to the register
    * Example: 1: LD 7, -1(5)
    *
-   * @param line      The line number
    * @param operation The operation
    * @param register  The register
    * @param address   The target address

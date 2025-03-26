@@ -1,18 +1,27 @@
+import java.util.HashMap;
+
 /**
  * The block for a function in the instruction space
  */
 public class Block {
+  // The address of this block in memory
+  private int address;
+
   // The current offset given the instructions that have been
-  private int offset;
+  private int offset = -1;
 
   /**
    * Create a new block with the offsets
    */
   public Block() {
-    this.offset = -1;
+    this.address = 0;
 
     // Add the return instruction
     // addInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
+  }
+
+  public Block(int address) {
+    this.address = address;
   }
 
   /**
@@ -25,10 +34,10 @@ public class Block {
    * @param comment   comment
    *
    */
-  public String addInstructionRR(String operation, int r, int s, int t, String comment) {
-    String code = Instructions.RR(CodeGen.LINENUM, operation, r, s, t, comment);
+  public String createInstructionRR(String operation, int r, int s, int t, String comment) {
+    String code = Instructions.RR(operation, r, s, t, comment);
 
-    updateLineNumber();
+    incrementOffset();
 
     return code;
   }
@@ -42,10 +51,10 @@ public class Block {
    * @param address   The address in register
    * @param comment   comment
    */
-  public String addInstructionRM(String operation, int r, int offset, int address, String comment) {
-    String code = Instructions.RM(CodeGen.LINENUM, operation, r, offset, address, comment);
+  public String createInstructionRM(String operation, int r, int offset, int address, String comment) {
+    String code = Instructions.RM(operation, r, offset, address, comment);
 
-    updateLineNumber();
+    incrementOffset();
 
     return code;
   }
@@ -59,10 +68,10 @@ public class Block {
    * @param address   The target address
    * @param comment   Comment
    */
-  public String addInstructionRM(String operation, int register, int address, String comment) {
-    String code = Instructions.RM(CodeGen.LINENUM, operation, register, offset, address, comment);
+  public String createInstructionRM(String operation, int register, int address, String comment) {
+    String code = Instructions.RM(operation, register, offset, address, comment);
 
-    updateLineNumber();
+    incrementOffset();
 
     return code;
   }
@@ -82,15 +91,17 @@ public class Block {
   }
 
   /**
-   * Update the line number based on the instruction given
+   * Create an address for this symbol relative to this block (frame pointer)
    */
-  private void updateLineNumber() {
-    offset++;
+  public void createLocalAddress(String symbol) throws Exception {
 
-    ++CodeGen.LINENUM;
-    if (CodeGen.MAXLINENUM < CodeGen.LINENUM) {
-      CodeGen.MAXLINENUM = CodeGen.LINENUM;
-    }
   }
 
+  // Continue from here:
+  // You need to create a seperate
+  /**
+   * Create a global address for the symbol (line number)
+   */
+  public void createGlobalAddress(String symbol) throws Exception {
+  }
 }

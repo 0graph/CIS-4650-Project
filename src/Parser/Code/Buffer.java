@@ -8,6 +8,10 @@ public class Buffer {
   private String name;
   private StringBuilder buffer;
 
+  // Keep track of the line numbers
+  private int line;
+  private int maxLine;
+
   /**
    * Create a new file
    *
@@ -24,10 +28,25 @@ public class Buffer {
    * Create an instruction and add it to the file buffer that is being created
    *
    * @param instruction
-   * @param line        The current line number
    */
-  public void addInstruction(String instruction) {
-    this.buffer.append(instruction);
+  public int addInstruction(String instruction) {
+    String code = String.format("%d: %s", line, instruction);
+    this.buffer.append(code);
+
+    updateLineNumber();
+
+    return line;
+  }
+
+  /**
+   * Update the line number after inserting an instruction
+   */
+  private void updateLineNumber() {
+    ++line;
+
+    if (maxLine < line) {
+      maxLine = line;
+    }
   }
 
   /**

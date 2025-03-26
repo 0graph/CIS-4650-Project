@@ -4,18 +4,19 @@ import Ast.*;
  * Generates the intermediate code based on the symbols parsed
  */
 public final class CodeGen implements AstVisitor {
-  // The current instruction and max instruction number that can be accessed
-  public static int LINENUM = 0;
-  public static int MAXLINENUM = 0;
 
   public int globalOffset; // The global offset in memory
   public int frameOffset; // The frame offset for the next function in memory
 
-  // The symbol table that keeps track of extra things
-  private SymbolTable table;
-
   // Buffer for the final file being created
   private Buffer buffer;
+
+  // The current instruction
+  private int line = 0;
+
+  // CONTINUE: Add a small symbol table implemention that is a tree that just
+  // keeps track of the address of certain instructions.
+  // Debating if the blocks function should be used for this or not...
 
   /**
    * Setup runtime environment for code
@@ -33,8 +34,8 @@ public final class CodeGen implements AstVisitor {
   public void compile(Ast ast) {
     // Create the Global Block
     Block block = new Block();
-    String code = block.addInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
-    buffer.addInstruction(code);
+    String code = block.createInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
+    addInstruction(code);
 
     visit(ast, block, false);
   }
@@ -54,7 +55,7 @@ public final class CodeGen implements AstVisitor {
    * @param line The line number
    * @param flag Whether the expression is an address or not
    */
-  public static void visit(Ast ast, Block block, boolean flag) {
+  public void visit(Ast ast, Block block, boolean flag) {
     if (ast instanceof ListAst) {
       visit((ListAst) ast, block, flag);
       // visit((ListAst) ast, line, flag);
@@ -116,6 +117,8 @@ public final class CodeGen implements AstVisitor {
 
     // Add the function body to the function block
     visit(function.body, functionBlock, flag);
+
+    // TODO: Update the global offset with the length of the function
   }
 
   /**
@@ -130,7 +133,6 @@ public final class CodeGen implements AstVisitor {
 
     // Increment the offset of where the function body starts at
     block.incrementOffset();
-
   }
 
   /**
@@ -138,5 +140,14 @@ public final class CodeGen implements AstVisitor {
    */
   public String toString() {
     return buffer.toString();
+  }
+
+  /**
+   * Add an instruction to the instruction string buffer
+   *
+   * @param code
+   */
+  private void addInstruction(String code) {
+    line = buffer.addInstruction(code);
   }
 }
