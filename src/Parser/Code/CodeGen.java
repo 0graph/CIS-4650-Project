@@ -132,7 +132,7 @@ public final class CodeGen implements AstVisitor {
    * @param flag     Flag for info
    */
   public void visit(SimpleDec variable, Block block) {
-    // Save the address of the variable within the block and globally
+    // Save the address of the variable within the block
     String name = variable.name;
 
     try {
@@ -140,7 +140,7 @@ public final class CodeGen implements AstVisitor {
       buffer.addComment(comment);
       block.createAddress(name, line);
 
-      updateLineNumber();
+      System.out.println("Line Number:" + line);
 
     } catch (Exception e) { // This should never ever happen at this stage
       e.printStackTrace();
