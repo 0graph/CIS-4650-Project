@@ -112,13 +112,13 @@ public class SymbolTable {
 
   public NodeType getFunctionSymbol() {
     SymbolTable current = this;
-    while(current != null) {
-      if(current.name.isEmpty()) {
+    while (current != null) {
+      if (current.name.isEmpty()) {
         current = current.outerScope;
       } else {
         return current.symbolInAllScopes(current.name);
       }
-    } 
+    }
     return null;
   }
 
@@ -145,6 +145,26 @@ public class SymbolTable {
     }
 
     return symbol;
+  }
+
+  /**
+   * Given the declaration pointer, return the node for the declaration object
+   *
+   * @param declaration The declaration object
+   */
+  public NodeType symbolInTree(Dec declaration) {
+    System.out.println("TODO");
+    return null;
+  }
+
+  /**
+   * Given the expression pointer, return the node for this expression
+   *
+   * @param expression The expression object
+   */
+  public Exp expressionInTree(Exp expression) {
+    System.out.println("TODO");
+    return null;
   }
 
   /**
