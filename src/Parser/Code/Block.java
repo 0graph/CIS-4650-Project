@@ -13,7 +13,10 @@ public class Block {
    * @param returnAddress  The return address for the caller
    */
   public Block(int line, int oldFrameOffset, int returnAddress) {
-    this.offset = 0;
+    this.offset = -1;
+
+    // Add the return instruction
+    addInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
   }
 
   /**
@@ -52,17 +55,16 @@ public class Block {
   }
 
   /**
-   * Create an RM instruction with a relative address to the register
+   * Create an RM instruction with a RELATIVE address to the block of code
    * Example: 1: LD 7, -1(5)
    *
    * @param operation The operation
    * @param register  The register
    * @param address   The target address
-   * @param relative  The working register with the offset of the target address
    * @param comment   Comment
    */
-  public String addInstructionRMAbs(String operation, int register, int address, int relative, String comment) {
-    String code = Instructions.RM_ABS(CodeGen.LINENUM, operation, register, address, relative, comment);
+  public String addInstructionRM(String operation, int register, int address, String comment) {
+    String code = Instructions.RM_ABS(CodeGen.LINENUM, operation, register, address, offset, comment);
 
     updateLineNumber();
 

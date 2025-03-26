@@ -5,11 +5,14 @@ public final class Instructions {
   // Global Pointer
   public static final int GP = 6;
 
+  // Function Pointer
+  public static final int FP = 5;
+
   // Program Counter
   public static final int PC = 7;
 
   // Register 0
-  public static final int R0 = 0;
+  public static final int AC = 0;
 
   // Register 1
   public static final int R1 = 1;
