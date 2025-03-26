@@ -60,7 +60,7 @@ public class Block {
    * @param comment   Comment
    */
   public String addInstructionRM(String operation, int register, int address, String comment) {
-    String code = Instructions.RM_ABS(CodeGen.LINENUM, operation, register, address, offset, comment);
+    String code = Instructions.RM(CodeGen.LINENUM, operation, register, offset, address, comment);
 
     updateLineNumber();
 
