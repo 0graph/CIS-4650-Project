@@ -130,9 +130,8 @@ public final class CodeGen implements AstVisitor {
   /**
    * Go through the declaration of a simple variable expression
    *
-   * @param varaible The variable declared
+   * @param variable The variable declared
    * @param block    The current block for a function
-   * @param flag     Flag for info
    */
   public void visit(SimpleDec variable, Block block) {
     // Save the address of the variable within the block
@@ -151,7 +150,17 @@ public final class CodeGen implements AstVisitor {
     } catch (Exception e) { // This should never ever happen at this stage
       e.printStackTrace();
     }
+  }
 
+  /**
+   * Declare an array in the program
+   *
+   * @param variable The index variable
+   * @param block    The current block
+   */
+  public void visit(ArrayDec variable, Block block) {
+    // Store the position based on the length of the variable
+    // U
   }
 
   /**
