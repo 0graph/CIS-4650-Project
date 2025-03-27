@@ -304,6 +304,7 @@ public final class CodeGen implements AstVisitor {
     Exp index = variable.index;
 
     // Get the value for the index that will be updated
+    // TODO: Continue from here
     visit(index, block, false, offset + 1);
   }
 
