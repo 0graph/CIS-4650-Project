@@ -35,7 +35,32 @@ public final class CodeGen implements AstVisitor {
     // Create the Global Block
     Block block = new Block();
 
+    // Generate the prelude for the code
+    prelude();
+
     visit(ast, block, false, 0);
+  }
+
+  /**
+   * Generate the prelude for the code
+   * it's the standard code that is generated at the start of the file
+   */
+  public void prelude() {
+    String code;
+    buffer.addComment("Standard Prelude"); 
+
+    code = Instructions.RM("LD", Instructions.GP, 0, Instructions.AC, "Load the global pointer with max address");
+    addInstruction(code);
+
+    code = Instructions.RM("LDA", Instructions.FP, 0, Instructions.GP, "Load the frame pointer");
+    addInstruction(code);
+
+    code = Instructions.RM("ST", Instructions.AC, 0, Instructions.AC, "Clear Location 0");
+    addInstruction(code);
+
+
+    buffer.addComment("End Standard Prelude");
+    
   }
 
   /**
@@ -275,6 +300,7 @@ public final class CodeGen implements AstVisitor {
     if (address) {
       // Create the instructions for loading the symbol address
       comment = String.format("Load address for var (%s)", name);
+      // TODO: FIX -> this does not work with global variables being ref'd inside a func
       code = Instructions.RM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
       addInstruction(code);
 
