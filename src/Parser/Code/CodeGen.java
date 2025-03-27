@@ -442,10 +442,9 @@ public final class CodeGen implements AstVisitor {
    *               nest and have sub-levels)
    */
   public void visit(CallExp call, Block block, int offset) {
-    int newOffset = offset;
     int level = block.getNestingLevel();
 
-    block.incrementNestingLevel(); // Increment the nesting level for subsequent cals
+    block.incrementNestingLevel(offset); // Increment the nesting level for subsequent cals
 
     String name = call.func;
     ExpList arguments = call.args;
@@ -460,9 +459,10 @@ public final class CodeGen implements AstVisitor {
     buffer.addComment(comment);
 
     // Check for arguments
+    visit(arguments, block, false, offset + 1);
 
-    // Save the current frame pointer
-    comment = String.format("Save address of current frame pointer to memory with offset %d", newOffset);
+    // Save the address of the current frame pointer
+    comment = String.format("Save address of current frame pointer to memory with offset %d", offset + level);
     code = Instructions.RM("ST", Instructions.FP, offset + level, Instructions.FP, comment);
     addInstruction(code);
 

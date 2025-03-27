@@ -77,9 +77,11 @@ public class Block {
 
   /**
    * increment the nesting level by 1
+   *
+   * @param amount The amount to increment it by
    */
-  public void incrementNestingLevel() {
-    level++;
+  public void incrementNestingLevel(int amount) {
+    level += amount;
   }
 
   /**
