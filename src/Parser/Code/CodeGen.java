@@ -69,6 +69,8 @@ public final class CodeGen implements AstVisitor {
       visit((ArrayDec) ast, block);
     } else if (ast instanceof IndexVar) {
       visit((IndexVar) ast, block, flag, offset);
+    } else if (ast instanceof BoolExp) {
+      visit((BoolExp) ast, block, offset);
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -394,7 +396,110 @@ public final class CodeGen implements AstVisitor {
       }
 
       code = Instructions.RR(op, Instructions.AC, Instructions.AC, Instructions.R1, "Operation");
-    } else {
+    } else if (operation > OpExp.DIV && operation <= OpExp.NOT) { // Comparison
+
+      String op = "";
+      switch (operation) {
+        case 5: // equal
+          op = "JEQ";
+          break;
+        case 6: // not equal
+          op = "JNE";
+          break;
+        case 7: // less than
+          op = "JLT";
+          break;
+        case 8: // less than or equal
+          op = "JLE";
+          break;
+        case 9: // greater than
+          op = "JGT";
+          break;
+        case 10: // greater than or equal
+          op = "JGE";
+          break;
+        case 11: // not
+          op = "JNE";
+          break;
+        
+      }
+
+      // for comparison expressions we have to convert the result to 1 or 0
+      // ex. x = y < z
+      // SUB y, z, x // subtract z from y store in register x (y < z if x < 0)
+      // JLT x, 2 // if x (y - z) < 0, jump to +2
+      // LDC 0, x     // store 0 (false) in x
+      // LDA 1        // skip the next instruction
+      // LDC 1, x     // store 1 (true) in x
+
+
+      // subtract right from left as RA instructions compare with 0
+      code = Instructions.RR("SUB", Instructions.AC, Instructions.AC, Instructions.R1, "Subtract for Comparison");
+      addInstruction(code);
+      // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it lands on
+      // Jump to the next instruction if the result is true
+      code = Instructions.RM(op, Instructions.AC, 2, Instructions.PC, "Jump to next instruction if true");
+      addInstruction(code);
+
+      // Load 0 (false) to the register
+      code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "Load 0 (false)");
+      addInstruction(code);
+      // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it lands on
+      // Unconditional Jump to skip the true instruction of the result is false
+      code = Instructions.RM("LDA", Instructions.PC, 1, Instructions.PC, "Unconditional Jump");
+      addInstruction(code);
+
+      // Load 1 (true) to the register
+      code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "Load 1 (true)");
+      addInstruction(code);
+
+
+    } else { // Logical
+      // the code is generated inside the switch because AND / OR are special cases
+      switch (operation) {
+        case 12:  // and (special case)
+          // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it lands on
+          // if LHS <= 0 JUMP to END
+          code = Instructions.RM("JLE", Instructions.AC, 4, Instructions.PC, "Jump to END if LHS <= 0");
+          addInstruction(code);
+          // if RHS <= 0 JUMP to ZERO
+          code = Instructions.RM("JLE", Instructions.R1, 2, Instructions.PC, "Jump to ZERO if RHS <= 0");
+          addInstruction(code);
+          // LHS = 1
+          code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "LHS = 1");
+          addInstruction(code);
+          // JUMP to END
+          code = Instructions.RM("LDA", Instructions.PC, 1, Instructions.PC, "Jump to END");
+          addInstruction(code);
+          // ZERO: LHS = 0
+          code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "LHS = 0");
+          addInstruction(code);
+          // END
+            
+            break;
+        case 13: // or (special case)
+          // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it lands on
+          // if LHS > 0 JUMP to ONE
+          code = Instructions.RM("JGT", Instructions.AC, 3, Instructions.PC, "Jump to ONE if LHS > 0");
+          addInstruction(code);
+          // if RHS > 0 JUMP to ONE
+          code = Instructions.RM("JGT", Instructions.R1, 2, Instructions.PC, "Jump to ONE if RHS > 0");
+          addInstruction(code);
+          // LHS = 0
+          code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "LHS = 0");
+          addInstruction(code);
+          // JUMP to END
+          code = Instructions.RM("LDA", Instructions.PC, 1, Instructions.PC, "Jump to END");
+          addInstruction(code);
+          // ONE: LHS = 1
+          code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "LHS = 1");
+          addInstruction(code);
+          // END:
+          break;
+        default:
+          System.out.println("Unknown Operation: " + operation);
+          break;
+      }
     }
 
     // Save actual logic
@@ -402,6 +507,32 @@ public final class CodeGen implements AstVisitor {
 
     // Store value
     code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store value of expression");
+    addInstruction(code);
+  }
+
+  /**
+   * Visit a boolean expression
+   * @param expression The expression
+   * @param block The current code block
+   * @param offset The offset from the based frame pointer
+   */
+  public void visit(BoolExp expression, Block block, int offset) {
+    String code;
+    String comment;
+
+    // convert boolean to integer
+    Integer value = expression.value ? 1 : 0;
+
+    // Load Constant to register
+    comment = String.format("Loading Constant %b to register %d and save to memory with offset %d", value,
+        Instructions.AC, offset);
+    buffer.addComment(comment);
+
+    code = Instructions.RM("LDC", Instructions.AC, value, Instructions.AC, "");
+    addInstruction(code);
+
+    // Save to Memory
+    code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "");
     addInstruction(code);
   }
 
