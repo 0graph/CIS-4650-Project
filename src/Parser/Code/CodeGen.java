@@ -431,6 +431,55 @@ public final class CodeGen implements AstVisitor {
   }
 
   /**
+   * Call a function from inside a code block: input()
+   *
+   * @param call   The calling expression
+   * @param block  The current block of code
+   * @param offset the offset to which this starts at
+   * @param level  The current level of nesting within calls (note that calls can
+   *               nest and have sub-levels)
+   */
+  public void visit(CallExp call, Block block, int offset, int level) {
+    int newOffset = offset;
+
+    String name = call.func;
+    ExpList arguments = call.args;
+
+    String code;
+    String comment = String.format("--- Calling %s() ---", name);
+
+    Integer[] symbol = block.getSymbolAddress(name);
+    Integer address = symbol[0];
+    Integer pointer = symbol[1];
+
+    buffer.addComment(comment);
+
+    // Check for arguments
+
+    // Save the current frame pointer
+    comment = String.format("Save address of current frame pointer to memory with offset %d", newOffset);
+    code = Instructions.RM("ST", Instructions.FP, offset + level, Instructions.FP, comment);
+    addInstruction(code);
+
+    // load the frame pointer to push stack
+    comment = String.format("Load the frame pointer so that it starts at offset %d", offset);
+    code = Instructions.RM("LDA", Instructions.FP, offset, Instructions.FP, comment);
+    addInstruction(code);
+
+    // Save the return address to the accumulator
+    comment = String.format("Save the return address in the accumulator");
+    code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, comment);
+    addInstruction(code);
+
+    // Pop the frame once we are done
+    comment = String.format("Pop the frame when we return");
+    code = Instructions.RM("LD", Instructions.FP, offset, Instructions.PC, comment);
+    addInstruction(code);
+
+    comment = String.format("--- Calling %s() ---", name);
+    buffer.addComment(comment);
+  }
+
    * Add an instruction to the instruction string buffer
    *
    * @param code
