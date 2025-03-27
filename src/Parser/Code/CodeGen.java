@@ -643,7 +643,7 @@ public final class CodeGen implements AstVisitor {
 
     // Pop the frame once we are done
     comment = String.format("Pop the frame and return to the current frame");
-    code = Instructions.RM("LD", Instructions.FP, level, Instructions.PC, comment);
+    code = Instructions.RM("LD", Instructions.FP, level, Instructions.FP, comment);
     addInstruction(code);
 
     comment = String.format("--- Calling %s() ---", name);
