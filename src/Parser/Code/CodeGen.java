@@ -331,7 +331,7 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RR("ADD", Instructions.AC, Instructions.AC, Instructions.R1, "Add the offset to the address");
       addInstruction(code);
 
-      comment = String.format("Store the index at offset %d", offset);
+      comment = String.format("Store the address given the index at offset %d", offset);
       code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     }
