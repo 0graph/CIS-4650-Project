@@ -53,14 +53,14 @@ public final class Instructions {
    *
    * @param operation The operation
    * @param register  The register
+   * @param line      The current line address
    * @param address   The target address
-   * @param relative  The working register with the offset of the target address
+   * @param pointer   The pointer to use for this
    * @param comment   Comment
    */
-  public static String RM_ABS(int line, String operation, int register, int address, int relative, String comment) {
+  public static String RM_ABS(String operation, int register, int line, int address, int pointer, String comment) {
 
-    String code = String.format("%d: %s %d,%d(%d) %s", line, operation, register, address - (line + 1), relative,
-        comment);
+    String code = String.format("%s %d,%d(%d) %s\n", operation, register, address - (line + 1), pointer, comment);
 
     return code;
   }

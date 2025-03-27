@@ -443,6 +443,9 @@ public final class CodeGen implements AstVisitor {
    */
   public void visit(CallExp call, Block block, int offset) {
     int newOffset = offset;
+    int level = block.getNestingLevel();
+
+    block.incrementNestingLevel(); // Increment the nesting level for subsequent cals
 
     String name = call.func;
     ExpList arguments = call.args;
@@ -473,23 +476,28 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, comment);
     addInstruction(code);
 
+    // Jump to instruction
+    comment = String.format("Jump to %s()", name);
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line + 1, address, Instructions.PC, comment);
+    addInstruction(code);
+
     // Pop the frame once we are done
-    comment = String.format("Pop the frame when we return");
-    code = Instructions.RM("LD", Instructions.FP, offset, Instructions.PC, comment);
+    comment = String.format("Pop the frame and return to the current frame");
+    code = Instructions.RM("LD", Instructions.FP, level, Instructions.PC, comment);
     addInstruction(code);
 
     comment = String.format("--- Calling %s() ---", name);
     buffer.addComment(comment);
+
   }
 
-  *
-
-  Add an
-  instruction to
-  the instruction
-  string buffer**
-
-  @param code
+  /*
+   * Add an
+   * instruction to
+   * the instruction
+   * string buffer**
+   * 
+   * @param code
    */
   private void addInstruction(String code) {
     line = buffer.addInstruction(code);

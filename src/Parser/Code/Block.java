@@ -17,6 +17,10 @@ public class Block {
   // the first position if the address)
   private int offset = 1;
 
+  // The current nesting level of the block (This is used for call expressions
+  // where nesting expressions are possible)
+  private int level = 0;
+
   // The Symbols and their address in this current scope
   // The Integer holds two values: [offset, global/frame pointer]
   private HashMap<String, Integer[]> symbols = new HashMap<String, Integer[]>();
@@ -56,10 +60,26 @@ public class Block {
   }
 
   /**
+   * Returns the nesting level for call expressions
+   *
+   * @return The current nesting level
+   */
+  public int getNestingLevel() {
+    return level;
+  }
+
+  /**
    * Increment the offset of the block by one
    */
   public void incrementOffset() {
     offset++;
+  }
+
+  /**
+   * increment the nesting level by 1
+   */
+  public void incrementNestingLevel() {
+    level++;
   }
 
   /**
