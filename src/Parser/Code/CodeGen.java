@@ -58,11 +58,13 @@ public final class CodeGen implements AstVisitor {
     } else if (ast instanceof VarExp) {
       visit((VarExp) ast, block, flag, offset);
     } else if (ast instanceof OpExp) {
-      visit((OpExp) ast, block);
+      visit((OpExp) ast, block, offset);
     } else if (ast instanceof AssignExp) {
       visit((AssignExp) ast, block, offset);
     } else if (ast instanceof SimpleVar) {
       visit((SimpleVar) ast, block, flag, offset);
+    } else if (ast instanceof IntExp) {
+      visit((IntExp) ast, block, offset);
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -185,11 +187,11 @@ public final class CodeGen implements AstVisitor {
 
     buffer.addComment("Creating Assignment Expression...");
 
-    // Visit the expression first
-    visit(right, block, false, offset + 2);
-
     // Assign Expression to address
     visit(left, block, true, offset + 1);
+
+    // Visit the expression first
+    visit(right, block, false, offset + 2);
   }
 
   /**
@@ -213,16 +215,16 @@ public final class CodeGen implements AstVisitor {
    * @param offset   the offset
    */
   public void visit(SimpleVar variable, Block block, boolean address, int offset) {
+    String name = variable.name;
+
     String code;
     String comment;
 
-    String name = variable.name;
+    // Get address location
+    Integer[] symbol = block.getSymbolAddressInScope(name);
 
     // Load the address
     if (address) {
-      // Get address location
-      Integer[] symbol = block.getSymbolAddressInScope(name);
-
       // Create the instructions for loading the symbol address
       comment = String.format("Load address for var (%s)", name);
       code = block.createInstructionRM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
@@ -233,21 +235,54 @@ public final class CodeGen implements AstVisitor {
       comment = String.format("&%s", name);
       code = block.createInstructionRM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
+    } else { // Right hand side variable
+      comment = String.format("Value of %s", name);
+      code = block.createInstructionRM("LD", Instructions.AC, symbol[0], symbol[1], comment);
+      addInstruction(code);
+
+      code = block.createInstructionRM("ST", Instructions.AC, offset, symbol[1], "");
+      addInstruction(code);
     }
   }
 
   /**
-   * Visit an assignment: x = 10;
+   * Visit an expression
    *
    * @param expression The expression
    * @param block      The current code block
+   * @param offset     The offset
    */
-  public void visit(OpExp expression, Block block) {
+  public void visit(OpExp expression, Block block, int offset) {
     Exp left = expression.lhs;
     Exp right = expression.rhs;
 
-    // visit(right, block, false);
-    // visit(left, block, false);
+    visit(left, block, false, offset + 1);
+    visit(right, block, false, offset + 2);
+  }
+
+  /**
+   * Visit a number
+   *
+   * @param expression The expression
+   * @param block      The current code block
+   * @param offset     The offset from the based frame pointer
+   */
+  public void visit(IntExp expression, Block block, int offset) {
+    // Note: Since the instruction already does the negative of a value, we have to
+    // do a negative sign again
+    String code;
+    Integer value = expression.value;
+
+    // Load Constant to register
+    String comment = String.format("Loading Constant %d to register %d and save to memory with offset %d", value,
+        Instructions.AC, offset);
+    buffer.addComment(comment);
+    code = block.createInstructionRM("LDC", Instructions.AC, -value, Instructions.AC, "");
+    addInstruction(code);
+
+    // Save to Memory
+    code = block.createInstructionRM("ST", Instructions.AC, offset, Instructions.FP, "");
+    addInstruction(code);
 
   }
 
