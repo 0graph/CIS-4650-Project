@@ -218,7 +218,7 @@ public final class CodeGen implements AstVisitor {
 
     String name = variable.name;
 
-    // Only load the address if we want an address
+    // Load the address
     if (address) {
       // Get address location
       Integer[] symbol = block.getSymbolAddressInScope(name);
