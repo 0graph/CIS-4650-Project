@@ -686,13 +686,6 @@ public final class CodeGen implements AstVisitor {
   }
 
   /**
-   * Increment the line number
-   */
-  private void updateLineNumber() {
-    line = buffer.updateLineNumber();
-  }
-
-  /**
    * Print out any information about code generation
    */
   public String toString() {
