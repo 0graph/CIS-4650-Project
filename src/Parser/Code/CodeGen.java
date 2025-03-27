@@ -182,16 +182,36 @@ public final class CodeGen implements AstVisitor {
    *                   place in
    */
   public void visit(AssignExp expression, Block block, int offset) {
+    String code;
+    String comment = String.format("Store back the result of the assignment operation");
+
     VarExp left = expression.lhs;
     Exp right = expression.rhs;
 
-    buffer.addComment("Creating Assignment Expression...");
+    buffer.addComment("--- Assignment Expression... ---");
 
     // Assign Expression to address
     visit(left, block, true, offset + 1);
 
     // Visit the expression first
     visit(right, block, false, offset + 2);
+
+    // Assign Value to Address
+    buffer.addComment(comment);
+    code = block.createInstructionRM("LD", Instructions.AC, offset + 1, Instructions.FP,
+        "Load to memory the address and result value");
+    addInstruction(code);
+
+    code = block.createInstructionRM("LD", Instructions.R1, offset + 2, Instructions.FP, "");
+    addInstruction(code);
+
+    code = block.createInstructionRM("ST", Instructions.R1, 0, Instructions.AC, "");
+    addInstruction(code);
+
+    code = block.createInstructionRM("ST", Instructions.R1, offset, Instructions.FP, "Value Stored!");
+    addInstruction(code);
+
+    buffer.addComment("--- Assignment Expression... ---");
   }
 
   /**
@@ -253,11 +273,58 @@ public final class CodeGen implements AstVisitor {
    * @param offset     The offset
    */
   public void visit(OpExp expression, Block block, int offset) {
+    String code;
+    String comment;
+
     Exp left = expression.lhs;
     Exp right = expression.rhs;
+    int operation = expression.Op;
 
+    // Setup the instructions necessary
     visit(left, block, false, offset + 1);
     visit(right, block, false, offset + 2);
+
+    // Save the result to the address of the left side
+    comment = String.format("Save the result of the operation expression to the address offset %d", offset);
+
+    // Load Value of left
+    buffer.addComment(comment);
+    code = block.createInstructionRM("LD", Instructions.AC, offset + 1, Instructions.FP, "Load Left hand side");
+    addInstruction(code);
+
+    // Load value of right
+    code = block.createInstructionRM("LD", Instructions.R1, offset + 2, Instructions.FP, "Load Right hand side");
+    addInstruction(code);
+
+    if (operation <= OpExp.DIV) { // Arithmetic
+      String op = "";
+      switch (operation) {
+        case 0: // add
+          op = "ADD";
+          break;
+        case 1: // subtract
+          op = "SUB";
+          break;
+        case 2: // negate
+          break;
+        case 3: // multiplication
+          op = "MUL";
+          break;
+        case 4: // div
+          op = "DIV";
+          break;
+      }
+
+      code = block.createInstructionRR(op, Instructions.AC, Instructions.AC, Instructions.R1, "Operation");
+    } else {
+    }
+
+    // Save actual logic
+    addInstruction(code);
+
+    // Store value
+    code = block.createInstructionRM("ST", Instructions.AC, offset, Instructions.FP, "Store value of expression");
+    addInstruction(code);
   }
 
   /**
