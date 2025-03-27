@@ -71,14 +71,14 @@ public final class CodeGen implements AstVisitor {
    */
   public void visit(Ast ast, Block block, boolean flag, int offset) {
     if (ast instanceof ListAst) {
-      visit((ListAst) ast, block);
+      visit((ListAst) ast, block, offset);
       // visit((ListAst) ast, line, flag);
     } else if (ast instanceof FunctionDec) {
       visit((FunctionDec) ast, block);
     } else if (ast instanceof SimpleDec) {
       visit((SimpleDec) ast, block);
     } else if (ast instanceof CompoundExp) {
-      visit((CompoundExp) ast, block);
+      visit((CompoundExp) ast, block, offset);
     } else if (ast instanceof VarExp) {
       visit((VarExp) ast, block, flag, offset);
     } else if (ast instanceof OpExp) {
@@ -109,7 +109,7 @@ public final class CodeGen implements AstVisitor {
    * @param block The current block for a function
    * @param flag  Flag for info
    */
-  public void visit(ListAst list, Block block) {
+  public void visit(ListAst list, Block block, int offset) {
     ListAst node = list;
 
     // Visit each component in the list
@@ -117,7 +117,7 @@ public final class CodeGen implements AstVisitor {
       Ast ast = node.head;
 
       if (ast != null) {
-        visit(ast, block, false, block.getOffset());
+        visit(ast, block, false, offset);
       }
 
       node = node.tail;
@@ -153,7 +153,7 @@ public final class CodeGen implements AstVisitor {
      */
 
     // Add the params to the function block
-    visit(function.params, functionBlock);
+    visit(function.params, functionBlock, block.getOffset());
 
     // Add the function body to the function block
     visit(function.body, functionBlock, true, block.getOffset());
@@ -215,15 +215,15 @@ public final class CodeGen implements AstVisitor {
    * @param expression The Complete expression
    * @param block      The current code block
    */
-  public void visit(CompoundExp expression, Block block) {
+  public void visit(CompoundExp expression, Block block, int offset) {
     // There are declarations here
     if (expression.decs != null) {
-      visit(expression.decs, block);
+      visit(expression.decs, block, offset);
     }
 
     // Go through both
     if (expression.exps != null) {
-      visit(expression.exps, block);
+      visit(expression.exps, block, offset);
     }
   }
 
@@ -614,12 +614,34 @@ public final class CodeGen implements AstVisitor {
 
     Integer[] symbol = block.getSymbolAddress(name);
     Integer address = symbol[0];
-    Integer pointer = symbol[1];
+    // Integer pointer = symbol[1];
 
     buffer.addComment(comment);
+    buffer.addComment("Offset: " + offset);
 
-    // Check for arguments
-    visit(arguments, block, false, offset + 1);
+    // Check for arguments using a for loop since we need to know how many arguments
+    // we are passing it
+    int initialOffset = 2; // We know the second instruction is the return address
+    ListAst node = arguments;
+    Ast expression;
+    while (node != null) {
+      expression = node.head;
+      if (expression != null) {
+        comment = String.format("Adding argument %d", initialOffset - 1);
+        buffer.addComment(comment);
+
+        visit(expression, block, false, offset + 1);
+
+        // Create the instructions to include the arguments
+        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset, Instructions.FP, "Storing argument");
+        addInstruction(code);
+      }
+
+      node = node.tail;
+      initialOffset++;
+    }
+
+    buffer.addComment("Create new activation record");
 
     // Save the address of the current frame pointer
     comment = String.format("Save address of current frame pointer to memory with offset %d", offset + level);
