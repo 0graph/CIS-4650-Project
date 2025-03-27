@@ -65,6 +65,10 @@ public final class CodeGen implements AstVisitor {
       visit((SimpleVar) ast, block, flag, offset);
     } else if (ast instanceof IntExp) {
       visit((IntExp) ast, block, offset);
+    } else if (ast instanceof ArrayDec) {
+      visit((ArrayDec) ast, block);
+    } else if (ast instanceof IndexVar) {
+      visit((IndexVar) ast, block, flag, offset);
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -146,7 +150,6 @@ public final class CodeGen implements AstVisitor {
 
       // Create an address for this variable in this scope
       block.createAddress(name, pointer);
-
     } catch (Exception e) { // This should never ever happen at this stage
       e.printStackTrace();
     }
@@ -160,7 +163,21 @@ public final class CodeGen implements AstVisitor {
    */
   public void visit(ArrayDec variable, Block block) {
     // Store the position based on the length of the variable
-    // U
+    String name = variable.name;
+    Integer size = variable.size;
+
+    try {
+      String comment = String.format("Making space for array variable (%s[%d])", name, size);
+      buffer.addComment(comment);
+
+      // Check if the variable is global or local
+      int pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
+
+      // Create an address for this variable in this scope
+      block.createAddress(name, pointer, size);
+    } catch (Exception e) { // This should never happen
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -272,6 +289,22 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, symbol[1], "");
       addInstruction(code);
     }
+  }
+
+  /**
+   * Visiting an index of an array variable
+   *
+   * @param variable The array variable
+   * @param block    The current code block
+   * @param address  Whether this is in the assignment part
+   * @param offset   The offet to the frame which is being dealt here
+   */
+  public void visit(IndexVar variable, Block block, boolean address, int offset) {
+    String name = variable.name;
+    Exp index = variable.index;
+
+    // Get the value for the index that will be updated
+    visit(index, block, false, offset + 1);
   }
 
   /**

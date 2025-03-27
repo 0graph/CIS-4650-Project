@@ -140,6 +140,34 @@ public class Block {
   }
 
   /**
+   * Cretae an address for the symbol. If the global address does not matter, set
+   * it to -1
+   * 
+   * @param id      The id of the symbol
+   * @param pointer The pointer for which this address is a part of (global
+   *                pointer/frame pointer)
+   * @param size    The offset amount
+   */
+  public void createAddress(String id, int pointer, int size) throws Exception {
+    // Check if the address has already been created in this scope
+    Integer[] address;
+
+    address = symbols.get(id);
+
+    if (address != null) {
+      String message = String.format("Symbol %s already has a valid address in this space!\n", id);
+      throw new Exception(message);
+    }
+
+    // The address is the first position of the array
+    address = new Integer[] { offset, pointer };
+    symbols.put(id, address);
+
+    // Increase the offset
+    offset = offset + size;
+  }
+
+  /**
    * Creates a inner block based on the outer block created
    * 
    * @param address The global address for the code block

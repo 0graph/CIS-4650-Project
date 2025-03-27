@@ -42,7 +42,7 @@ public final class Instructions {
    * @param comment   comment
    */
   public static String RM(String operation, int r, int offset, int address, String comment) {
-    String code = String.format("%s %d,%d(%d) %s\n", operation, r, offset, address, comment);
+    String code = String.format("%s %d,%d(%d) %s\n", operation, r, -offset, address, comment);
 
     return code;
   }
