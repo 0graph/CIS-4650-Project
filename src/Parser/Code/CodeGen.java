@@ -188,7 +188,7 @@ public final class CodeGen implements AstVisitor {
     VarExp left = expression.lhs;
     Exp right = expression.rhs;
 
-    buffer.addComment("--- Assignment Expression... ---");
+    buffer.addComment("--- Assignment Expression ---");
 
     // Assign Expression to address
     visit(left, block, true, offset + 1);
@@ -198,20 +198,20 @@ public final class CodeGen implements AstVisitor {
 
     // Assign Value to Address
     buffer.addComment(comment);
-    code = block.createInstructionRM("LD", Instructions.AC, offset + 1, Instructions.FP,
+    code = Instructions.RM("LD", Instructions.AC, offset + 1, Instructions.FP,
         "Load to memory the address and result value");
     addInstruction(code);
 
-    code = block.createInstructionRM("LD", Instructions.R1, offset + 2, Instructions.FP, "");
+    code = Instructions.RM("LD", Instructions.R1, offset + 2, Instructions.FP, "");
     addInstruction(code);
 
-    code = block.createInstructionRM("ST", Instructions.R1, 0, Instructions.AC, "");
+    code = Instructions.RM("ST", Instructions.R1, 0, Instructions.AC, "");
     addInstruction(code);
 
-    code = block.createInstructionRM("ST", Instructions.R1, offset, Instructions.FP, "Value Stored!");
+    code = Instructions.RM("ST", Instructions.R1, offset, Instructions.FP, "Value Stored!");
     addInstruction(code);
 
-    buffer.addComment("--- Assignment Expression... ---");
+    buffer.addComment("--- Assignment Expression ---");
   }
 
   /**
@@ -247,20 +247,20 @@ public final class CodeGen implements AstVisitor {
     if (address) {
       // Create the instructions for loading the symbol address
       comment = String.format("Load address for var (%s)", name);
-      code = block.createInstructionRM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
+      code = Instructions.RM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
       addInstruction(code);
 
       // Create the instruction to read the effective address and save it to the part
       // of memory
       comment = String.format("&%s", name);
-      code = block.createInstructionRM("ST", Instructions.AC, offset, Instructions.FP, comment);
+      code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     } else { // Right hand side variable
       comment = String.format("Value of %s", name);
-      code = block.createInstructionRM("LD", Instructions.AC, symbol[0], symbol[1], comment);
+      code = Instructions.RM("LD", Instructions.AC, symbol[0], symbol[1], comment);
       addInstruction(code);
 
-      code = block.createInstructionRM("ST", Instructions.AC, offset, symbol[1], "");
+      code = Instructions.RM("ST", Instructions.AC, offset, symbol[1], "");
       addInstruction(code);
     }
   }
@@ -289,11 +289,11 @@ public final class CodeGen implements AstVisitor {
 
     // Load Value of left
     buffer.addComment(comment);
-    code = block.createInstructionRM("LD", Instructions.AC, offset + 1, Instructions.FP, "Load Left hand side");
+    code = Instructions.RM("LD", Instructions.AC, offset + 1, Instructions.FP, "Load Left hand side");
     addInstruction(code);
 
     // Load value of right
-    code = block.createInstructionRM("LD", Instructions.R1, offset + 2, Instructions.FP, "Load Right hand side");
+    code = Instructions.RM("LD", Instructions.R1, offset + 2, Instructions.FP, "Load Right hand side");
     addInstruction(code);
 
     if (operation <= OpExp.DIV) { // Arithmetic
@@ -315,7 +315,7 @@ public final class CodeGen implements AstVisitor {
           break;
       }
 
-      code = block.createInstructionRR(op, Instructions.AC, Instructions.AC, Instructions.R1, "Operation");
+      code = Instructions.RR(op, Instructions.AC, Instructions.AC, Instructions.R1, "Operation");
     } else {
     }
 
@@ -323,7 +323,7 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
 
     // Store value
-    code = block.createInstructionRM("ST", Instructions.AC, offset, Instructions.FP, "Store value of expression");
+    code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store value of expression");
     addInstruction(code);
   }
 
@@ -344,13 +344,12 @@ public final class CodeGen implements AstVisitor {
     String comment = String.format("Loading Constant %d to register %d and save to memory with offset %d", value,
         Instructions.AC, offset);
     buffer.addComment(comment);
-    code = block.createInstructionRM("LDC", Instructions.AC, -value, Instructions.AC, "");
+    code = Instructions.RM("LDC", Instructions.AC, -value, Instructions.AC, "");
     addInstruction(code);
 
     // Save to Memory
-    code = block.createInstructionRM("ST", Instructions.AC, offset, Instructions.FP, "");
+    code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "");
     addInstruction(code);
-
   }
 
   /**
