@@ -140,7 +140,7 @@ public final class CodeGen implements AstVisitor {
     Block functionBlock = block.createNewBlock(name, line);
 
     // Initialize the block
-    String code = functionBlock.createInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
+    String code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
 
     /**
