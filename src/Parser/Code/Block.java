@@ -5,19 +5,20 @@ import java.util.HashMap;
  * The block for a function in the instruction space
  */
 public class Block {
-  // The address of this block in memory
-  private int address;
-
-  // The current offset given the instructions that have been
-  private int offset = 1;
-
   // Keep track of the scopes within blocks in case we need to reference anything
   // in the tree
-  private Block outerScope;
-  private ArrayList<Block> innerScopes = new ArrayList<Block>();
+  public Block outerScope;
+  public ArrayList<Block> innerScopes = new ArrayList<Block>();
+
+  // The address of this block is the instruction line number
+  private int address;
+
+  // The current offset given the instructions that have been (start at -1 since
+  // the first position if the address)
+  private int offset = 1;
 
   // The Symbols and their address in this current scope
-  // The Integer holds two values: [local address, global address]
+  // The Integer holds two values: [offset, global/frame pointer]
   private HashMap<String, Integer[]> symbols = new HashMap<String, Integer[]>();
 
   /**
@@ -25,9 +26,6 @@ public class Block {
    */
   public Block() {
     this.address = 0;
-
-    // Add the return instruction
-    // addInstructionRM("ST", Instructions.AC, Instructions.FP, "store return");
   }
 
   /**
@@ -84,6 +82,7 @@ public class Block {
 
   /**
    * Create an RM instruction. Example: 1: LD 7,-1(5)
+   * Note: This does not increment the offset
    *
    * @param operation The instruction
    * @param r         The destination register
@@ -93,8 +92,6 @@ public class Block {
    */
   public String createInstructionRM(String operation, int r, int offset, int address, String comment) {
     String code = Instructions.RM(operation, r, -offset, address, comment);
-
-    incrementOffset();
 
     return code;
   }
@@ -120,10 +117,11 @@ public class Block {
    * Cretae an address for the symbol. If the global address does not matter, set
    * it to -1
    * 
-   * @param id     The id of the symbol
-   * @param global The global address within the instruction set
+   * @param id      The id of the symbol
+   * @param pointer The pointer for which this address is a part of (global
+   *                pointer/frame pointer)
    */
-  public void createAddress(String id, int global) throws Exception {
+  public void createAddress(String id, int pointer) throws Exception {
     // Check if the address has already been created in this scope
     Integer[] address;
 
@@ -134,7 +132,7 @@ public class Block {
       throw new Exception(message);
     }
 
-    address = new Integer[] { offset, global };
+    address = new Integer[] { offset, pointer };
     symbols.put(id, address);
 
     // Increase the offset
@@ -153,7 +151,7 @@ public class Block {
     // Add the block to the new scope
     innerScopes.add(innerBlock);
 
-    incrementOffset();
+    // incrementOffset();
 
     return innerBlock;
   }

@@ -1,1 +1,1 @@
-void main(int x) {}
+void main(int x) { x = x + 3; }
