@@ -3,5 +3,5 @@
 void main(void) {
   int y[2];
 
-  y[1 + 1] = 2;
+  y[1 + 1] = y[3] + 2;
 }
