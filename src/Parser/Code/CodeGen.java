@@ -133,14 +133,15 @@ public final class CodeGen implements AstVisitor {
    */
   public void visit(FunctionDec function, Block block) {
     // The name of the function
+    String code;
     String name = function.name;
 
     // Create a new block
-    buffer.addComment(String.format("Entering Function Declaration (%s)", name));
+    buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
     Block functionBlock = block.createNewBlock(name, line);
 
     // Initialize the block
-    String code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
+    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
 
     /**
@@ -157,6 +158,12 @@ public final class CodeGen implements AstVisitor {
 
     // Add the function body to the function block
     visit(function.body, functionBlock, true, block.getOffset());
+
+    // Return to caller
+    code = Instructions.RM("LD", Instructions.PC, -1, Instructions.FP, "Return to caller");
+    addInstruction(code);
+
+    buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
   }
 
   /**
