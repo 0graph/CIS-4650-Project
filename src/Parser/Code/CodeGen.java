@@ -69,6 +69,8 @@ public final class CodeGen implements AstVisitor {
       visit((ArrayDec) ast, block);
     } else if (ast instanceof IndexVar) {
       visit((IndexVar) ast, block, flag, offset);
+    } else if (ast instanceof CallExp) {
+      visit((CallExp) ast, block, offset);
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -439,7 +441,7 @@ public final class CodeGen implements AstVisitor {
    * @param level  The current level of nesting within calls (note that calls can
    *               nest and have sub-levels)
    */
-  public void visit(CallExp call, Block block, int offset, int level) {
+  public void visit(CallExp call, Block block, int offset) {
     int newOffset = offset;
 
     String name = call.func;
@@ -480,9 +482,14 @@ public final class CodeGen implements AstVisitor {
     buffer.addComment(comment);
   }
 
-   * Add an instruction to the instruction string buffer
-   *
-   * @param code
+  *
+
+  Add an
+  instruction to
+  the instruction
+  string buffer**
+
+  @param code
    */
   private void addInstruction(String code) {
     line = buffer.addInstruction(code);
