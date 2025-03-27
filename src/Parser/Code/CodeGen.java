@@ -303,9 +303,38 @@ public final class CodeGen implements AstVisitor {
     String name = variable.name;
     Exp index = variable.index;
 
+    String code;
+    String comment;
+
+    // Get the base address of the array
+    Integer[] symbol = block.getSymbolAddress(name);
+    Integer base = symbol[0];
+    Integer pointer = symbol[1];
+
     // Get the value for the index that will be updated
-    // TODO: Continue from here
     visit(index, block, false, offset + 1);
+
+    // Load the Address to the position in memory
+    if (address) {
+      // Add the Index to a register to then calculate the offset of the array index
+      comment = String.format(
+          "Load index calculated at offset %d and base address of array %s[] and save it to offset %d",
+          offset + 1, name, offset);
+      buffer.addComment(comment);
+
+      code = Instructions.RM("LDA", Instructions.AC, base, pointer, "Load address to register");
+      addInstruction(code);
+
+      code = Instructions.RM("LD", Instructions.R1, offset + 1, Instructions.FP, "Load index value to register");
+      addInstruction(code);
+
+      code = Instructions.RR("ADD", Instructions.AC, Instructions.AC, Instructions.R1, "Add the offset to the address");
+      addInstruction(code);
+
+      comment = String.format("Store the index at offset %d", offset);
+      code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
+      addInstruction(code);
+    }
   }
 
   /**

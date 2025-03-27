@@ -226,7 +226,7 @@ public class Block {
 
     // Go up
     while (current != null) {
-      Integer[] address = current.getSymbolAddress(id);
+      Integer[] address = current.getSymbolAddressInScope(id);
 
       if (address != null) {
         return address;
