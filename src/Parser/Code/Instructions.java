@@ -59,7 +59,6 @@ public final class Instructions {
    * @param comment   Comment
    */
   public static String RM_ABS(String operation, int register, int line, int address, int pointer, String comment) {
-
     String code = String.format("%s %d,%d(%d) %s\n", operation, register, address - (line + 1), pointer, comment);
 
     return code;

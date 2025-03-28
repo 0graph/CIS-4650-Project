@@ -15,7 +15,7 @@ public final class CodeGen implements AstVisitor {
   private int line = 0;
 
   // Create the global block that contains everything
-  private Block block = new Block();
+  private Block block;
 
   /**
    * Setup runtime environment for code
@@ -25,6 +25,10 @@ public final class CodeGen implements AstVisitor {
     this.frameOffset = this.globalOffset;
 
     this.buffer = new Buffer("test.tm");
+    this.block = new Block();
+
+    // Since this is the global block we don't want any preset offsets
+    block.setOffset(0);
   }
 
   /**
@@ -33,6 +37,7 @@ public final class CodeGen implements AstVisitor {
   public void compile(Ast ast) {
     String code;
     int[] savedLine = new int[] { 0, 0 }; // The saved lines for backpatching
+    int line = 0;
 
     // Generate the prelude for the code
     prelude();
@@ -41,10 +46,12 @@ public final class CodeGen implements AstVisitor {
     savedLine[0] = buffer.skipLines(1);
 
     // TODO: Add the I/O Routines
+    code = Instructions.RR("ADD", 0, 0, 0, "Bogus");
+    addInstruction(code);
 
     // Back patch
     savedLine[1] = buffer.skipLines(0);
-    buffer.lineBackup(savedLine[0]);
+    line = buffer.lineBackup(savedLine[0]);
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, savedLine[1], Instructions.PC, "Jump around i/o code");
     addInstruction(code);
     buffer.lineRestore();
@@ -55,7 +62,7 @@ public final class CodeGen implements AstVisitor {
 
     // Back patch
     savedLine[1] = buffer.skipLines(0);
-    buffer.lineBackup(savedLine[0]);
+    line = buffer.lineBackup(savedLine[0]);
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, savedLine[1], Instructions.PC,
         "Jump around function bodies");
     addInstruction(code);
@@ -101,6 +108,7 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, "Load Accumulator with return pointer");
     addInstruction(code);
 
+    System.out.println("Main address: " + main[0]);
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, main[0], Instructions.PC, "Jump to Location");
     addInstruction(code);
 
@@ -182,7 +190,6 @@ public final class CodeGen implements AstVisitor {
    *
    * @param function The declaration list
    * @param block    The current block for a function
-   * @param flag     Flag for info
    */
   public void visit(FunctionDec function, Block block) {
     // The name of the function
@@ -191,11 +198,11 @@ public final class CodeGen implements AstVisitor {
 
     // Create a new block
     buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
-    Block functionBlock = block.createNewBlock(name, line);
-
     // Initialize the block
     code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
+
+    Block functionBlock = block.createNewBlock(name, line - 1);
 
     /**
      * This will also have to be refactored a tad bit.
@@ -746,10 +753,14 @@ public final class CodeGen implements AstVisitor {
     Exp body = expression.then;
     Exp _else = expression._else;
 
+    Integer[] savedLines = new Integer[] { 0, 0 }; // Used for backpatching
+
     buffer.addComment("--- If Expression ---");
 
     // Evaluate the test first
     visit(test, block, false, offset + 1);
+
+    // Create the code based on the offset
 
     buffer.addComment("--- If Expression ---");
   }

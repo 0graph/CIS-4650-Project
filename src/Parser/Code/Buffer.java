@@ -82,13 +82,15 @@ public class Buffer {
    *
    * @param location The line number to jump to
    */
-  public void lineBackup(int location) {
+  public int lineBackup(int location) {
     if (location > maxLine) {
       String comment = String.format("BUG in line backup for %d lines", location);
       buffer.append(comment);
     }
 
     line = location;
+
+    return line;
   }
 
   /**

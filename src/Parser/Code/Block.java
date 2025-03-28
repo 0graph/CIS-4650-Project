@@ -76,6 +76,15 @@ public class Block {
   }
 
   /**
+   * Set the offset to an arbitrary value
+   *
+   * @param value The value to update the offset to
+   */
+  public void setOffset(int value) {
+    offset = value;
+  }
+
+  /**
    * increment the nesting level by 1
    *
    * @param amount The amount to increment it by
@@ -164,7 +173,7 @@ public class Block {
    */
   public Block createNewBlock(String name, int address) {
     // Add the current block as a symbol
-    Integer[] symbol = new Integer[] { offset, address };
+    Integer[] symbol = new Integer[] { address, Instructions.GP };
     symbols.put(name, symbol);
 
     Block innerBlock = createNewBlock(address);
