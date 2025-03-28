@@ -46,51 +46,51 @@
 32: ST 0,-4(5) Store value of expression
 * --- Operation Expression ---
 * --- Assignment Expression ---
-33: LDA 0,-2(5) Load address for var (a)
-34: ST 0,-6(5) &a
+34: LDA 0,-2(5) Load address for var (a)
+35: ST 0,-6(5) &a
 * --- Operation Expression ---
-35: LD 0,-2(5) Value of a
-36: ST 0,-8(5) 
+36: LD 0,-2(5) Value of a
+37: ST 0,-8(5) 
 * Loading Constant 1 to register 0 and save to memory with offset 9
-37: LDC 0,1(0) 
-38: ST 0,-9(5) 
+38: LDC 0,1(0) 
+39: ST 0,-9(5) 
 * Save the result of the operation expression to the address offset 7
-39: LD 0,-8(5) Load Left hand side
-40: LD 1,-9(5) Load Right hand side
-41: ADD 0,0,1 Operation
-42: ST 0,-7(5) Store value of expression
+40: LD 0,-8(5) Load Left hand side
+41: LD 1,-9(5) Load Right hand side
+42: ADD 0,0,1 Operation
+43: ST 0,-7(5) Store value of expression
 * --- Operation Expression ---
 * Store back the result of the assignment operation
-43: LD 0,-6(5) Load to memory the address and result value
-44: LD 1,-7(5) 
-45: ST 1,0(0) 
-46: ST 1,-5(5) Value Stored!
+44: LD 0,-6(5) Load to memory the address and result value
+45: LD 1,-7(5) 
+46: ST 1,0(0) 
+47: ST 1,-5(5) Value Stored!
 * --- Assignment Expression ---
-47: LDA 7,26(7) Jump to test after body
+48: LDA 7,-21(7) Jump to test after body
 * Load the test value to register 0
-32: LD 0,-4(5) Load test value
-33: JLE 0,-15(7) Jump to end if test <= 0 (false)
+33: LD 0,-4(5) Load test value
+34: JLE 0,-48(7) Jump to end if test <= 0 (false)
 * --- Calling output() ---
 * Offset: 3
 * Adding argument 1
-34: LD 0,-2(5) Value of a
-35: ST 0,-4(5) 
-36: ST 0,-5(5) Storing argument
+49: LD 0,-2(5) Value of a
+50: ST 0,-4(5) 
+51: ST 0,-5(5) Storing argument
 * Create new activation record
-37: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
-38: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
-39: LDA 0,-1(7) Save the return address in the accumulator
-40: LDA 7,-34(7) Jump to output()
-41: LD 5,0(5) Pop the frame and return to the current frame
+52: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
+53: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
+54: LDA 0,1(7) Save the return address in the accumulator
+55: LDA 7,-48(7) Jump to output()
+56: LD 5,0(5) Pop the frame and return to the current frame
 * --- Calling output() ---
-42: LD 7,-1(5) Return to caller
+57: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,31(7) Jump around function bodies
+11: LDA 7,46(7) Jump around function bodies
 * --- Final ---
-48: ST 5,0(5) Original Pointer
-49: LDA 5,0(5) Push Main Frame Pointer
-50: LDA 0,-1(7) Load Accumulator with return pointer
-51: LDA 7,-40(7) Jump to Location
-52: LD 5,0(5) Pop Main Frame
-53: HALT 0,0,0 Exit
+58: ST 5,0(5) Original Pointer
+59: LDA 5,0(5) Push Main Frame Pointer
+60: LDA 0,1(7) Load Accumulator with return pointer
+61: LDA 7,-50(7) Jump to Location
+62: LD 5,0(5) Pop Main Frame
+63: HALT 0,0,0 Exit
 * --- Final ---

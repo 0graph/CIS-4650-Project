@@ -502,24 +502,23 @@ public final class CodeGen implements AstVisitor {
     String code;
     String comment;
 
+    Integer[] savedLines = new Integer[] { 0, 0, 0 };
+
     Exp test = exp.test;
     Exp body = exp.body;
 
     buffer.addComment("--- While Expression ---");
 
     // setup the inner instructions
-    int testLineBegin = line;
+    savedLines[0] = buffer.skipLines(0);
     visit(test, block, false, offset + 1);
-    int bodyLineBegin = line;
+    savedLines[1] = buffer.skipLines(1);
     visit(body, block, false, offset + 2);
+    savedLines[2] = buffer.skipLines(0);
 
-    code = Instructions.RM("LDA", Instructions.PC, testLineBegin - line, Instructions.PC, "Jump to test after body");
+    code = Instructions.RM("LDA", Instructions.PC, savedLines[0], Instructions.PC, "Jump to test after body");
     addInstruction(code);
     int bodyLineEnd = line;
-
-    System.out.println("Test Line Begin: " + testLineBegin);
-    System.out.println("Body Line Begin: " + bodyLineBegin);
-    System.out.println("Body Line End: " + bodyLineEnd);
 
     // While Steps:
     // TEST: ... // result should be in register 0
@@ -532,14 +531,16 @@ public final class CodeGen implements AstVisitor {
     comment = String.format("Load the test value to register %d", Instructions.AC);
     buffer.addComment(comment);
 
-    buffer.lineBackup(bodyLineBegin - 1); // place testing code before the body
+    buffer.lineBackup(savedLines[1]); // place testing code before the body
 
     code = Instructions.RM("LD", Instructions.AC, offset + 1, Instructions.FP, "Load test value");
     addInstruction(code);
     
     // Jump to the end if the test is false
-    code = Instructions.RM("JLE", Instructions.AC, bodyLineEnd - line, Instructions.PC, "Jump to end if test <= 0 (false)");
+    code = Instructions.RM("JLE", Instructions.AC, savedLines[2], Instructions.PC, "Jump to end if test <= 0 (false)");
     addInstruction(code);
+
+    buffer.lineRestore();
   }
 
   /**
