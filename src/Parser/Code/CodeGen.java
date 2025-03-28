@@ -581,7 +581,7 @@ public final class CodeGen implements AstVisitor {
       // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it
       // lands on
       // Jump to the next instruction if the result is true
-      code = Instructions.RM(op, Instructions.AC, 2, Instructions.PC, "Jump to next instruction if true");
+      code = Instructions.RM(op, Instructions.AC, -2, Instructions.PC, "Jump to next instruction if true");
       addInstruction(code);
 
       // Load 0 (false) to the register
@@ -591,7 +591,7 @@ public final class CodeGen implements AstVisitor {
       // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it
       // lands on
       // Unconditional Jump to skip the true instruction of the result is false
-      code = Instructions.RM("LDA", Instructions.PC, 1, Instructions.PC, "Unconditional Jump");
+      code = Instructions.RM("LDA", Instructions.PC, -1, Instructions.PC, "Unconditional Jump");
       addInstruction(code);
 
       // Load 1 (true) to the register
@@ -604,16 +604,16 @@ public final class CodeGen implements AstVisitor {
           // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it
           // lands on
           // if LHS <= 0 JUMP to END
-          code = Instructions.RM("JLE", Instructions.AC, 4, Instructions.PC, "Jump to END if LHS <= 0");
+          code = Instructions.RM("JLE", Instructions.AC, -4, Instructions.PC, "Jump to END if LHS <= 0");
           addInstruction(code);
           // if RHS <= 0 JUMP to ZERO
-          code = Instructions.RM("JLE", Instructions.R1, 2, Instructions.PC, "Jump to ZERO if RHS <= 0");
+          code = Instructions.RM("JLE", Instructions.R1, -2, Instructions.PC, "Jump to ZERO if RHS <= 0");
           addInstruction(code);
           // LHS = 1
-          code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "LHS = 1");
+          code = Instructions.RM("LDC", Instructions.AC, -1, Instructions.AC, "LHS = 1");
           addInstruction(code);
           // JUMP to END
-          code = Instructions.RM("LDA", Instructions.PC, 1, Instructions.PC, "Jump to END");
+          code = Instructions.RM("LDA", Instructions.PC, -1, Instructions.PC, "Jump to END");
           addInstruction(code);
           // ZERO: LHS = 0
           code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "LHS = 0");
@@ -624,19 +624,19 @@ public final class CodeGen implements AstVisitor {
           // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it
           // lands on
           // if LHS > 0 JUMP to ONE
-          code = Instructions.RM("JGT", Instructions.AC, 3, Instructions.PC, "Jump to ONE if LHS > 0");
+          code = Instructions.RM("JGT", Instructions.AC, -3, Instructions.PC, "Jump to ONE if LHS > 0");
           addInstruction(code);
           // if RHS > 0 JUMP to ONE
-          code = Instructions.RM("JGT", Instructions.R1, 2, Instructions.PC, "Jump to ONE if RHS > 0");
+          code = Instructions.RM("JGT", Instructions.R1, -2, Instructions.PC, "Jump to ONE if RHS > 0");
           addInstruction(code);
           // LHS = 0
           code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "LHS = 0");
           addInstruction(code);
           // JUMP to END
-          code = Instructions.RM("LDA", Instructions.PC, 1, Instructions.PC, "Jump to END");
+          code = Instructions.RM("LDA", Instructions.PC, -1, Instructions.PC, "Jump to END");
           addInstruction(code);
           // ONE: LHS = 1
-          code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "LHS = 1");
+          code = Instructions.RM("LDC", Instructions.AC, -1, Instructions.AC, "LHS = 1");
           // END:
           break;
 
