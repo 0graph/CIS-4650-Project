@@ -14,9 +14,8 @@ public final class CodeGen implements AstVisitor {
   // The current instruction
   private int line = 0;
 
-  // CONTINUE: Add a small symbol table implemention that is a tree that just
-  // keeps track of the address of certain instructions.
-  // Debating if the blocks function should be used for this or not...
+  // Create the global block that contains everything
+  private Block block = new Block();
 
   /**
    * Setup runtime environment for code
@@ -33,12 +32,13 @@ public final class CodeGen implements AstVisitor {
    */
   public void compile(Ast ast) {
     // Create the Global Block
-    Block block = new Block();
 
     // Generate the prelude for the code
     prelude();
 
     visit(ast, block, false, 0);
+
+    finale();
   }
 
   /**
@@ -60,6 +60,35 @@ public final class CodeGen implements AstVisitor {
 
     buffer.addComment("End Standard Prelude");
 
+  }
+
+  /**
+   * Generate the final part of the program
+   */
+  private void finale() {
+    Integer[] main = block.getSymbolAddress("main");
+    String code;
+    buffer.addComment("--- Final ---");
+
+    code = Instructions.RM("ST", Instructions.FP, block.getOffset(), Instructions.FP, "Original Pointer");
+    addInstruction(code);
+
+    code = Instructions.RM("LDA", Instructions.FP, block.getOffset(), Instructions.FP, "Push Main Frame Pointer");
+    addInstruction(code);
+
+    code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, "Load Accumulator with return pointer");
+    addInstruction(code);
+
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line, main[0], Instructions.PC, "Jump to Location");
+    addInstruction(code);
+
+    code = Instructions.RM("LD", Instructions.FP, 0, Instructions.FP, "Pop Main Frame");
+    addInstruction(code);
+
+    code = Instructions.RR("HALT", 0, 0, 0, "Exit");
+    addInstruction(code);
+
+    buffer.addComment("--- Final ---");
   }
 
   /**
