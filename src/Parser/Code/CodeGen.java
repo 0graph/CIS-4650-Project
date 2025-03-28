@@ -31,12 +31,35 @@ public final class CodeGen implements AstVisitor {
    * Compile the code given
    */
   public void compile(Ast ast) {
-    // Create the Global Block
+    String code;
+    int[] savedLine = new int[] { 0, 0 }; // The saved lines for backpatching
 
     // Generate the prelude for the code
     prelude();
 
+    // Back patch current line
+    savedLine[0] = buffer.skipLines(1);
+
+    // TODO: Add the I/O Routines
+
+    // Back patch
+    savedLine[1] = buffer.skipLines(0);
+    buffer.lineBackup(savedLine[0]);
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line, savedLine[1], Instructions.PC, "Jump around i/o code");
+    addInstruction(code);
+    buffer.lineRestore();
+
+    savedLine[0] = buffer.skipLines(1);
+
     visit(ast, block, false, 0);
+
+    // Back patch
+    savedLine[1] = buffer.skipLines(0);
+    buffer.lineBackup(savedLine[0]);
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line, savedLine[1], Instructions.PC,
+        "Jump around function bodies");
+    addInstruction(code);
+    buffer.lineRestore();
 
     finale();
   }
@@ -59,7 +82,6 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
 
     buffer.addComment("End Standard Prelude");
-
   }
 
   /**
@@ -710,10 +732,7 @@ public final class CodeGen implements AstVisitor {
   }
 
   /*
-   * Add an
-   * instruction to
-   * the instruction
-   * string buffer**
+   * Add an instruction to the instruction string buffer
    * 
    * @param code
    */
