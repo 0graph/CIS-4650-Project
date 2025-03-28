@@ -1,7 +1,10 @@
 /* void main(int x) { x = x + 3; } */
 
-int x;
+void main(void) {
+  int x;
+  x = 0;
 
-void input(void) { int z; }
-void gcd(void) { int c; }
-void main(void) { gcd(input()); }
+  if (x == 0) {
+    x = 1;
+  }
+}
