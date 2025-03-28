@@ -46,8 +46,7 @@ public final class CodeGen implements AstVisitor {
     savedLine[0] = buffer.skipLines(1);
 
     // TODO: Add the I/O Routines
-    code = Instructions.RR("ADD", 0, 0, 0, "Bogus");
-    addInstruction(code);
+    ioSetup();
 
     // Back patch
     savedLine[1] = buffer.skipLines(0);
@@ -57,6 +56,7 @@ public final class CodeGen implements AstVisitor {
     buffer.lineRestore();
 
     savedLine[0] = buffer.skipLines(1);
+
 
     visit(ast, block, false, 0);
 
@@ -71,6 +71,50 @@ public final class CodeGen implements AstVisitor {
     finale();
   }
 
+  public void ioSetup() {
+    String code;
+    int pointer;
+    // I/O instructions
+    // INPUT
+    buffer.addComment("code for input routine");
+    pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
+
+    // Create an address for this variable in this scope
+
+    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
+    addInstruction(code);
+
+    // add function address for input
+    block.createNewBlock("input", line);
+
+    code = Instructions.RR("IN", Instructions.AC, 0, 0, "Read integer value");
+    addInstruction(code);
+
+    code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "return to caller");
+    addInstruction(code);
+
+    // OUTPUT
+    buffer.addComment("code for output routine");
+    pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
+
+    // Create an address for this variable in this scope
+    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
+    addInstruction(code);
+
+    // add function address for output
+    block.createNewBlock("output", line);
+
+    code = Instructions.RM("LD", Instructions.AC, 2, Instructions.FP, "Load value to output");
+    addInstruction(code);
+
+    code = Instructions.RR("OUT", Instructions.AC, 0, 0, "Output integer value");
+    addInstruction(code);
+
+    code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "return to caller");
+    addInstruction(code);
+    // END I/O
+  }
+
   /**
    * Generate the prelude for the code
    * it's the standard code that is generated at the start of the file
@@ -79,6 +123,7 @@ public final class CodeGen implements AstVisitor {
     String code;
     buffer.addComment("Standard Prelude");
 
+    // PRELUDE
     code = Instructions.RM("LD", Instructions.GP, 0, Instructions.AC, "Load the global pointer with max address");
     addInstruction(code);
 
@@ -87,6 +132,7 @@ public final class CodeGen implements AstVisitor {
 
     code = Instructions.RM("ST", Instructions.AC, 0, Instructions.AC, "Clear Location 0");
     addInstruction(code);
+    // END PRELUDE
 
     buffer.addComment("End Standard Prelude");
   }
@@ -119,6 +165,8 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
 
     buffer.addComment("--- Final ---");
+    // END PRELUDE
+
   }
 
   /**
