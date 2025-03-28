@@ -211,7 +211,7 @@ public final class CodeGen implements AstVisitor {
     visit(function.body, functionBlock, true, block.getOffset());
 
     // Return to caller
-    code = Instructions.RM("LD", Instructions.PC, -1, Instructions.FP, "Return to caller");
+    code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "Return to caller");
     addInstruction(code);
 
     buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
