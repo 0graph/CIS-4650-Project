@@ -1,4 +1,7 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileWriter;
 
 /**
  * The file that has all of the code instructions being generated in an internal
@@ -98,6 +101,55 @@ public class Buffer {
    */
   public void lineRestore() {
     line = maxLine;
+  }
+
+  /**
+   * Generate a file from the string buffer created
+   *
+   * @param directory The complete path for this file relative to where the
+   *                  program runs
+   */
+  public void generateFile(String directory) {
+    String fileName = String.format("%s/%s.tm", directory, name);
+
+    generate(fileName);
+  }
+
+  /**
+   * Generate a file from the string buffer created
+   */
+  public void generateFile() {
+    generateFile(name);
+  }
+
+  /**
+   * Generate a file with the buffered text
+   * 
+   * @param name The name of the file
+   */
+  private void generate(String name) {
+    String text = buffer.toString();
+    File file = new File(name);
+
+    try {
+      System.out.println("file Exits: " + file.exists());
+
+      if (!file.exists()) {
+        file.createNewFile();
+      }
+
+      FileWriter writer = new FileWriter(file);
+      writer.write(text);
+      writer.close();
+
+      System.out.println("File " + name + " Generated");
+    } catch (FileNotFoundException e) {
+      System.out.println("File Not Found: " + name);
+      System.out.println(e);
+    } catch (IOException e) {
+      System.out.println("Could not generate: " + name);
+      System.out.println(e);
+    }
   }
 
   /**

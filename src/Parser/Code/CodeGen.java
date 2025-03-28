@@ -20,11 +20,12 @@ public final class CodeGen implements AstVisitor {
   /**
    * Setup runtime environment for code
    */
-  public CodeGen() {
+  public CodeGen(String file) {
     this.globalOffset = 0;
     this.frameOffset = this.globalOffset;
 
-    this.buffer = new Buffer("test.tm");
+    String name = getFileNameOnly(file);
+    this.buffer = new Buffer(name);
     this.block = new Block();
 
     // Since this is the global block we don't want any preset offsets
@@ -153,7 +154,6 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, "Load Accumulator with return pointer");
     addInstruction(code);
 
-    System.out.println("Main address: " + main[0]);
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, main[0], Instructions.PC, "Jump to Location");
     addInstruction(code);
 
@@ -165,7 +165,6 @@ public final class CodeGen implements AstVisitor {
 
     buffer.addComment("--- Final ---");
     // END PRELUDE
-
   }
 
   /**
@@ -829,6 +828,15 @@ public final class CodeGen implements AstVisitor {
     buffer.addComment("--- If Expression ---");
   }
 
+  /**
+   * Generate the file based on the text buffered
+   * 
+   * @param directory
+   */
+  public void generateFile(String directory) {
+    buffer.generateFile(directory);
+  }
+
   /*
    * Add an instruction to the instruction string buffer
    * 
@@ -836,6 +844,36 @@ public final class CodeGen implements AstVisitor {
    */
   private void addInstruction(String code) {
     line = buffer.addInstruction(code);
+  }
+
+  /**
+   * Get the name of the file only and strip out all other information
+   *
+   * @param fileName The complete filename
+   */
+  private String getFileNameOnly(String fileName) {
+    String name = fileName;
+
+    // Get the last directory index
+    int slashIndex = name.lastIndexOf('/');
+    if (slashIndex != -1) {
+      name = name.substring(slashIndex + 1);
+    }
+
+    // Get the filetype extension removed
+    int lastDotIndex = name.lastIndexOf('.');
+    if (lastDotIndex != -1) {
+      // Remove the trailing extension
+      name = name.substring(0, lastDotIndex);
+    }
+
+    // Any extra dots
+    int innerDotIndex = name.lastIndexOf('.');
+    if (innerDotIndex != -1) {
+      name = name.substring(innerDotIndex + 1);
+    }
+
+    return name;
   }
 
   /**
