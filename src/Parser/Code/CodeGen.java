@@ -511,11 +511,13 @@ public final class CodeGen implements AstVisitor {
     // setup the inner instructions
     savedLines[0] = buffer.skipLines(0);
     visit(test, block, false, offset + 1);
-    savedLines[1] = buffer.skipLines(1);
+    savedLines[1] = buffer.skipLines(2);
     visit(body, block, false, offset + 2);
     savedLines[2] = buffer.skipLines(0);
 
-    code = Instructions.RM("LDA", Instructions.PC, savedLines[0], Instructions.PC, "Jump to test after body");
+    System.out.println("Saved Lines: " + savedLines[0] + " " + savedLines[1] + " " + savedLines[2]);
+
+    code = Instructions.RM("LDA", Instructions.PC, line - savedLines[0] - 1, Instructions.PC, "Jump to test after body");
     addInstruction(code);
     int bodyLineEnd = line;
 
@@ -536,7 +538,7 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
     
     // Jump to the end if the test is false
-    code = Instructions.RM("JLE", Instructions.AC, savedLines[2], Instructions.PC, "Jump to end if test <= 0 (false)");
+    code = Instructions.RM("JLE", Instructions.AC, line - savedLines[2], Instructions.PC, "Jump to end if test <= 0 (false)");
     addInstruction(code);
 
     buffer.lineRestore();

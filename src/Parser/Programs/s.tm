@@ -66,7 +66,7 @@
 47: ST 1,0(0) 
 48: ST 1,-5(5) Value Stored!
 * --- Assignment Expression ---
-49: LDA 7,-25(7) Jump to test after body
+49: LDA 7,-27(7) Jump to test after body
 * Load the test value to register 0
 33: LD 0,-4(5) Load test value
 34: JLE 0,15(7) Jump to end if test <= 0 (false)
