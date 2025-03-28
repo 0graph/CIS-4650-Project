@@ -148,6 +148,8 @@ public final class CodeGen implements AstVisitor {
       visit((CallExp) ast, block, offset);
     } else if (ast instanceof BoolExp) {
       visit((BoolExp) ast, block, offset);
+    } else if (ast instanceof IfExp) {
+      visit((IfExp) ast, block, offset);
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -444,6 +446,8 @@ public final class CodeGen implements AstVisitor {
     Exp right = expression.rhs;
     int operation = expression.Op;
 
+    buffer.addComment("--- Operation Expression ---");
+
     // Setup the instructions necessary
     visit(left, block, false, offset + 1);
     visit(right, block, false, offset + 2);
@@ -528,6 +532,7 @@ public final class CodeGen implements AstVisitor {
       // Load 0 (false) to the register
       code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "Load 0 (false)");
       addInstruction(code);
+
       // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it
       // lands on
       // Unconditional Jump to skip the true instruction of the result is false
@@ -535,8 +540,7 @@ public final class CodeGen implements AstVisitor {
       addInstruction(code);
 
       // Load 1 (true) to the register
-      code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "Load 1 (true)");
-      addInstruction(code);
+      code = Instructions.RM("LDC", Instructions.AC, -1, Instructions.AC, "Load 1 (true)");
 
     } else { // Logical
       // the code is generated inside the switch because AND / OR are special cases
@@ -558,10 +562,9 @@ public final class CodeGen implements AstVisitor {
           addInstruction(code);
           // ZERO: LHS = 0
           code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "LHS = 0");
-          addInstruction(code);
           // END
-
           break;
+
         case 13: // or (special case)
           // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it
           // lands on
@@ -579,9 +582,9 @@ public final class CodeGen implements AstVisitor {
           addInstruction(code);
           // ONE: LHS = 1
           code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "LHS = 1");
-          addInstruction(code);
           // END:
           break;
+
         default:
           System.out.println("Unknown Operation: " + operation);
           break;
@@ -594,6 +597,8 @@ public final class CodeGen implements AstVisitor {
     // Store value
     code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store value of expression");
     addInstruction(code);
+
+    buffer.addComment("--- Operation Expression ---");
   }
 
   /**
@@ -727,6 +732,26 @@ public final class CodeGen implements AstVisitor {
     comment = String.format("--- Calling %s() ---", name);
     buffer.addComment(comment);
 
+  }
+
+  /**
+   * Visit an if statement and check the boolean expresion inside
+   *
+   * @param expression
+   * @param block      the current block
+   * @param offset     The offset in the code block
+   */
+  public void visit(IfExp expression, Block block, int offset) {
+    Exp test = expression.test;
+    Exp body = expression.then;
+    Exp _else = expression._else;
+
+    buffer.addComment("--- If Expression ---");
+
+    // Evaluate the test first
+    visit(test, block, false, offset + 1);
+
+    buffer.addComment("--- If Expression ---");
   }
 
   /*
