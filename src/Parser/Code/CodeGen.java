@@ -205,6 +205,8 @@ public final class CodeGen implements AstVisitor {
       visit((BoolExp) ast, block, offset);
     } else if (ast instanceof IfExp) {
       visit((IfExp) ast, block, offset);
+    } else if (ast instanceof WhileExp) {
+      visit((WhileExp) ast, block, offset);
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -488,6 +490,57 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, pointer, comment);
       addInstruction(code);
     }
+  }
+
+  /**
+   * Visit a while expression
+   * 
+   * @param exp    The expression
+   * @param block  The current code block
+   * @param offset The offset
+   */
+  public void visit(WhileExp exp, Block block, int offset) {
+    String code;
+    String comment;
+
+    Exp test = exp.test;
+    Exp body = exp.body;
+
+    buffer.addComment("--- While Expression ---");
+
+    // setup the inner instructions
+    int testLineBegin = line;
+    visit(test, block, false, offset + 1);
+    int bodyLineBegin = line;
+    visit(body, block, false, offset + 2);
+
+    code = Instructions.RM("LDA", Instructions.PC, testLineBegin - line, Instructions.PC, "Jump to test after body");
+    addInstruction(code);
+    int bodyLineEnd = line;
+
+    System.out.println("Test Line Begin: " + testLineBegin);
+    System.out.println("Body Line Begin: " + bodyLineBegin);
+    System.out.println("Body Line End: " + bodyLineEnd);
+
+    // While Steps:
+    // TEST: ... // result should be in register 0
+    // JLE 0, END // Jump to end if test <= 0 (false)
+    // body ...
+    // LDA TEST // Jump to test always after body
+    // END: ... // End of the while loop (after condition is false)
+
+    // Load the test value
+    comment = String.format("Load the test value to register %d", Instructions.AC);
+    buffer.addComment(comment);
+
+    buffer.lineBackup(bodyLineBegin - 1); // place testing code before the body
+
+    code = Instructions.RM("LD", Instructions.AC, offset + 1, Instructions.FP, "Load test value");
+    addInstruction(code);
+    
+    // Jump to the end if the test is false
+    code = Instructions.RM("JLE", Instructions.AC, bodyLineEnd - line, Instructions.PC, "Jump to end if test <= 0 (false)");
+    addInstruction(code);
   }
 
   /**
