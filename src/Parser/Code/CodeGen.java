@@ -131,7 +131,6 @@ public final class CodeGen implements AstVisitor {
   public void visit(Ast ast, Block block, boolean flag, int offset) {
     if (ast instanceof ListAst) {
       visit((ListAst) ast, block, offset);
-      // visit((ListAst) ast, line, flag);
     } else if (ast instanceof FunctionDec) {
       visit((FunctionDec) ast, block);
     } else if (ast instanceof SimpleDec) {
@@ -214,10 +213,15 @@ public final class CodeGen implements AstVisitor {
      */
 
     // Add the params to the function block
-    visit(function.params, functionBlock, block.getOffset());
+    visit(function.params, functionBlock, functionBlock.getOffset());
 
-    // Add the function body to the function block
-    visit(function.body, functionBlock, true, block.getOffset());
+    // Visit the declarations first
+    visit(((CompoundExp) function.body).decs, functionBlock,
+        functionBlock.getOffset());
+
+    // Visit the actual calls
+    visit(((CompoundExp) function.body).exps, functionBlock,
+        functionBlock.getOffset());
 
     // Return to caller
     code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "Return to caller");
@@ -749,6 +753,8 @@ public final class CodeGen implements AstVisitor {
    * @param offset     The offset in the code block
    */
   public void visit(IfExp expression, Block block, int offset) {
+    String code;
+
     Exp test = expression.test;
     Exp body = expression.then;
     Exp _else = expression._else;
@@ -759,6 +765,17 @@ public final class CodeGen implements AstVisitor {
 
     // Evaluate the test first
     visit(test, block, false, offset + 1);
+
+    // Evaluate the inside first and backpatch the equality
+    savedLines[0] = buffer.skipLines(1);
+
+    visit(body, block, false, offset + 1);
+
+    savedLines[1] = buffer.skipLines(0);
+    buffer.lineBackup(savedLines[0]);
+    code = Instructions.RM("JEQ", Instructions.AC, -offset, Instructions.PC, "if: jump to else");
+    addInstruction(code);
+    buffer.lineRestore();
 
     // Create the code based on the offset
 
