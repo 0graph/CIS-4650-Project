@@ -49,6 +49,7 @@ public final class CodeGen implements AstVisitor {
     String code;
     buffer.addComment("Standard Prelude");
 
+    // PRELUDE
     code = Instructions.RM("LD", Instructions.GP, 0, Instructions.AC, "Load the global pointer with max address");
     addInstruction(code);
 
@@ -57,8 +58,41 @@ public final class CodeGen implements AstVisitor {
 
     code = Instructions.RM("ST", Instructions.AC, 0, Instructions.AC, "Clear Location 0");
     addInstruction(code);
+    // END PRELUDE
+
+    // jump over I/O instructions
+    code = Instructions.RM("LDA", Instructions.PC, -7, Instructions.PC, "Jump to main");
+    addInstruction(code);
+
+    // I/O instructions
+    // INPUT
+    buffer.addComment("code for input routine");
+    code = Instructions.RM("ST", Instructions.AC, -1, Instructions.FP, "Store return");
+    addInstruction(code);
+
+    code = Instructions.RR("IN", Instructions.AC, 0, 0, "Read integer value");
+    addInstruction(code);
+
+    code = Instructions.RM("LD", Instructions.PC, -1, Instructions.FP, "return to caller");
+    addInstruction(code);
+
+    // OUTPUT
+    buffer.addComment("code for output routine");
+    code = Instructions.RM("ST", Instructions.AC, -1, Instructions.FP, "Store return");
+    addInstruction(code);
+
+    code = Instructions.RM("LD", Instructions.AC, -2, Instructions.FP, "Load value to output");
+    addInstruction(code);
+
+    code = Instructions.RR("OUT", Instructions.AC, 0, 0, "Output integer value");
+    addInstruction(code);
+
+    code = Instructions.RM("LD", Instructions.PC, -1, Instructions.FP, "return to caller");
+    addInstruction(code);
+    // END I/O
 
     buffer.addComment("End Standard Prelude");
+    // END PRELUDE
 
   }
 
