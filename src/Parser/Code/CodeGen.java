@@ -57,7 +57,6 @@ public final class CodeGen implements AstVisitor {
 
     savedLine[0] = buffer.skipLines(1);
 
-
     visit(ast, block, false, 0);
 
     // Back patch
@@ -775,7 +774,7 @@ public final class CodeGen implements AstVisitor {
 
     // Save the return address to the accumulator
     comment = String.format("Save the return address in the accumulator");
-    code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, comment);
+    code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, comment);
     addInstruction(code);
 
     // Jump to instruction
