@@ -46,8 +46,7 @@ public final class CodeGen implements AstVisitor {
     savedLine[0] = buffer.skipLines(1);
 
     // TODO: Add the I/O Routines
-    code = Instructions.RR("ADD", 0, 0, 0, "Bogus");
-    addInstruction(code);
+    ioSetup();
 
     // Back patch
     savedLine[1] = buffer.skipLines(0);
@@ -71,29 +70,8 @@ public final class CodeGen implements AstVisitor {
     finale();
   }
 
-  /**
-   * Generate the prelude for the code
-   * it's the standard code that is generated at the start of the file
-   */
-  public void prelude() {
+  public void ioSetup() {
     String code;
-    buffer.addComment("Standard Prelude");
-
-    // PRELUDE
-    code = Instructions.RM("LD", Instructions.GP, 0, Instructions.AC, "Load the global pointer with max address");
-    addInstruction(code);
-
-    code = Instructions.RM("LDA", Instructions.FP, 0, Instructions.GP, "Load the frame pointer");
-    addInstruction(code);
-
-    code = Instructions.RM("ST", Instructions.AC, 0, Instructions.AC, "Clear Location 0");
-    addInstruction(code);
-    // END PRELUDE
-
-    // jump over I/O instructions
-    code = Instructions.RM("LDA", Instructions.PC, -7, Instructions.PC, "Jump to main");
-    addInstruction(code);
-
     // I/O instructions
     // INPUT
     buffer.addComment("code for input routine");
@@ -120,6 +98,26 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LD", Instructions.PC, -1, Instructions.FP, "return to caller");
     addInstruction(code);
     // END I/O
+  }
+
+  /**
+   * Generate the prelude for the code
+   * it's the standard code that is generated at the start of the file
+   */
+  public void prelude() {
+    String code;
+    buffer.addComment("Standard Prelude");
+
+    // PRELUDE
+    code = Instructions.RM("LD", Instructions.GP, 0, Instructions.AC, "Load the global pointer with max address");
+    addInstruction(code);
+
+    code = Instructions.RM("LDA", Instructions.FP, 0, Instructions.GP, "Load the frame pointer");
+    addInstruction(code);
+
+    code = Instructions.RM("ST", Instructions.AC, 0, Instructions.AC, "Clear Location 0");
+    addInstruction(code);
+    // END PRELUDE
 
     buffer.addComment("End Standard Prelude");
   }
