@@ -57,7 +57,6 @@ public final class CodeGen implements AstVisitor {
 
     savedLine[0] = buffer.skipLines(1);
 
-
     visit(ast, block, false, 0);
 
     // Back patch
@@ -151,7 +150,7 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LDA", Instructions.FP, block.getOffset(), Instructions.FP, "Push Main Frame Pointer");
     addInstruction(code);
 
-    code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, "Load Accumulator with return pointer");
+    code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, "Load Accumulator with return pointer");
     addInstruction(code);
 
     System.out.println("Main address: " + main[0]);
@@ -828,12 +827,12 @@ public final class CodeGen implements AstVisitor {
 
     // Save the return address to the accumulator
     comment = String.format("Save the return address in the accumulator");
-    code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, comment);
+    code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, comment);
     addInstruction(code);
 
     // Jump to instruction
     comment = String.format("Jump to %s()", name);
-    code = Instructions.RM_ABS("LDA", Instructions.PC, line + 1, address, Instructions.PC, comment);
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line, address, Instructions.PC, comment);
     addInstruction(code);
 
     // Pop the frame once we are done
