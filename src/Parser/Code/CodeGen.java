@@ -150,7 +150,7 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LDA", Instructions.FP, block.getOffset(), Instructions.FP, "Push Main Frame Pointer");
     addInstruction(code);
 
-    code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, "Load Accumulator with return pointer");
+    code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, "Load Accumulator with return pointer");
     addInstruction(code);
 
     System.out.println("Main address: " + main[0]);
