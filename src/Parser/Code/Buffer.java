@@ -63,6 +63,42 @@ public class Buffer {
   }
 
   /**
+   * Skip a certain amount of lines
+   *
+   * @param amount The amount of lines to skip
+   */
+  public int skipLines(int amount) {
+
+    int i = line;
+    line += amount;
+
+    maxLine = maxLine < line ? line : maxLine;
+
+    return i;
+  }
+
+  /**
+   * Backup the line by changing it back to the location wanted
+   *
+   * @param location The line number to jump to
+   */
+  public void lineBackup(int location) {
+    if (location > maxLine) {
+      String comment = String.format("BUG in line backup for %d lines", location);
+      buffer.append(comment);
+    }
+
+    line = location;
+  }
+
+  /**
+   * Restore the line to the max line provided
+   */
+  public void lineRestore() {
+    line = maxLine;
+  }
+
+  /**
    * Return the whole instruction set as a string
    */
   public String toString() {

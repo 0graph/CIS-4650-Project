@@ -14,9 +14,8 @@ public final class CodeGen implements AstVisitor {
   // The current instruction
   private int line = 0;
 
-  // CONTINUE: Add a small symbol table implemention that is a tree that just
-  // keeps track of the address of certain instructions.
-  // Debating if the blocks function should be used for this or not...
+  // Create the global block that contains everything
+  private Block block = new Block();
 
   /**
    * Setup runtime environment for code
@@ -32,13 +31,37 @@ public final class CodeGen implements AstVisitor {
    * Compile the code given
    */
   public void compile(Ast ast) {
-    // Create the Global Block
-    Block block = new Block();
+    String code;
+    int[] savedLine = new int[] { 0, 0 }; // The saved lines for backpatching
 
     // Generate the prelude for the code
     prelude();
 
+    // Back patch current line
+    savedLine[0] = buffer.skipLines(1);
+
+    // TODO: Add the I/O Routines
+
+    // Back patch
+    savedLine[1] = buffer.skipLines(0);
+    buffer.lineBackup(savedLine[0]);
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line, savedLine[1], Instructions.PC, "Jump around i/o code");
+    addInstruction(code);
+    buffer.lineRestore();
+
+    savedLine[0] = buffer.skipLines(1);
+
     visit(ast, block, false, 0);
+
+    // Back patch
+    savedLine[1] = buffer.skipLines(0);
+    buffer.lineBackup(savedLine[0]);
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line, savedLine[1], Instructions.PC,
+        "Jump around function bodies");
+    addInstruction(code);
+    buffer.lineRestore();
+
+    finale();
   }
 
   /**
@@ -92,6 +115,35 @@ public final class CodeGen implements AstVisitor {
     // END I/O
 
     buffer.addComment("End Standard Prelude");
+  }
+
+  /**
+   * Generate the final part of the program
+   */
+  private void finale() {
+    Integer[] main = block.getSymbolAddress("main");
+    String code;
+    buffer.addComment("--- Final ---");
+
+    code = Instructions.RM("ST", Instructions.FP, block.getOffset(), Instructions.FP, "Original Pointer");
+    addInstruction(code);
+
+    code = Instructions.RM("LDA", Instructions.FP, block.getOffset(), Instructions.FP, "Push Main Frame Pointer");
+    addInstruction(code);
+
+    code = Instructions.RM("LDA", Instructions.AC, 1, Instructions.PC, "Load Accumulator with return pointer");
+    addInstruction(code);
+
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line, main[0], Instructions.PC, "Jump to Location");
+    addInstruction(code);
+
+    code = Instructions.RM("LD", Instructions.FP, 0, Instructions.FP, "Pop Main Frame");
+    addInstruction(code);
+
+    code = Instructions.RR("HALT", 0, 0, 0, "Exit");
+    addInstruction(code);
+
+    buffer.addComment("--- Final ---");
     // END PRELUDE
 
   }
@@ -105,14 +157,14 @@ public final class CodeGen implements AstVisitor {
    */
   public void visit(Ast ast, Block block, boolean flag, int offset) {
     if (ast instanceof ListAst) {
-      visit((ListAst) ast, block);
+      visit((ListAst) ast, block, offset);
       // visit((ListAst) ast, line, flag);
     } else if (ast instanceof FunctionDec) {
       visit((FunctionDec) ast, block);
     } else if (ast instanceof SimpleDec) {
       visit((SimpleDec) ast, block);
     } else if (ast instanceof CompoundExp) {
-      visit((CompoundExp) ast, block);
+      visit((CompoundExp) ast, block, offset);
     } else if (ast instanceof VarExp) {
       visit((VarExp) ast, block, flag, offset);
     } else if (ast instanceof OpExp) {
@@ -131,6 +183,8 @@ public final class CodeGen implements AstVisitor {
       visit((CallExp) ast, block, offset);
     } else if (ast instanceof BoolExp) {
       visit((BoolExp) ast, block, offset);
+    } else if (ast instanceof IfExp) {
+      visit((IfExp) ast, block, offset);
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -143,7 +197,7 @@ public final class CodeGen implements AstVisitor {
    * @param block The current block for a function
    * @param flag  Flag for info
    */
-  public void visit(ListAst list, Block block) {
+  public void visit(ListAst list, Block block, int offset) {
     ListAst node = list;
 
     // Visit each component in the list
@@ -151,7 +205,7 @@ public final class CodeGen implements AstVisitor {
       Ast ast = node.head;
 
       if (ast != null) {
-        visit(ast, block, false, block.getOffset());
+        visit(ast, block, false, offset);
       }
 
       node = node.tail;
@@ -167,14 +221,15 @@ public final class CodeGen implements AstVisitor {
    */
   public void visit(FunctionDec function, Block block) {
     // The name of the function
+    String code;
     String name = function.name;
 
     // Create a new block
-    buffer.addComment(String.format("Entering Function Declaration (%s)", name));
+    buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
     Block functionBlock = block.createNewBlock(name, line);
 
     // Initialize the block
-    String code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
+    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
 
     /**
@@ -187,10 +242,16 @@ public final class CodeGen implements AstVisitor {
      */
 
     // Add the params to the function block
-    visit(function.params, functionBlock);
+    visit(function.params, functionBlock, block.getOffset());
 
     // Add the function body to the function block
     visit(function.body, functionBlock, true, block.getOffset());
+
+    // Return to caller
+    code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "Return to caller");
+    addInstruction(code);
+
+    buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
   }
 
   /**
@@ -249,15 +310,15 @@ public final class CodeGen implements AstVisitor {
    * @param expression The Complete expression
    * @param block      The current code block
    */
-  public void visit(CompoundExp expression, Block block) {
+  public void visit(CompoundExp expression, Block block, int offset) {
     // There are declarations here
     if (expression.decs != null) {
-      visit(expression.decs, block);
+      visit(expression.decs, block, offset);
     }
 
     // Go through both
     if (expression.exps != null) {
-      visit(expression.exps, block);
+      visit(expression.exps, block, offset);
     }
   }
 
@@ -329,14 +390,12 @@ public final class CodeGen implements AstVisitor {
     String comment;
 
     // Get address location
-    Integer[] symbol = block.getSymbolAddressInScope(name);
+    Integer[] symbol = block.getSymbolAddress(name);
 
     // Load the address
     if (address) {
       // Create the instructions for loading the symbol address
       comment = String.format("Load address for var (%s)", name);
-      // TODO: FIX -> this does not work with global variables being ref'd inside a
-      // func
       code = Instructions.RM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
       addInstruction(code);
 
@@ -422,6 +481,8 @@ public final class CodeGen implements AstVisitor {
     Exp right = expression.rhs;
     int operation = expression.Op;
 
+    buffer.addComment("--- Operation Expression ---");
+
     // Setup the instructions necessary
     visit(left, block, false, offset + 1);
     visit(right, block, false, offset + 2);
@@ -506,6 +567,7 @@ public final class CodeGen implements AstVisitor {
       // Load 0 (false) to the register
       code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "Load 0 (false)");
       addInstruction(code);
+
       // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it
       // lands on
       // Unconditional Jump to skip the true instruction of the result is false
@@ -513,8 +575,7 @@ public final class CodeGen implements AstVisitor {
       addInstruction(code);
 
       // Load 1 (true) to the register
-      code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "Load 1 (true)");
-      addInstruction(code);
+      code = Instructions.RM("LDC", Instructions.AC, -1, Instructions.AC, "Load 1 (true)");
 
     } else { // Logical
       // the code is generated inside the switch because AND / OR are special cases
@@ -536,10 +597,9 @@ public final class CodeGen implements AstVisitor {
           addInstruction(code);
           // ZERO: LHS = 0
           code = Instructions.RM("LDC", Instructions.AC, 0, Instructions.AC, "LHS = 0");
-          addInstruction(code);
           // END
-
           break;
+
         case 13: // or (special case)
           // NOTE: for Jump OPs the offset may be wrong I assumed it skips the one it
           // lands on
@@ -557,9 +617,9 @@ public final class CodeGen implements AstVisitor {
           addInstruction(code);
           // ONE: LHS = 1
           code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "LHS = 1");
-          addInstruction(code);
           // END:
           break;
+
         default:
           System.out.println("Unknown Operation: " + operation);
           break;
@@ -572,6 +632,8 @@ public final class CodeGen implements AstVisitor {
     // Store value
     code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store value of expression");
     addInstruction(code);
+
+    buffer.addComment("--- Operation Expression ---");
   }
 
   /**
@@ -648,12 +710,34 @@ public final class CodeGen implements AstVisitor {
 
     Integer[] symbol = block.getSymbolAddress(name);
     Integer address = symbol[0];
-    Integer pointer = symbol[1];
+    // Integer pointer = symbol[1];
 
     buffer.addComment(comment);
+    buffer.addComment("Offset: " + offset);
 
-    // Check for arguments
-    visit(arguments, block, false, offset + 1);
+    // Check for arguments using a for loop since we need to know how many arguments
+    // we are passing it
+    int initialOffset = 2; // We know the second instruction is the return address
+    ListAst node = arguments;
+    Ast expression;
+    while (node != null) {
+      expression = node.head;
+      if (expression != null) {
+        comment = String.format("Adding argument %d", initialOffset - 1);
+        buffer.addComment(comment);
+
+        visit(expression, block, false, offset + 1);
+
+        // Create the instructions to include the arguments
+        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset, Instructions.FP, "Storing argument");
+        addInstruction(code);
+      }
+
+      node = node.tail;
+      initialOffset++;
+    }
+
+    buffer.addComment("Create new activation record");
 
     // Save the address of the current frame pointer
     comment = String.format("Save address of current frame pointer to memory with offset %d", offset + level);
@@ -677,7 +761,7 @@ public final class CodeGen implements AstVisitor {
 
     // Pop the frame once we are done
     comment = String.format("Pop the frame and return to the current frame");
-    code = Instructions.RM("LD", Instructions.FP, level, Instructions.PC, comment);
+    code = Instructions.RM("LD", Instructions.FP, level, Instructions.FP, comment);
     addInstruction(code);
 
     comment = String.format("--- Calling %s() ---", name);
@@ -685,23 +769,33 @@ public final class CodeGen implements AstVisitor {
 
   }
 
+  /**
+   * Visit an if statement and check the boolean expresion inside
+   *
+   * @param expression
+   * @param block      the current block
+   * @param offset     The offset in the code block
+   */
+  public void visit(IfExp expression, Block block, int offset) {
+    Exp test = expression.test;
+    Exp body = expression.then;
+    Exp _else = expression._else;
+
+    buffer.addComment("--- If Expression ---");
+
+    // Evaluate the test first
+    visit(test, block, false, offset + 1);
+
+    buffer.addComment("--- If Expression ---");
+  }
+
   /*
-   * Add an
-   * instruction to
-   * the instruction
-   * string buffer**
+   * Add an instruction to the instruction string buffer
    * 
    * @param code
    */
   private void addInstruction(String code) {
     line = buffer.addInstruction(code);
-  }
-
-  /**
-   * Increment the line number
-   */
-  private void updateLineNumber() {
-    line = buffer.updateLineNumber();
   }
 
   /**

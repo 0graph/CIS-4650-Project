@@ -15,7 +15,7 @@ public class Block {
 
   // The current offset given the instructions that have been (start at -1 since
   // the first position if the address)
-  private int offset = 1;
+  private int offset = 2;
 
   // The current nesting level of the block (This is used for call expressions
   // where nesting expressions are possible)
@@ -82,57 +82,6 @@ public class Block {
    */
   public void incrementNestingLevel(int amount) {
     level += amount;
-  }
-
-  /**
-   * Add an RO instruction to the current file buffer
-   *
-   * @param operation The instruction
-   * @param r         The register that this instruction is tied to
-   * @param s         Parameter
-   * @param t         Parameter
-   * @param comment   comment
-   *
-   */
-  public String createInstructionRR(String operation, int r, int s, int t, String comment) {
-    String code = Instructions.RR(operation, r, s, t, comment);
-
-    incrementOffset();
-
-    return code;
-  }
-
-  /**
-   * Create an RM instruction. Example: 1: LD 7,-1(5)
-   * Note: This does not increment the offset
-   *
-   * @param operation The instruction
-   * @param r         The destination register
-   * @param offset    The offset for address
-   * @param address   The address in register
-   * @param comment   comment
-   */
-  public String createInstructionRM(String operation, int r, int offset, int address, String comment) {
-    String code = Instructions.RM(operation, r, -offset, address, comment);
-
-    return code;
-  }
-
-  /**
-   * Create an RM instruction with a RELATIVE address to the block of code
-   * Example: 1: LD 7, -1(5)
-   *
-   * @param operation The operation
-   * @param register  The register
-   * @param address   The target address
-   * @param comment   Comment
-   */
-  public String createInstructionRM(String operation, int register, int address, String comment) {
-    String code = Instructions.RM(operation, register, -offset, address, comment);
-
-    incrementOffset();
-
-    return code;
   }
 
   /**
