@@ -57,6 +57,7 @@ public final class CodeGen implements AstVisitor {
 
     savedLine[0] = buffer.skipLines(1);
 
+
     visit(ast, block, false, 0);
 
     // Back patch
@@ -72,30 +73,44 @@ public final class CodeGen implements AstVisitor {
 
   public void ioSetup() {
     String code;
+    int pointer;
     // I/O instructions
     // INPUT
     buffer.addComment("code for input routine");
-    code = Instructions.RM("ST", Instructions.AC, -1, Instructions.FP, "Store return");
+    pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
+
+    // Create an address for this variable in this scope
+
+    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
+
+    // add function address for input
+    block.createNewBlock("input", line);
 
     code = Instructions.RR("IN", Instructions.AC, 0, 0, "Read integer value");
     addInstruction(code);
 
-    code = Instructions.RM("LD", Instructions.PC, -1, Instructions.FP, "return to caller");
+    code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "return to caller");
     addInstruction(code);
 
     // OUTPUT
     buffer.addComment("code for output routine");
-    code = Instructions.RM("ST", Instructions.AC, -1, Instructions.FP, "Store return");
+    pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
+
+    // Create an address for this variable in this scope
+    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
 
-    code = Instructions.RM("LD", Instructions.AC, -2, Instructions.FP, "Load value to output");
+    // add function address for output
+    block.createNewBlock("output", line);
+
+    code = Instructions.RM("LD", Instructions.AC, 2, Instructions.FP, "Load value to output");
     addInstruction(code);
 
     code = Instructions.RR("OUT", Instructions.AC, 0, 0, "Output integer value");
     addInstruction(code);
 
-    code = Instructions.RM("LD", Instructions.PC, -1, Instructions.FP, "return to caller");
+    code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "return to caller");
     addInstruction(code);
     // END I/O
   }
