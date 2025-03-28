@@ -779,7 +779,7 @@ public final class CodeGen implements AstVisitor {
 
     // Jump to instruction
     comment = String.format("Jump to %s()", name);
-    code = Instructions.RM_ABS("LDA", Instructions.PC, line + 1, address, Instructions.PC, comment);
+    code = Instructions.RM_ABS("LDA", Instructions.PC, line, address, Instructions.PC, comment);
     addInstruction(code);
 
     // Pop the frame once we are done
