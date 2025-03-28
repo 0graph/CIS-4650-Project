@@ -73,19 +73,18 @@ public final class CodeGen implements AstVisitor {
 
   public void ioSetup() {
     String code;
-    int pointer;
     // I/O instructions
     // INPUT
     buffer.addComment("code for input routine");
-    pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
 
     // Create an address for this variable in this scope
 
-    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
-    addInstruction(code);
-
+    
     // add function address for input
     block.createNewBlock("input", line);
+
+    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
+    addInstruction(code);
 
     code = Instructions.RR("IN", Instructions.AC, 0, 0, "Read integer value");
     addInstruction(code);
@@ -95,14 +94,13 @@ public final class CodeGen implements AstVisitor {
 
     // OUTPUT
     buffer.addComment("code for output routine");
-    pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
+
+    // add function address for output
+    block.createNewBlock("output", line);
 
     // Create an address for this variable in this scope
     code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
-
-    // add function address for output
-    block.createNewBlock("output", line);
 
     code = Instructions.RM("LD", Instructions.AC, 2, Instructions.FP, "Load value to output");
     addInstruction(code);
@@ -205,6 +203,8 @@ public final class CodeGen implements AstVisitor {
       visit((IfExp) ast, block, offset);
     } else if (ast instanceof WhileExp) {
       visit((WhileExp) ast, block, offset);
+    } else if (ast instanceof ReturnExp) {
+      visit((ReturnExp) ast, block, offset);
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -488,6 +488,33 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, pointer, comment);
       addInstruction(code);
     }
+  }
+
+  /**
+   * Visit a return expression
+   * 
+   * @param exp    The expression
+   * @param block  The current code block
+   * @param offset The offset
+   */
+  public void visit(ReturnExp exp, Block block, int offset) {
+    String code;
+    String comment;
+
+    buffer.addComment("--- Return Expression ---");
+    // Load the return value to the accumulator
+    visit(exp.exp, block, false, offset + 1);
+
+    code = Instructions.RM("LD", Instructions.R1, 0, Instructions.FP, "Load return address");
+    addInstruction(code);
+
+    code = Instructions.RM("ST", Instructions.AC, 2, Instructions.R1, "Store return value");
+    addInstruction(code);
+
+    
+    code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "Return to caller");
+    addInstruction(code);
+  
   }
 
   /**
@@ -840,6 +867,14 @@ public final class CodeGen implements AstVisitor {
     // Pop the frame once we are done
     comment = String.format("Pop the frame and return to the current frame");
     code = Instructions.RM("LD", Instructions.FP, level, Instructions.FP, comment);
+    addInstruction(code);
+
+    // Load the return value to the accumulator
+    comment = String.format("Load the return value to the accumulator");
+    code = Instructions.RM("LD", Instructions.AC, 2, Instructions.FP, comment);
+    addInstruction(code);
+    // Store the return value to the address
+    code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store return value");
     addInstruction(code);
 
     comment = String.format("--- Calling %s() ---", name);
