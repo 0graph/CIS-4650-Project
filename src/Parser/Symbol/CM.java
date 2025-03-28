@@ -86,10 +86,12 @@ public class CM {
       Parser p = new Parser(new Lexer(new FileReader(file)));
       Ast result = (Ast) p.parse().value;
 
-      AstVisitor visitor = new CodeGen();
+      AstVisitor visitor = new CodeGen(file);
 
       CodeGen compiler = (CodeGen) visitor;
       compiler.compile((DecList) result);
+
+      compiler.generateFile("Programs");
 
       System.out.println(compiler);
 
