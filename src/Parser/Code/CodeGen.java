@@ -353,14 +353,12 @@ public final class CodeGen implements AstVisitor {
     String comment;
 
     // Get address location
-    Integer[] symbol = block.getSymbolAddressInScope(name);
+    Integer[] symbol = block.getSymbolAddress(name);
 
     // Load the address
     if (address) {
       // Create the instructions for loading the symbol address
       comment = String.format("Load address for var (%s)", name);
-      // TODO: FIX -> this does not work with global variables being ref'd inside a
-      // func
       code = Instructions.RM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
       addInstruction(code);
 
