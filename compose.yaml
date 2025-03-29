@@ -10,5 +10,18 @@ services:
       - ./src/Parser/Scanner:/app/Scanner
       - ./src/Parser/Parse:/app/Parse
       - ./src/Parser/tests:/app/tests
-      - ./src/Parser/Ast/:/app/Ast
-      - ./src/Parser/Symbol/:/app/Symbol
+      - ./src/Parser/Ast:/app/Ast
+      - ./src/Parser/Symbol:/app/Symbol
+      - ./src/Parser/Code:/app/Code
+      - ./src/Parser/Programs:/app/Programs
+
+  assembly: # Simulator
+    image: socsguelph/socslinux:latest
+    volumes:
+      - ./src/Assembly:/app
+      - ./src/Parser/Programs:/app/Programs
+    command: "bash"
+    stdin_open: true
+    tty: true
+    working_dir: /app
+
