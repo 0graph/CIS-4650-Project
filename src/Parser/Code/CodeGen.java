@@ -484,8 +484,11 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     } else { // Used as part of an expression in the right hands side
-      comment = String.format("Value of %s[index]", name);
+      comment = String.format("Load the value at the %s[index] address to the AC", name);
+      code = Instructions.RM("LD", Instructions.AC, 0, Instructions.AC, comment);
+      addInstruction(code);
 
+      comment = String.format("Value of %s[index]", name);
       code = Instructions.RM("ST", Instructions.AC, offset, pointer, comment);
       addInstruction(code);
     }
