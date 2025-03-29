@@ -539,8 +539,6 @@ public final class CodeGen implements AstVisitor {
     visit(body, block, false, offset + 2);
     savedLines[2] = buffer.skipLines(0);
 
-    System.out.println("Saved Lines: " + savedLines[0] + " " + savedLines[1] + " " + savedLines[2]);
-
     code = Instructions.RM("LDA", Instructions.PC, line - savedLines[0] - 1, Instructions.PC,
         "Jump to test after body");
     addInstruction(code);
