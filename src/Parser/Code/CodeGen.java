@@ -203,6 +203,8 @@ public final class CodeGen implements AstVisitor {
       visit((WhileExp) ast, block, offset);
     } else if (ast instanceof ReturnExp) {
       visit((ReturnExp) ast, block, offset);
+    } else if (ast instanceof NilExp) {
+      return;
     } else {
       System.out.println("Implement: " + ast.getClass());
     }
@@ -503,15 +505,15 @@ public final class CodeGen implements AstVisitor {
     // Load the return value to the accumulator
     visit(exp.exp, block, false, offset + 1);
 
-    code = Instructions.RM("LD", Instructions.R1, 0, Instructions.FP, "Load return address");
-    addInstruction(code);
-
-    code = Instructions.RM("ST", Instructions.AC, 2, Instructions.R1, "Store return value");
+    // code = Instructions.RM("LD", Instructions.R1, 1, Instructions.FP, "Load
+    // return address");
+    code = Instructions.RM("LD", Instructions.R1, 0, Instructions.AC, "Save value from return expression");
     addInstruction(code);
 
     code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "Return to caller");
     addInstruction(code);
 
+    buffer.addComment("--- Return Expression ---");
   }
 
   /**
@@ -842,7 +844,9 @@ public final class CodeGen implements AstVisitor {
 
     // Save the address of the current frame pointer
     comment = String.format("Save address of current frame pointer to memory with offset %d", offset + level);
-    code = Instructions.RM("ST", Instructions.FP, offset + level, Instructions.FP, comment);
+    // code = Instructions.RM("ST", Instructions.FP, offset + level,
+    // Instructions.FP, comment);
+    code = Instructions.RM("ST", Instructions.FP, offset, Instructions.FP, comment);
     addInstruction(code);
 
     // load the frame pointer to push stack
@@ -862,7 +866,7 @@ public final class CodeGen implements AstVisitor {
 
     // Pop the frame once we are done
     comment = String.format("Pop the frame and return to the current frame");
-    code = Instructions.RM("LD", Instructions.FP, level, Instructions.FP, comment);
+    code = Instructions.RM("LD", Instructions.FP, 0, Instructions.FP, comment);
     addInstruction(code);
 
     // Store result from 0 to offset
@@ -873,7 +877,9 @@ public final class CodeGen implements AstVisitor {
     // addInstruction(code);
 
     // Store the return value to the address
-    code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store return value");
+    code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store return value"); // NOTE: This is a bit
+                                                                                                  // sus I don''t know
+                                                                                                  // if we need levels'
     addInstruction(code);
 
     comment = String.format("--- Calling %s() ---", name);
