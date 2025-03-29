@@ -93,7 +93,7 @@ public class CM {
 
       compiler.generateFile("Programs");
 
-      System.out.println(compiler);
+      // System.out.println(compiler);
 
     } catch (Exception e) {
       e.printStackTrace();

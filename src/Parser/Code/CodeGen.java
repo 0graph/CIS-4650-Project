@@ -46,7 +46,6 @@ public final class CodeGen implements AstVisitor {
     // Back patch current line
     savedLine[0] = buffer.skipLines(1);
 
-    // TODO: Add the I/O Routines
     ioSetup();
 
     // Back patch
@@ -79,9 +78,8 @@ public final class CodeGen implements AstVisitor {
 
     // Create an address for this variable in this scope
 
-    
     // add function address for input
-    block.createNewBlock("input", line);
+    block.createNewBlock("input", line + 1);
 
     code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
@@ -511,10 +509,9 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("ST", Instructions.AC, 2, Instructions.R1, "Store return value");
     addInstruction(code);
 
-    
     code = Instructions.RM("LD", Instructions.PC, 1, Instructions.FP, "Return to caller");
     addInstruction(code);
-  
+
   }
 
   /**
@@ -544,7 +541,8 @@ public final class CodeGen implements AstVisitor {
 
     System.out.println("Saved Lines: " + savedLines[0] + " " + savedLines[1] + " " + savedLines[2]);
 
-    code = Instructions.RM("LDA", Instructions.PC, line - savedLines[0] - 1, Instructions.PC, "Jump to test after body");
+    code = Instructions.RM("LDA", Instructions.PC, line - savedLines[0] - 1, Instructions.PC,
+        "Jump to test after body");
     addInstruction(code);
     int bodyLineEnd = line;
 
@@ -563,9 +561,10 @@ public final class CodeGen implements AstVisitor {
 
     code = Instructions.RM("LD", Instructions.AC, offset + 1, Instructions.FP, "Load test value");
     addInstruction(code);
-    
+
     // Jump to the end if the test is false
-    code = Instructions.RM("JLE", Instructions.AC, line - savedLines[2], Instructions.PC, "Jump to end if test <= 0 (false)");
+    code = Instructions.RM("JLE", Instructions.AC, line - savedLines[2], Instructions.PC,
+        "Jump to end if test <= 0 (false)");
     addInstruction(code);
 
     buffer.lineRestore();
@@ -815,7 +814,6 @@ public final class CodeGen implements AstVisitor {
 
     Integer[] symbol = block.getSymbolAddress(name);
     Integer address = symbol[0];
-    // Integer pointer = symbol[1];
 
     buffer.addComment(comment);
     buffer.addComment("Offset: " + offset);
@@ -891,6 +889,7 @@ public final class CodeGen implements AstVisitor {
    */
   public void visit(IfExp expression, Block block, int offset) {
     String code;
+    String comment;
 
     Exp test = expression.test;
     Exp body = expression.then;
@@ -909,12 +908,27 @@ public final class CodeGen implements AstVisitor {
     visit(body, block, false, offset + 1);
 
     savedLines[1] = buffer.skipLines(0);
-    buffer.lineBackup(savedLines[0]);
-    code = Instructions.RM("JEQ", Instructions.AC, -offset, Instructions.PC, "if: jump to else");
+    int backupLine = buffer.lineBackup(savedLines[0]);
+
+    comment = String.format("if false jump %d instructions", savedLines[1] - (backupLine + 1));
+    code = Instructions.RM_ABS("JEQ", Instructions.AC, backupLine, savedLines[1], Instructions.PC, comment);
     addInstruction(code);
     buffer.lineRestore();
 
-    // Create the code based on the offset
+    // Jump to the end of the expression
+    savedLines[0] = buffer.skipLines(1);
+
+    // Visit the else
+    if (_else != null) {
+      visit(_else, block, false, offset + 1);
+    }
+
+    savedLines[1] = buffer.skipLines(0);
+    backupLine = buffer.lineBackup(savedLines[0]);
+
+    code = Instructions.RM_ABS("LDA", Instructions.PC, backupLine, savedLines[1], Instructions.PC, "jump around body");
+    addInstruction(code);
+    buffer.lineRestore();
 
     buffer.addComment("--- If Expression ---");
   }

@@ -132,8 +132,6 @@ public class Buffer {
     File file = new File(name);
 
     try {
-      System.out.println("file Exits: " + file.exists());
-
       if (!file.exists()) {
         file.createNewFile();
       }
