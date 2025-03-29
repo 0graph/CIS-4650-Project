@@ -489,7 +489,7 @@ public final class CodeGen implements AstVisitor {
       addInstruction(code);
 
       comment = String.format("Value of %s[index]", name);
-      code = Instructions.RM("ST", Instructions.AC, offset, pointer, comment);
+      code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     }
   }
