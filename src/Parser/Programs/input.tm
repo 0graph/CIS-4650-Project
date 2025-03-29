@@ -27,34 +27,36 @@
 17: LDA 0,1(7) Save the return address in the accumulator
 18: LDA 7,-15(7) Jump to input()
 19: LD 5,0(5) Pop the frame and return to the current frame
+20: ST 0,-5(5) Store return value
 * --- Calling input() ---
 * Store back the result of the assignment operation
-20: LD 0,-4(5) Load to memory the address and result value
-21: LD 1,-5(5) 
-22: ST 1,0(0) 
-23: ST 1,-3(5) Value Stored!
+21: LD 0,-4(5) Load to memory the address and result value
+22: LD 1,-5(5) 
+23: ST 1,0(0) 
+24: ST 1,-3(5) Value Stored!
 * --- Assignment Expression ---
 * --- Calling output() ---
 * Offset: 3
 * Adding argument 1
-24: LD 0,-2(5) Value of x
-25: ST 0,-4(5) 
-26: ST 0,-5(5) Storing argument
+25: LD 0,-2(5) Value of x
+26: ST 0,-4(5) 
+27: ST 0,-5(5) Storing argument
 * Create new activation record
-27: ST 5,-8(5) Save address of current frame pointer to memory with offset 8
-28: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
-29: LDA 0,1(7) Save the return address in the accumulator
-30: LDA 7,-24(7) Jump to output()
-31: LD 5,-5(5) Pop the frame and return to the current frame
+28: ST 5,-8(5) Save address of current frame pointer to memory with offset 8
+29: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
+30: LDA 0,1(7) Save the return address in the accumulator
+31: LDA 7,-25(7) Jump to output()
+32: LD 5,-5(5) Pop the frame and return to the current frame
+33: ST 0,-3(5) Store return value
 * --- Calling output() ---
-32: LD 7,-1(5) Return to caller
+34: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,21(7) Jump around function bodies
+11: LDA 7,23(7) Jump around function bodies
 * --- Final ---
-33: ST 5,0(5) Original Pointer
-34: LDA 5,0(5) Push Main Frame Pointer
-35: LDA 0,1(7) Load Accumulator with return pointer
-36: LDA 7,-25(7) Jump to Location
-37: LD 5,0(5) Pop Main Frame
-38: HALT 0,0,0 Exit
+35: ST 5,0(5) Original Pointer
+36: LDA 5,0(5) Push Main Frame Pointer
+37: LDA 0,1(7) Load Accumulator with return pointer
+38: LDA 7,-27(7) Jump to Location
+39: LD 5,0(5) Pop Main Frame
+40: HALT 0,0,0 Exit
 * --- Final ---

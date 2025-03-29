@@ -86,46 +86,48 @@
 58: LDA 0,1(7) Save the return address in the accumulator
 59: LDA 7,-48(7) Jump to gcd()
 60: LD 5,0(5) Pop the frame and return to the current frame
+61: ST 0,-6(5) Store return value
 * --- Calling gcd() ---
-61: LD 1,0(5) Load return address
-62: ST 0,-2(1) Store return value
-63: LD 7,-1(5) Return to caller
-31: LDA 7,32(7) jump around body
-* --- If Expression ---
+62: LD 1,0(5) Load return address
+63: ST 0,-2(1) Store return value
 64: LD 7,-1(5) Return to caller
+31: LDA 7,33(7) jump around body
+* --- If Expression ---
+65: LD 7,-1(5) Return to caller
 * --- Function Declaration (gcd) ---
 * --- Function Declaration (main) ---
-65: ST 0,-1(5) Store return
+66: ST 0,-1(5) Store return
 * Making Space for variable (x)
 * --- Assignment Expression ---
-66: LDA 0,-2(5) Load address for var (x)
-67: ST 0,-4(5) &x
+67: LDA 0,-2(5) Load address for var (x)
+68: ST 0,-4(5) &x
 * --- Calling input() ---
 * Offset: 5
 * Create new activation record
-68: ST 5,-5(5) Save address of current frame pointer to memory with offset 5
-69: LDA 5,-5(5) Load the frame pointer so that it starts at offset 5
-70: LDA 0,1(7) Save the return address in the accumulator
-71: LDA 7,-68(7) Jump to input()
-72: LD 5,0(5) Pop the frame and return to the current frame
+69: ST 5,-5(5) Save address of current frame pointer to memory with offset 5
+70: LDA 5,-5(5) Load the frame pointer so that it starts at offset 5
+71: LDA 0,1(7) Save the return address in the accumulator
+72: LDA 7,-69(7) Jump to input()
+73: LD 5,0(5) Pop the frame and return to the current frame
+74: ST 0,-5(5) Store return value
 * --- Calling input() ---
 * Store back the result of the assignment operation
-73: LD 0,-4(5) Load to memory the address and result value
-74: LD 1,-5(5) 
-75: ST 1,0(0) 
-76: ST 1,-3(5) Value Stored!
+75: LD 0,-4(5) Load to memory the address and result value
+76: LD 1,-5(5) 
+77: ST 1,0(0) 
+78: ST 1,-3(5) Value Stored!
 * --- Assignment Expression ---
 * --- Assignment Expression ---
-77: LDA 0,0(6) Load address for var (y)
-78: ST 0,-4(5) &y
+79: LDA 0,0(6) Load address for var (y)
+80: ST 0,-4(5) &y
 * Loading Constant 10 to register 0 and save to memory with offset 5
-79: LDC 0,10(0) 
-80: ST 0,-5(5) 
+81: LDC 0,10(0) 
+82: ST 0,-5(5) 
 * Store back the result of the assignment operation
-81: LD 0,-4(5) Load to memory the address and result value
-82: LD 1,-5(5) 
-83: ST 1,0(0) 
-84: ST 1,-3(5) Value Stored!
+83: LD 0,-4(5) Load to memory the address and result value
+84: LD 1,-5(5) 
+85: ST 1,0(0) 
+86: ST 1,-3(5) Value Stored!
 * --- Assignment Expression ---
 * --- Calling output() ---
 * Offset: 3
@@ -133,36 +135,38 @@
 * --- Calling gcd() ---
 * Offset: 4
 * Adding argument 1
-85: LD 0,-2(5) Value of x
-86: ST 0,-5(5) 
-87: ST 0,-6(5) Storing argument
+87: LD 0,-2(5) Value of x
+88: ST 0,-5(5) 
+89: ST 0,-6(5) Storing argument
 * Adding argument 2
-88: LD 0,0(6) Value of y
-89: ST 0,-5(6) 
-90: ST 0,-7(5) Storing argument
+90: LD 0,0(6) Value of y
+91: ST 0,-5(6) 
+92: ST 0,-7(5) Storing argument
 * Create new activation record
-91: ST 5,-12(5) Save address of current frame pointer to memory with offset 12
-92: LDA 5,-4(5) Load the frame pointer so that it starts at offset 4
-93: LDA 0,1(7) Save the return address in the accumulator
-94: LDA 7,-83(7) Jump to gcd()
-95: LD 5,-8(5) Pop the frame and return to the current frame
+93: ST 5,-12(5) Save address of current frame pointer to memory with offset 12
+94: LDA 5,-4(5) Load the frame pointer so that it starts at offset 4
+95: LDA 0,1(7) Save the return address in the accumulator
+96: LDA 7,-85(7) Jump to gcd()
+97: LD 5,-8(5) Pop the frame and return to the current frame
+98: ST 0,-4(5) Store return value
 * --- Calling gcd() ---
-96: ST 0,-5(5) Storing argument
+99: ST 0,-5(5) Storing argument
 * Create new activation record
-97: ST 5,-8(5) Save address of current frame pointer to memory with offset 8
-98: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
-99: LDA 0,1(7) Save the return address in the accumulator
-100: LDA 7,-94(7) Jump to output()
-101: LD 5,-5(5) Pop the frame and return to the current frame
+100: ST 5,-8(5) Save address of current frame pointer to memory with offset 8
+101: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
+102: LDA 0,1(7) Save the return address in the accumulator
+103: LDA 7,-97(7) Jump to output()
+104: LD 5,-5(5) Pop the frame and return to the current frame
+105: ST 0,-3(5) Store return value
 * --- Calling output() ---
-102: LD 7,-1(5) Return to caller
+106: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,91(7) Jump around function bodies
+11: LDA 7,95(7) Jump around function bodies
 * --- Final ---
-103: ST 5,-1(5) Original Pointer
-104: LDA 5,-1(5) Push Main Frame Pointer
-105: LDA 0,1(7) Load Accumulator with return pointer
-106: LDA 7,-42(7) Jump to Location
-107: LD 5,0(5) Pop Main Frame
-108: HALT 0,0,0 Exit
+107: ST 5,-1(5) Original Pointer
+108: LDA 5,-1(5) Push Main Frame Pointer
+109: LDA 0,1(7) Load Accumulator with return pointer
+110: LDA 7,-45(7) Jump to Location
+111: LD 5,0(5) Pop Main Frame
+112: HALT 0,0,0 Exit
 * --- Final ---
