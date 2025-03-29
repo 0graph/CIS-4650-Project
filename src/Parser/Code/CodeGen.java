@@ -421,6 +421,8 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
       addInstruction(code);
 
+      System.out.println(String.format("Address of %s is %d", name, symbol[0]));
+
       // Create the instruction to read the effective address and save it to the part
       // of memory
       comment = String.format("&%s", name);
@@ -865,13 +867,16 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LD", Instructions.FP, level, Instructions.FP, comment);
     addInstruction(code);
 
+    // Store result from 0 to offset
+
     // Load the return value to the accumulator
-    comment = String.format("Load the return value to the accumulator");
-    code = Instructions.RM("LD", Instructions.AC, 2, Instructions.FP, comment);
-    addInstruction(code);
-    // Store the return value to the address
-    code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store return value");
-    addInstruction(code);
+    // comment = String.format("Load the return value to the accumulator");
+    // code = Instructions.RM("LD", Instructions.AC, 2, Instructions.FP, comment);
+    // addInstruction(code);
+    // // Store the return value to the address
+    // code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "Store
+    // return value");
+    // addInstruction(code);
 
     comment = String.format("--- Calling %s() ---", name);
     buffer.addComment(comment);

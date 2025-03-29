@@ -1,0 +1,11 @@
+void test(void) {
+  int a;
+
+  a = 69;
+
+  output(input());
+}
+
+int main(void) {
+  test();
+}

@@ -1,0 +1,13 @@
+int five(int a) {
+    while (a < 5) {
+        a = a + 1;
+    }
+    return a;
+}
+
+int main(void) {
+    int a;
+    a = 0;
+    a = five(a);
+    output(a); /* should output 5*/
+}
