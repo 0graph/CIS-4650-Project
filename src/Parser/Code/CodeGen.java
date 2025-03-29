@@ -927,7 +927,7 @@ public final class CodeGen implements AstVisitor {
 
     // Visit the else
     if (_else != null) {
-      visit(_else, block, false, offset + 1);
+      visit(_else, block, false, offset + 2);
     }
 
     savedLines[1] = buffer.skipLines(0);
