@@ -473,7 +473,8 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LD", Instructions.R1, offset + 1, Instructions.FP, "Load index value to register");
     addInstruction(code);
 
-    code = Instructions.RR("ADD", Instructions.AC, Instructions.AC, Instructions.R1, "Add the offset to the address");
+    code = Instructions.RR("SUB", Instructions.AC, Instructions.AC, Instructions.R1,
+        "Substract the offset to the address");
     addInstruction(code);
 
     // Load the Address to the position in memory
