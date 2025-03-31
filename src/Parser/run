@@ -30,6 +30,11 @@ compile() {
   java -cp "$CUP_PATH:$BUILD_DIR:$PARSE_DIR:$SCANNER_DIR:$SYM_DIR" CM "$1" "$2"
 }
 
+# Do a complete compilation of the file provided
+compile_all() {
+  java -cp "$CUP_PATH:$BUILD_DIR:$PARSE_DIR:$SCANNER_DIR:$SYM_DIR" CM $1
+}
+
 while getopts "s:p:c:h" option; do
   case "$option" in
   s)
@@ -56,5 +61,5 @@ done
 
 # Run the parser with only one option
 if [[ $# -eq 1 ]]; then
-  parse $1
+  compile_all $1
 fi

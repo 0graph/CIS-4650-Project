@@ -1,6 +1,6 @@
 void printArr(int a[]) {
     int j;
-    j = 0;
+    j = 2;
     while(j < 10) {
         output(a[j]);
         j = j + 1;

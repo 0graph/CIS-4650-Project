@@ -20,8 +20,8 @@
 * --- Assignment Expression ---
 13: LDA 0,-2(5) Load address for var (j)
 14: ST 0,-4(5) &j
-* Loading Constant 0 to register 0 and save to memory with offset 5
-15: LDC 0,0(0) 
+* Loading Constant 2 to register 0 and save to memory with offset 5
+15: LDC 0,2(0) 
 16: ST 0,-5(5) 
 * Store back the result of the assignment operation
 17: LD 0,-4(5) Load to memory the address and result value

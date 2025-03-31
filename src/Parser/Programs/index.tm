@@ -115,7 +115,7 @@
 77: ADD 0,0,1 Operation
 78: ST 0,-9(5) Store value of expression
 * --- Operation Expression ---
-79: ST 0,-10(5) Storing argument
+79: ST 0,-9(5) Storing argument
 * Create new activation record
 80: ST 5,-8(5) Save address of current frame pointer to memory with offset 8
 81: LDA 5,-8(5) Load the frame pointer so that it starts at offset 8
