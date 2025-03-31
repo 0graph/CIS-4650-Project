@@ -226,15 +226,15 @@
 * Adding argument 1
 153: LD 0,-2(5) Value of a
 154: ST 0,-11(5) 
-155: ST 0,-12(5) Storing argument
+155: ST 0,-11(5) Storing argument
 * Adding argument 2
 156: LD 0,-5(5) Value of i
 157: ST 0,-11(5) 
-158: ST 0,-13(5) Storing argument
+158: ST 0,-12(5) Storing argument
 * Adding argument 3
 159: LD 0,-3(5) Value of high
 160: ST 0,-11(5) 
-161: ST 0,-14(5) Storing argument
+161: ST 0,-13(5) Storing argument
 * Create new activation record
 162: ST 5,-10(5) Save address of current frame pointer to memory with offset 10
 163: LDA 5,-10(5) Load the frame pointer so that it starts at offset 10
@@ -417,17 +417,17 @@
 * Adding argument 1
 284: LD 0,0(6) Value of x
 285: ST 0,-4(6) 
-286: ST 0,-5(5) Storing argument
+286: ST 0,-4(5) Storing argument
 * Adding argument 2
 * Loading Constant 0 to register 0 and save to memory with offset 4
 287: LDC 0,0(0) 
 288: ST 0,-4(5) 
-289: ST 0,-6(5) Storing argument
+289: ST 0,-5(5) Storing argument
 * Adding argument 3
 * Loading Constant 10 to register 0 and save to memory with offset 4
 290: LDC 0,10(0) 
 291: ST 0,-4(5) 
-292: ST 0,-7(5) Storing argument
+292: ST 0,-6(5) Storing argument
 * Create new activation record
 293: ST 5,-3(5) Save address of current frame pointer to memory with offset 10
 294: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
@@ -476,7 +476,7 @@
 325: SUB 0,0,1 Substract the offset to the address
 326: LD 0,0(0) Load the value at the x[index] address to the AC
 327: ST 0,-6(6) Value of x[index]
-328: ST 0,-7(5) Storing argument
+328: ST 0,-6(5) Storing argument
 * Create new activation record
 329: ST 5,-5(5) Save address of current frame pointer to memory with offset 15
 330: LDA 5,-5(5) Load the frame pointer so that it starts at offset 5
