@@ -242,6 +242,11 @@ public final class CodeGen implements AstVisitor {
    * @param block    The current block for a function
    */
   public void visit(FunctionDec function, Block block) {
+    // Verify that this is not a function prototype
+    if (function.body instanceof NilExp) {
+      return;
+    }
+
     // The name of the function
     String code;
     String name = function.name;
