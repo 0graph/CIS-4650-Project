@@ -299,9 +299,9 @@ public class SemanticAnalyser implements AstVisitor {
         } catch (Exception e) {
           errors.addIncorrectCallsError(exp.func, ast.row, ast.col);
         }
+        i++;
       }
 
-      i++;
       list = list.tail;
     }
 
