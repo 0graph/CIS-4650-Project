@@ -251,6 +251,16 @@ public final class CodeGen implements AstVisitor {
     String code;
     String name = function.name;
 
+    /**
+     * TODO: Find a way to backpatch a function prototype so that we can link and
+     * keep
+     * track of where the other instructions for this function is at
+     *
+     * TODO: Fix the semantic analyzer given an error when an array is being used
+     * properly (this is what we will use to make sure that our program is correct)
+     *
+     * This might take some tinkering to do
+     */
     Block functionBlock = block.createNewBlock(name, line);
 
     // Create a new block
