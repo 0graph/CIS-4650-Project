@@ -251,6 +251,12 @@ public final class CodeGen implements AstVisitor {
     String code;
     String name = function.name;
 
+    // Create a new block
+    buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
+    // Initialize the block
+    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
+    addInstruction(code);
+
     /**
      * TODO: Find a way to backpatch a function prototype so that we can link and
      * keep
@@ -261,13 +267,7 @@ public final class CodeGen implements AstVisitor {
      *
      * This might take some tinkering to do
      */
-    Block functionBlock = block.createNewBlock(name, line);
-
-    // Create a new block
-    buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
-    // Initialize the block
-    code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
-    addInstruction(code);
+    Block functionBlock = block.createNewBlock(name, line - 1);
 
     /**
      * This will also have to be refactored a tad bit.
@@ -853,8 +853,14 @@ public final class CodeGen implements AstVisitor {
 
         visit(expression, block, false, offset + 1);
 
+        // TODO: This part still needs cleaning
         // Create the instructions to include the arguments
-        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset - 1, Instructions.FP, "Storing argument");
+        // This one works for arrays
+        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset - 1,
+            Instructions.FP, "Storing argument");
+        // This one works for normal variables
+        // code = Instructions.RM("ST", Instructions.AC, offset + initialOffset,
+        // Instructions.FP, "Storing argument");
         addInstruction(code);
       }
 
