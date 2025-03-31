@@ -8,8 +8,9 @@ import java.util.*;
 public class SemanticAnalyser implements AstVisitor {
   final static int SPACES = 4;
 
-  private SymbolTable table;
   private SymbolErrors errors;
+  private SymbolTable table;
+  private boolean main = false; // Check if the main fucntion was declared
 
   public SemanticAnalyser() {
     // Initialize the global scope
@@ -68,7 +69,13 @@ public class SemanticAnalyser implements AstVisitor {
    * Create a symbol table based on the results parsed
    */
   public void symbolTable(Ast ast) {
+    // Parse Symbols
     visit(ast, table);
+
+    // Main function was not declared
+    if (!main) {
+      errors.addError("Error: Main Function was never declared!", 0, 0);
+    }
   }
 
   /**
@@ -135,6 +142,8 @@ public class SemanticAnalyser implements AstVisitor {
    */
   public void visit(FunctionDec dec, SymbolTable table) {
     NodeType node = new NodeType(dec.name, dec, table.level, NodeType.SymbolType.FUNCTION);
+
+    main = dec.name.equals("main") ? true : main;
 
     // Add symbol to scope
     try {
@@ -544,5 +553,16 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     return builder.toString();
+  }
+
+  /**
+   * Returns the number of errors (if any)
+   *
+   * @return The number of errors
+   */
+  public int getErrors() {
+    int amount = errors.getErrors().size();
+
+    return amount;
   }
 }

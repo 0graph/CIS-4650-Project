@@ -51,10 +51,12 @@ public class CM {
   static void doAll(String file) {
     try {
       // Symbol Table
-      doSymbolParse(file, false);
+      int errors = doSymbolParse(file, false);
 
       // Compile File
-      doCompile(file, false);
+      if (errors <= 0) {
+        doCompile(file, false);
+      }
 
     } catch (Exception e) {
       System.out.println("En error was encountered during compilation.");
@@ -67,8 +69,10 @@ public class CM {
    *
    * @param file  The file to parse
    * @param print Whether to print the output
+   * @return The number of errors found
    */
-  static void doSymbolParse(String file, boolean print) {
+  static int doSymbolParse(String file, boolean print) {
+    int errors = 0;
     try {
       Parser p = new Parser(new Lexer(new FileReader(file)));
       Ast result = (Ast) p.parse().value;
@@ -78,7 +82,9 @@ public class CM {
       SemanticAnalyser analyser = (SemanticAnalyser) visitor;
       analyser.symbolTable((DecList) result);
 
-      if (print) {
+      errors = analyser.getErrors();
+
+      if (print || errors > 0) {
         System.out.println("Symbol Table: ");
 
         System.out.println(analyser);
@@ -87,6 +93,8 @@ public class CM {
       /* do cleanup here -- possibly rethrow e */
       e.printStackTrace();
     }
+
+    return errors;
   }
 
   /**
