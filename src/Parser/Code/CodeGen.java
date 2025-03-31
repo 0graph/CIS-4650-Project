@@ -70,6 +70,9 @@ public final class CodeGen implements AstVisitor {
     finale();
   }
 
+  /**
+   * Setup the code for input/output functions
+   */
   public void ioSetup() {
     String code;
     // I/O instructions
@@ -836,7 +839,7 @@ public final class CodeGen implements AstVisitor {
         visit(expression, block, false, offset + 1);
 
         // Create the instructions to include the arguments
-        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset, Instructions.FP, "Storing argument");
+        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset - 1, Instructions.FP, "Storing argument");
         addInstruction(code);
       }
 
