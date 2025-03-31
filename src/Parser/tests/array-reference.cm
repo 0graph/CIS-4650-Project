@@ -1,0 +1,20 @@
+void printArr(int a[]) {
+    int j;
+    j = 0;
+    while(j < 10) {
+        output(a[j]);
+        j = j + 1;
+    }
+}
+
+void main(void) {
+    int x[10];
+    int j;  
+    j = 0;
+    while (j < 10) {
+        x[j] = j;
+        j = j + 1;
+    }
+    
+    printArr(x);
+}
