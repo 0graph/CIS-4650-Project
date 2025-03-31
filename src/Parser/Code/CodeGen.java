@@ -251,13 +251,13 @@ public final class CodeGen implements AstVisitor {
     String code;
     String name = function.name;
 
+    Block functionBlock = block.createNewBlock(name, line);
+
     // Create a new block
     buffer.addComment(String.format("--- Function Declaration (%s) ---", name));
     // Initialize the block
     code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
-
-    Block functionBlock = block.createNewBlock(name, line - 1);
 
     /**
      * This will also have to be refactored a tad bit.
