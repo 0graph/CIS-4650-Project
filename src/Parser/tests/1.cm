@@ -1,7 +1,6 @@
 void main(void){
   int x;
 
-  x = input();
-
+  x = 45;
   output(x);
 }
