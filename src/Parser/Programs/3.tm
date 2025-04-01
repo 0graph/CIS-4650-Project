@@ -67,41 +67,39 @@
 * Create new activation record
 41: ST 5,-5(5) Save address of current frame pointer to memory with offset 5
 42: LDA 5,-5(5) Load the frame pointer so that it starts at offset 5
-43: LDA 0,2(7) Save the return address in the accumulator
-44: BRK 0,0,0 Breakpoint
-45: LDA 7,-34(7) Jump to add()
-46: LD 5,0(5) Pop the frame and return to the current frame
-47: ST 0,-5(5) Store return value
+43: LDA 0,1(7) Save the return address in the accumulator
+44: LDA 7,-33(7) Jump to add()
+45: LD 5,0(5) Pop the frame and return to the current frame
+46: ST 0,-5(5) Store return value
 * --- Calling add() ---
 * Store back the result of the assignment operation
-48: LD 0,-4(5) Load to memory the address and result value
-49: LD 1,-5(5) 
-50: ST 1,0(0) 
-51: ST 1,-3(5) Value Stored!
+47: LD 0,-4(5) Load to memory the address and result value
+48: LD 1,-5(5) 
+49: ST 1,0(0) 
+50: ST 1,-3(5) Value Stored!
 * --- Assignment Expression ---
 * --- Calling output() ---
 * Offset: 3
 * Adding argument 1
-52: LD 0,-2(5) Value of k
-53: ST 0,-4(5) 
-54: ST 0,-5(5) Storing argument
+51: LD 0,-2(5) Value of k
+52: ST 0,-4(5) 
+53: ST 0,-5(5) Storing argument
 * Create new activation record
-55: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
-56: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
-57: LDA 0,2(7) Save the return address in the accumulator
-58: BRK 0,0,0 Breakpoint
-59: LDA 7,-53(7) Jump to output()
-60: LD 5,0(5) Pop the frame and return to the current frame
-61: ST 0,-3(5) Store return value
+54: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
+55: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
+56: LDA 0,1(7) Save the return address in the accumulator
+57: LDA 7,-51(7) Jump to output()
+58: LD 5,0(5) Pop the frame and return to the current frame
+59: ST 0,-3(5) Store return value
 * --- Calling output() ---
-62: LD 7,-1(5) Return to caller
+60: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,51(7) Jump around function bodies
+11: LDA 7,49(7) Jump around function bodies
 * --- Final ---
-63: ST 5,0(5) Original Pointer
-64: LDA 5,0(5) Push Main Frame Pointer
-65: LDA 0,1(7) Load Accumulator with return pointer
-66: LDA 7,-35(7) Jump to Location
-67: LD 5,0(5) Pop Main Frame
-68: HALT 0,0,0 Exit
+61: ST 5,0(5) Original Pointer
+62: LDA 5,0(5) Push Main Frame Pointer
+63: LDA 0,1(7) Load Accumulator with return pointer
+64: LDA 7,-33(7) Jump to Location
+65: LD 5,0(5) Pop Main Frame
+66: HALT 0,0,0 Exit
 * --- Final ---

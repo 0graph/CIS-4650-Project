@@ -74,56 +74,53 @@
 * Create new activation record
 46: ST 5,-5(5) Save address of current frame pointer to memory with offset 5
 47: LDA 5,-5(5) Load the frame pointer so that it starts at offset 5
-48: LDA 0,2(7) Save the return address in the accumulator
-49: BRK 0,0,0 Breakpoint
-50: LDA 7,-39(7) Jump to mut()
-51: LD 5,0(5) Pop the frame and return to the current frame
-52: ST 0,-5(5) Store return value
+48: LDA 0,1(7) Save the return address in the accumulator
+49: LDA 7,-38(7) Jump to mut()
+50: LD 5,0(5) Pop the frame and return to the current frame
+51: ST 0,-5(5) Store return value
 * --- Calling mut() ---
 * Store back the result of the assignment operation
-53: LD 0,-4(5) Load to memory the address and result value
-54: LD 1,-5(5) 
-55: ST 1,0(0) 
-56: ST 1,-3(5) Value Stored!
+52: LD 0,-4(5) Load to memory the address and result value
+53: LD 1,-5(5) 
+54: ST 1,0(0) 
+55: ST 1,-3(5) Value Stored!
 * --- Assignment Expression ---
 * --- Calling output() ---
 * Offset: 3
 * Adding argument 1
-57: LD 0,-2(5) Value of y
-58: ST 0,-4(5) 
-59: ST 0,-5(5) Storing argument
+56: LD 0,-2(5) Value of y
+57: ST 0,-4(5) 
+58: ST 0,-5(5) Storing argument
 * Create new activation record
-60: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
-61: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
-62: LDA 0,2(7) Save the return address in the accumulator
-63: BRK 0,0,0 Breakpoint
-64: LDA 7,-58(7) Jump to output()
-65: LD 5,0(5) Pop the frame and return to the current frame
-66: ST 0,-3(5) Store return value
+59: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
+60: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
+61: LDA 0,1(7) Save the return address in the accumulator
+62: LDA 7,-56(7) Jump to output()
+63: LD 5,0(5) Pop the frame and return to the current frame
+64: ST 0,-3(5) Store return value
 * --- Calling output() ---
 * --- Calling output() ---
 * Offset: 3
 * Adding argument 1
-67: LD 0,0(6) Value of x
-68: ST 0,-4(6) 
-69: ST 0,-5(5) Storing argument
+65: LD 0,0(6) Value of x
+66: ST 0,-4(6) 
+67: ST 0,-5(5) Storing argument
 * Create new activation record
-70: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
-71: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
-72: LDA 0,2(7) Save the return address in the accumulator
-73: BRK 0,0,0 Breakpoint
-74: LDA 7,-68(7) Jump to output()
-75: LD 5,0(5) Pop the frame and return to the current frame
-76: ST 0,-3(5) Store return value
+68: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
+69: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
+70: LDA 0,1(7) Save the return address in the accumulator
+71: LDA 7,-65(7) Jump to output()
+72: LD 5,0(5) Pop the frame and return to the current frame
+73: ST 0,-3(5) Store return value
 * --- Calling output() ---
-77: LD 7,-1(5) Return to caller
+74: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,66(7) Jump around function bodies
+11: LDA 7,63(7) Jump around function bodies
 * --- Final ---
-78: ST 5,-1(5) Original Pointer
-79: LDA 5,-1(5) Push Main Frame Pointer
-80: LDA 0,1(7) Load Accumulator with return pointer
-81: LDA 7,-50(7) Jump to Location
-82: LD 5,0(5) Pop Main Frame
-83: HALT 0,0,0 Exit
+75: ST 5,-1(5) Original Pointer
+76: LDA 5,-1(5) Push Main Frame Pointer
+77: LDA 0,1(7) Load Accumulator with return pointer
+78: LDA 7,-47(7) Jump to Location
+79: LD 5,0(5) Pop Main Frame
+80: HALT 0,0,0 Exit
 * --- Final ---

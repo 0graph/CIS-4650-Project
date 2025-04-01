@@ -525,8 +525,18 @@ public final class CodeGen implements AstVisitor {
         offset + 1, name, offset);
     buffer.addComment(comment);
 
-    code = Instructions.RM("LD", Instructions.AC, base, pointer, "Load address to register");
-    addInstruction(code);
+    // check if the array variable is a parameter and the pointer is not global
+    // if either of those is false we want to access the address of the array
+    int paramOffset = block.getParamOffset();
+    if (base < paramOffset && pointer == Instructions.FP) { 
+      comment = String.format("Original Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, base, pointer);
+      code = Instructions.RM("LD", Instructions.AC, base, pointer, comment);
+      addInstruction(code);
+    } else {
+      comment = String.format("Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, base, pointer);
+      code = Instructions.RM("LDA", Instructions.AC, base, pointer, comment);
+      addInstruction(code);
+    }
 
     code = Instructions.RM("LD", Instructions.R1, offset + 1, Instructions.FP, "Load index value to register");
     addInstruction(code);
@@ -918,7 +928,7 @@ public final class CodeGen implements AstVisitor {
 
     // Save the return address to the accumulator
     comment = String.format("Save the return address in the accumulator");
-    code = Instructions.RM("LDA", Instructions.AC, -2, Instructions.PC, comment);
+    code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, comment);
     addInstruction(code);
 
     // add breakpoint
