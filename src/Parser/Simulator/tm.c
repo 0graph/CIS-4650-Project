@@ -28,13 +28,15 @@
 
 /******* type  *******/
 
-typedef enum {
+typedef enum
+{
   opclRR, /* reg operands r,s,t */
   opclRM, /* reg r, mem d+s */
   opclRA  /* reg r, int d+s */
 } OPCLASS;
 
-typedef enum {
+typedef enum
+{
   /* RR instructions */
   opHALT,  /* RR     halt, operands are ignored */
   opIN,    /* RR     read into reg(r); s and t are ignored */
@@ -43,6 +45,7 @@ typedef enum {
   opSUB,   /* RR     reg(r) = reg(s)-reg(t) */
   opMUL,   /* RR     reg(r) = reg(s)*reg(t) */
   opDIV,   /* RR     reg(r) = reg(s)/reg(t) */
+  opBRK,   /* RR     Breakpoint, operands are ignored */
   opRRLim, /* limit of RR opcodes */
 
   /* RM instructions */
@@ -62,7 +65,8 @@ typedef enum {
   opRALim /* Limit of RA opcodes */
 } OPCODE;
 
-typedef enum {
+typedef enum
+{
   srOKAY,
   srHALT,
   srIMEM_ERR,
@@ -70,7 +74,8 @@ typedef enum {
   srZERODIVIDE
 } STEPRESULT;
 
-typedef struct {
+typedef struct
+{
   int iop;
   int iarg1;
   int iarg2;
@@ -82,13 +87,14 @@ int iloc = 0;
 int dloc = 0;
 int traceflag = FALSE;
 int icountflag = FALSE;
+int breakflag = FALSE;
 
 INSTRUCTION iMem[IADDR_SIZE];
 int dMem[DADDR_SIZE];
 int reg[NO_REGS];
 
 char *opCodeTab[] = {
-    "HALT", "IN", "OUT", "ADD", "SUB", "MUL", "DIV", "????",
+    "HALT", "IN", "OUT", "ADD", "SUB", "MUL", "DIV", "BRK", "????",
     /* RR opcodes */
     "LD", "ST", "????", /* RM opcodes */
     "LDA", "LDC", "JLT", "JLE", "JGT", "JGE", "JEQ", "JNE", "????"
@@ -110,7 +116,8 @@ char ch;
 int done;
 
 /********************************************/
-int opClass(int c) {
+int opClass(int c)
+{
   if (c <= opRRLim)
     return (opclRR);
   else if (c <= opRMLim)
@@ -120,11 +127,14 @@ int opClass(int c) {
 } /* opClass */
 
 /********************************************/
-void writeInstruction(int loc) {
+void writeInstruction(int loc)
+{
   printf("%5d: ", loc);
-  if ((loc >= 0) && (loc < IADDR_SIZE)) {
+  if ((loc >= 0) && (loc < IADDR_SIZE))
+  {
     printf("%6s%3d,", opCodeTab[iMem[loc].iop], iMem[loc].iarg1);
-    switch (opClass(iMem[loc].iop)) {
+    switch (opClass(iMem[loc].iop))
+    {
     case opclRR:
       printf("%1d,%1d", iMem[loc].iarg2, iMem[loc].iarg3);
       break;
@@ -138,7 +148,8 @@ void writeInstruction(int loc) {
 } /* writeInstruction */
 
 /********************************************/
-void getCh(void) {
+void getCh(void)
+{
   if (++inCol < lineLen)
     ch = in_Line[inCol];
   else
@@ -146,27 +157,34 @@ void getCh(void) {
 } /* getCh */
 
 /********************************************/
-int nonBlank(void) {
+int nonBlank(void)
+{
   while ((inCol < lineLen) && (in_Line[inCol] == ' '))
     inCol++;
-  if (inCol < lineLen) {
+  if (inCol < lineLen)
+  {
     ch = in_Line[inCol];
     return TRUE;
-  } else {
+  }
+  else
+  {
     ch = ' ';
     return FALSE;
   }
 } /* nonBlank */
 
 /********************************************/
-int getNum(void) {
+int getNum(void)
+{
   int sign;
   int term;
   int temp = FALSE;
   num = 0;
-  do {
+  do
+  {
     sign = 1;
-    while (nonBlank() && ((ch == '+') || (ch == '-'))) {
+    while (nonBlank() && ((ch == '+') || (ch == '-')))
+    {
       temp = FALSE;
       if (ch == '-')
         sign = -sign;
@@ -174,7 +192,8 @@ int getNum(void) {
     }
     term = 0;
     nonBlank();
-    while (isdigit(ch)) {
+    while (isdigit(ch))
+    {
       temp = TRUE;
       term = term * 10 + (ch - '0');
       getCh();
@@ -185,11 +204,14 @@ int getNum(void) {
 } /* getNum */
 
 /********************************************/
-int getWord(void) {
+int getWord(void)
+{
   int temp = FALSE;
   int length = 0;
-  if (nonBlank()) {
-    while (isalnum(ch)) {
+  if (nonBlank())
+  {
+    while (isalnum(ch))
+    {
       if (length < WORDSIZE - 1)
         word[length++] = ch;
       getCh();
@@ -201,9 +223,11 @@ int getWord(void) {
 } /* getWord */
 
 /********************************************/
-int skipCh(char c) {
+int skipCh(char c)
+{
   int temp = FALSE;
-  if (nonBlank() && (ch == c)) {
+  if (nonBlank() && (ch == c))
+  {
     getCh();
     temp = TRUE;
   }
@@ -214,7 +238,8 @@ int skipCh(char c) {
 int atEOL(void) { return (!nonBlank()); } /* atEOL */
 
 /********************************************/
-int error(char *msg, int lineNo, int instNo) {
+int error(char *msg, int lineNo, int instNo)
+{
   printf("Line %d", lineNo);
   if (instNo >= 0)
     printf(" (Instruction %d)", instNo);
@@ -223,7 +248,8 @@ int error(char *msg, int lineNo, int instNo) {
 } /* error */
 
 /********************************************/
-int readInstructions(void) {
+int readInstructions(void)
+{
   OPCODE op;
   int arg1, arg2, arg3;
   int loc, regNo, lineNo;
@@ -232,14 +258,16 @@ int readInstructions(void) {
   dMem[0] = DADDR_SIZE - 1;
   for (loc = 1; loc < DADDR_SIZE; loc++)
     dMem[loc] = 0;
-  for (loc = 0; loc < IADDR_SIZE; loc++) {
+  for (loc = 0; loc < IADDR_SIZE; loc++)
+  {
     iMem[loc].iop = opHALT;
     iMem[loc].iarg1 = 0;
     iMem[loc].iarg2 = 0;
     iMem[loc].iarg3 = 0;
   }
   lineNo = 0;
-  while (!feof(pgm)) {
+  while (!feof(pgm))
+  {
     fgets(in_Line, LINESIZE - 2, pgm);
     inCol = 0;
     lineNo++;
@@ -248,7 +276,8 @@ int readInstructions(void) {
       in_Line[lineLen] = '\0';
     else
       in_Line[++lineLen] = '\0';
-    if ((nonBlank()) && (in_Line[inCol] != '*')) {
+    if ((nonBlank()) && (in_Line[inCol] != '*'))
+    {
       if (!getNum())
         return error("Bad location", lineNo, -1);
       loc = num;
@@ -263,7 +292,8 @@ int readInstructions(void) {
         op++;
       if (strncmp(opCodeTab[op], word, 4) != 0)
         return error("Illegal opcode", lineNo, loc);
-      switch (opClass(op)) {
+      switch (opClass(op))
+      {
       case opclRR:
         /***********************************/
         if ((!getNum()) || (num < 0) || (num >= NO_REGS))
@@ -309,7 +339,8 @@ int readInstructions(void) {
 } /* readInstructions */
 
 /********************************************/
-STEPRESULT stepTM(void) {
+STEPRESULT stepTM(void)
+{
   INSTRUCTION currentinstruction;
   int pc;
   int r, s, t, m;
@@ -320,7 +351,8 @@ STEPRESULT stepTM(void) {
     return srIMEM_ERR;
   reg[PC_REG] = pc + 1;
   currentinstruction = iMem[pc];
-  switch (opClass(currentinstruction.iop)) {
+  switch (opClass(currentinstruction.iop))
+  {
   case opclRR:
     /***********************************/
     r = currentinstruction.iarg1;
@@ -345,7 +377,8 @@ STEPRESULT stepTM(void) {
     break;
   } /* case */
 
-  switch (currentinstruction.iop) { /* RR instructions */
+  switch (currentinstruction.iop)
+  { /* RR instructions */
   case opHALT:
     /***********************************/
     printf("HALT: %1d,%1d,%1d\n", r, s, t);
@@ -354,7 +387,8 @@ STEPRESULT stepTM(void) {
 
   case opIN:
     /***********************************/
-    do {
+    do
+    {
       printf("Enter value for IN instruction: ");
       fflush(stdin);
       fflush(stdout);
@@ -389,7 +423,9 @@ STEPRESULT stepTM(void) {
     else
       return srZERODIVIDE;
     break;
-
+  case opBRK: // will cause execution to stop allowing for manual tracing
+    breakflag = TRUE;
+    break;
   /*************** RM instructions ********************/
   case opLD:
     reg[r] = dMem[m];
@@ -436,13 +472,15 @@ STEPRESULT stepTM(void) {
 } /* stepTM */
 
 /********************************************/
-int doCommand(void) {
+int doCommand(void)
+{
   char cmd;
   int stepcnt = 0, i;
   int printcnt;
   int stepResult;
   int regNo, loc;
-  do {
+  do
+  {
     printf("Enter command: ");
     fflush(stdin);
     fflush(stdout);
@@ -452,7 +490,8 @@ int doCommand(void) {
   } while (!getWord());
 
   cmd = word[0];
-  switch (cmd) {
+  switch (cmd)
+  {
   case 't':
     /***********************************/
     traceflag = !traceflag;
@@ -512,7 +551,8 @@ int doCommand(void) {
 
   case 'r':
     /***********************************/
-    for (i = 0; i < NO_REGS; i++) {
+    for (i = 0; i < NO_REGS; i++)
+    {
       printf("%1d: %4d    ", i, reg[i]);
       if ((i % 4) == 3)
         printf("\n");
@@ -522,7 +562,8 @@ int doCommand(void) {
   case 'i':
     /***********************************/
     printcnt = 1;
-    if (getNum()) {
+    if (getNum())
+    {
       iloc = num;
       if (getNum())
         printcnt = num;
@@ -530,8 +571,10 @@ int doCommand(void) {
     // if ( ! atEOL ())
     if (atEOL())
       printf("Instruction locations?\n");
-    else {
-      while ((iloc >= 0) && (iloc < IADDR_SIZE) && (printcnt > 0)) {
+    else
+    {
+      while ((iloc >= 0) && (iloc < IADDR_SIZE) && (printcnt > 0))
+      {
         writeInstruction(iloc);
         iloc++;
         printcnt--;
@@ -542,7 +585,8 @@ int doCommand(void) {
   case 'd':
     /***********************************/
     printcnt = 1;
-    if (getNum()) {
+    if (getNum())
+    {
       dloc = num;
       if (getNum())
         printcnt = num;
@@ -550,8 +594,10 @@ int doCommand(void) {
     // if ( ! atEOL ())
     if (atEOL())
       printf("Data locations?\n");
-    else {
-      while ((dloc >= 0) && (dloc < DADDR_SIZE) && (printcnt > 0)) {
+    else
+    {
+      while ((dloc >= 0) && (dloc < DADDR_SIZE) && (printcnt > 0))
+      {
         printf("%5d: %5d\n", dloc, dMem[dloc]);
         dloc++;
         printcnt--;
@@ -579,20 +625,32 @@ int doCommand(void) {
     break;
   } /* case */
   stepResult = srOKAY;
-  if (stepcnt > 0) {
-    if (cmd == 'g') {
+  if (stepcnt > 0)
+  {
+    if (cmd == 'g')
+    {
       stepcnt = 0;
-      while (stepResult == srOKAY) {
+      while (stepResult == srOKAY)
+      {
         iloc = reg[PC_REG];
         if (traceflag)
           writeInstruction(iloc);
         stepResult = stepTM();
         stepcnt++;
+        if (breakflag)
+        {
+          printf("Breakpoint at %d\n", iloc);
+          breakflag = FALSE;
+          break;
+        }
       }
       if (icountflag)
         printf("Number of instructions executed = %d\n", stepcnt);
-    } else {
-      while ((stepcnt > 0) && (stepResult == srOKAY)) {
+    }
+    else
+    {
+      while ((stepcnt > 0) && (stepResult == srOKAY))
+      {
         iloc = reg[PC_REG];
         if (traceflag)
           writeInstruction(iloc);
@@ -609,8 +667,10 @@ int doCommand(void) {
 /* E X E C U T I O N   B E G I N S   H E R E */
 /********************************************/
 
-int main(int argc, char *argv[]) {
-  if (argc != 2) {
+int main(int argc, char *argv[])
+{
+  if (argc != 2)
+  {
     printf("usage: %s <filename>\n", argv[0]);
     exit(1);
   }
@@ -618,7 +678,8 @@ int main(int argc, char *argv[]) {
   if (strchr(pgmName, '.') == NULL)
     strcat(pgmName, ".tm");
   pgm = fopen(pgmName, "r");
-  if (pgm == NULL) {
+  if (pgm == NULL)
+  {
     printf("file '%s' not found\n", pgmName);
     exit(1);
   }
