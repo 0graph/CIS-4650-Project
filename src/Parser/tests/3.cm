@@ -1,0 +1,15 @@
+int add(int x, int y){
+  int c;
+
+  c = x + y;
+
+  return c;
+}
+
+void main(void){
+  int k;
+
+  k = add(3, 9);
+
+  output(k);
+}

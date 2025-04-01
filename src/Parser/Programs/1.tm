@@ -15,12 +15,12 @@
 3: LDA 7,7(7) Jump around i/o code
 * --- Function Declaration (main) ---
 12: ST 0,-1(5) Store return
-* Making Space for variable (a)
+* Making Space for variable (x)
 * --- Assignment Expression ---
-13: LDA 0,-2(5) Load address for var (a)
-14: ST 0,-4(5) &a
-* Loading Constant 1 to register 0 and save to memory with offset 5
-15: LDC 0,1(0) 
+13: LDA 0,-2(5) Load address for var (x)
+14: ST 0,-4(5) &x
+* Loading Constant 45 to register 0 and save to memory with offset 5
+15: LDC 0,45(0) 
 16: ST 0,-5(5) 
 * Store back the result of the assignment operation
 17: LD 0,-4(5) Load to memory the address and result value
@@ -31,7 +31,7 @@
 * --- Calling output() ---
 * Offset: 3
 * Adding argument 1
-21: LD 0,-2(5) Value of a
+21: LD 0,-2(5) Value of x
 22: ST 0,-4(5) 
 23: ST 0,-5(5) Storing argument
 * Create new activation record
@@ -40,15 +40,16 @@
 26: LDA 0,1(7) Save the return address in the accumulator
 27: LDA 7,-21(7) Jump to output()
 28: LD 5,0(5) Pop the frame and return to the current frame
+29: ST 0,-3(5) Store return value
 * --- Calling output() ---
-29: LD 7,-1(5) Return to caller
+30: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,18(7) Jump around function bodies
+11: LDA 7,19(7) Jump around function bodies
 * --- Final ---
-30: ST 5,0(5) Original Pointer
-31: LDA 5,0(5) Push Main Frame Pointer
-32: LDA 0,1(7) Load Accumulator with return pointer
-33: LDA 7,-22(7) Jump to Location
-34: LD 5,0(5) Pop Main Frame
-35: HALT 0,0,0 Exit
+31: ST 5,0(5) Original Pointer
+32: LDA 5,0(5) Push Main Frame Pointer
+33: LDA 0,1(7) Load Accumulator with return pointer
+34: LDA 7,-23(7) Jump to Location
+35: LD 5,0(5) Pop Main Frame
+36: HALT 0,0,0 Exit
 * --- Final ---
