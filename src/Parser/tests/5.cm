@@ -1,0 +1,22 @@
+int add(int x[]){
+  int j;
+
+  j = 0;
+  while(j < 3){
+    x[j] = j * 2;
+    j = j + 1;
+  }
+}
+
+void main(void){
+  int x[3];
+  int i;
+
+  add(x);
+
+  i = 0;
+  while(i < 3){
+    output(x[i]);
+    i = i + 1;
+  }
+}

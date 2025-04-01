@@ -96,34 +96,38 @@
 64: LDA 0,1(7) Save the return address in the accumulator
 65: LDA 7,-54(7) Jump to five()
 66: LD 5,0(5) Pop the frame and return to the current frame
+67: LD 0,-2(5) Load the return value to the accumulator
+68: ST 0,-5(5) Store return value
 * --- Calling five() ---
 * Store back the result of the assignment operation
-67: LD 0,-4(5) Load to memory the address and result value
-68: LD 1,-5(5) 
-69: ST 1,0(0) 
-70: ST 1,-3(5) Value Stored!
+69: LD 0,-4(5) Load to memory the address and result value
+70: LD 1,-5(5) 
+71: ST 1,0(0) 
+72: ST 1,-3(5) Value Stored!
 * --- Assignment Expression ---
 * --- Calling output() ---
 * Offset: 3
 * Adding argument 1
-71: LD 0,-2(5) Value of a
-72: ST 0,-4(5) 
-73: ST 0,-5(5) Storing argument
+73: LD 0,-2(5) Value of a
+74: ST 0,-4(5) 
+75: ST 0,-5(5) Storing argument
 * Create new activation record
-74: ST 5,-8(5) Save address of current frame pointer to memory with offset 8
-75: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
-76: LDA 0,1(7) Save the return address in the accumulator
-77: LDA 7,-71(7) Jump to output()
-78: LD 5,-5(5) Pop the frame and return to the current frame
+76: ST 5,-8(5) Save address of current frame pointer to memory with offset 8
+77: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
+78: LDA 0,1(7) Save the return address in the accumulator
+79: LDA 7,-72(7) Jump to output()
+80: LD 5,-5(5) Pop the frame and return to the current frame
+81: LD 0,-2(5) Load the return value to the accumulator
+82: ST 0,-3(5) Store return value
 * --- Calling output() ---
-79: LD 7,-1(5) Return to caller
+83: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,68(7) Jump around function bodies
+11: LDA 7,72(7) Jump around function bodies
 * --- Final ---
-80: ST 5,0(5) Original Pointer
-81: LDA 5,0(5) Push Main Frame Pointer
-82: LDA 0,1(7) Load Accumulator with return pointer
-83: LDA 7,-36(7) Jump to Location
-84: LD 5,0(5) Pop Main Frame
-85: HALT 0,0,0 Exit
+84: ST 5,0(5) Original Pointer
+85: LDA 5,0(5) Push Main Frame Pointer
+86: LDA 0,1(7) Load Accumulator with return pointer
+87: LDA 7,-40(7) Jump to Location
+88: LD 5,0(5) Pop Main Frame
+89: HALT 0,0,0 Exit
 * --- Final ---
