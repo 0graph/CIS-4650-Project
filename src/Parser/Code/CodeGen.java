@@ -314,7 +314,7 @@ public final class CodeGen implements AstVisitor {
       int pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
 
       // Create an address for this variable in this scope
-      block.createAddress(name, pointer);
+      block.createAddress(name, pointer, Block.SymbolType.VARIABLE);
     } catch (Exception e) { // This should never ever happen at this stage
       e.printStackTrace();
     }
@@ -329,7 +329,7 @@ public final class CodeGen implements AstVisitor {
   public void visit(ArrayDec variable, Block block) {
     // Store the position based on the length of the variable
     String name = variable.name;
-    Integer size = variable.size;
+    Integer size = variable.size > 0 ? variable.size : 1;
 
     try {
       String comment = String.format("Making space for array variable (%s[%d])", name, size);
@@ -339,7 +339,7 @@ public final class CodeGen implements AstVisitor {
       int pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
 
       // Create an address for this variable in this scope
-      block.createAddress(name, pointer, size);
+      block.createAddress(name, pointer, size, Block.SymbolType.ARRAY);
     } catch (Exception e) { // This should never happen
       e.printStackTrace();
     }
@@ -434,11 +434,15 @@ public final class CodeGen implements AstVisitor {
     // Get address location
     Integer[] symbol = block.getSymbolAddress(name);
 
+    Integer symbolAddress = symbol[0];
+    Integer pointer = symbol[1];
+    Integer type = symbol[2];
+
     // Load the address
     if (address) {
       // Create the instructions for loading the symbol address
       comment = String.format("Load address for var (%s)", name);
-      code = Instructions.RM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
+      code = Instructions.RM("LDA", Instructions.AC, symbolAddress, pointer, comment);
       addInstruction(code);
 
       // Create the instruction to read the effective address and save it to the part
@@ -447,11 +451,24 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     } else { // Right hand side variable
-      comment = String.format("Value of %s", name);
-      code = Instructions.RM("LD", Instructions.AC, symbol[0], symbol[1], comment);
-      addInstruction(code);
 
-      code = Instructions.RM("ST", Instructions.AC, offset, symbol[1], "");
+      if (type == Block.SymbolType.VARIABLE.ordinal()) {
+        comment = String.format("Value of %s", name);
+        code = Instructions.RM("LD", Instructions.AC, symbolAddress, pointer, comment);
+        addInstruction(code);
+      } else {
+        comment = String.format("Address of %s", name);
+        code = Instructions.RM("LDA", Instructions.AC, symbolAddress, pointer, comment);
+        addInstruction(code);
+
+        if (block.getNestingLevel() > 0) {
+          comment = String.format("Derefence the pointer to the address of %s", name);
+          code = Instructions.RM("LD", Instructions.AC, 0, 0, comment);
+          addInstruction(code);
+        }
+      }
+
+      code = Instructions.RM("ST", Instructions.AC, offset, pointer, "");
       addInstruction(code);
     }
   }
@@ -853,14 +870,10 @@ public final class CodeGen implements AstVisitor {
 
         visit(expression, block, false, offset + 1);
 
-        // TODO: This part still needs cleaning
-        // Create the instructions to include the arguments
-        // This one works for arrays
-        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset - 1,
+        // int position = offset + initialOffset - 1;
+        int position = offset + initialOffset - 1;
+        code = Instructions.RM("ST", Instructions.AC, position,
             Instructions.FP, "Storing argument");
-        // This one works for normal variables
-        // code = Instructions.RM("ST", Instructions.AC, offset + initialOffset,
-        // Instructions.FP, "Storing argument");
         addInstruction(code);
       }
 
