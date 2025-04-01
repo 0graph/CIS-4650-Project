@@ -1,3 +1,4 @@
+
 void printArray(int a[]) {
     int i;
     i = 0;

@@ -52,7 +52,7 @@
 35: LD 0,-3(5) Value of i
 36: ST 0,-8(5) 
 * Load index calculated at offset 8 and base address of array a[] and save it to offset 7
-37: LDA 0,-2(5) Load address to register
+37: LD 0,-2(5) Load address to register
 38: LD 1,-8(5) Load index value to register
 39: SUB 0,0,1 Substract the offset to the address
 40: LD 0,0(0) Load the value at the a[index] address to the AC
@@ -131,7 +131,7 @@
 89: LD 0,-3(5) Value of i
 90: ST 0,-8(5) 
 * Load index calculated at offset 8 and base address of array a[] and save it to offset 7
-91: LDA 0,-2(5) Load address to register
+91: LD 0,-2(5) Load address to register
 92: LD 1,-8(5) Load index value to register
 93: SUB 0,0,1 Substract the offset to the address
 94: ST 0,-7(5) Store the address given the index at offset 7
@@ -181,55 +181,53 @@
 * --- Calling printArray() ---
 * Offset: 4
 * Adding argument 1
-122: LDA 0,-2(5) Address of a
-123: LD 0,0(0) Derefence the pointer to the address of a
-124: ST 0,-5(5) 
-125: ST 0,-6(5) Storing argument
+122: LD 0,-2(5) Original Address of a, PO: 3, SA: 2, P*: 5
+123: ST 0,-5(5) 
+124: ST 0,-6(5) Storing argument
 * Create new activation record
-126: ST 5,-4(5) Save address of current frame pointer to memory with offset 4
-127: LDA 5,-4(5) Load the frame pointer so that it starts at offset 4
-128: LDA 0,2(7) Save the return address in the accumulator
-129: BRK 0,0,0 Breakpoint
-130: LDA 7,-119(7) Jump to printArray()
-131: LD 5,0(5) Pop the frame and return to the current frame
-132: ST 0,-4(5) Store return value
+125: ST 5,-4(5) Save address of current frame pointer to memory with offset 4
+126: LDA 5,-4(5) Load the frame pointer so that it starts at offset 4
+127: LDA 0,2(7) Save the return address in the accumulator
+128: BRK 0,0,0 Breakpoint
+129: LDA 7,-118(7) Jump to printArray()
+130: LD 5,0(5) Pop the frame and return to the current frame
+131: ST 0,-4(5) Store return value
 * --- Calling printArray() ---
-133: LD 7,-1(5) Return to caller
+132: LD 7,-1(5) Return to caller
 * --- Function Declaration (makeArray) ---
 * --- Function Declaration (main) ---
-134: ST 0,-1(5) Store return
+133: ST 0,-1(5) Store return
 * Making space for array variable (arr[5])
 * --- Calling makeArray() ---
 * Offset: 7
 * Adding argument 1
-135: LDA 0,-2(5) Address of arr
-136: LD 0,0(0) Derefence the pointer to the address of arr
-137: ST 0,-8(5) 
-138: ST 0,-9(5) Storing argument
+134: LDA 0,-2(5) Address of arr, PO: 2, SA: 2, P*: 5
+135: ST 0,-8(5) 
+136: ST 0,-9(5) Storing argument
 * Create new activation record
-139: ST 5,-7(5) Save address of current frame pointer to memory with offset 7
-140: LDA 5,-7(5) Load the frame pointer so that it starts at offset 7
-141: LDA 0,2(7) Save the return address in the accumulator
-142: BRK 0,0,0 Breakpoint
-143: LDA 7,-78(7) Jump to makeArray()
-144: LD 5,0(5) Pop the frame and return to the current frame
-145: ST 0,-7(5) Store return value
+137: ST 5,-7(5) Save address of current frame pointer to memory with offset 7
+138: LDA 5,-7(5) Load the frame pointer so that it starts at offset 7
+139: LDA 0,2(7) Save the return address in the accumulator
+140: BRK 0,0,0 Breakpoint
+141: LDA 7,-76(7) Jump to makeArray()
+142: LD 5,0(5) Pop the frame and return to the current frame
+143: ST 0,-7(5) Store return value
 * --- Calling makeArray() ---
 * --- Return Expression ---
 * Loading Constant 0 to register 0 and save to memory with offset 8
-146: LDC 0,0(0) 
-147: ST 0,-8(5) 
-148: LD 1,0(0) Save value from return expression
-149: LD 7,-1(5) Return to caller
+144: LDC 0,0(0) 
+145: ST 0,-8(5) 
+146: LD 1,0(0) Save value from return expression
+147: LD 7,-1(5) Return to caller
 * --- Return Expression ---
-150: LD 7,-1(5) Return to caller
+148: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,139(7) Jump around function bodies
+11: LDA 7,137(7) Jump around function bodies
 * --- Final ---
-151: ST 5,0(5) Original Pointer
-152: LDA 5,0(5) Push Main Frame Pointer
-153: LDA 0,1(7) Load Accumulator with return pointer
-154: LDA 7,-21(7) Jump to Location
-155: LD 5,0(5) Pop Main Frame
-156: HALT 0,0,0 Exit
+149: ST 5,0(5) Original Pointer
+150: LDA 5,0(5) Push Main Frame Pointer
+151: LDA 0,1(7) Load Accumulator with return pointer
+152: LDA 7,-20(7) Jump to Location
+153: LD 5,0(5) Pop Main Frame
+154: HALT 0,0,0 Exit
 * --- Final ---

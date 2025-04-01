@@ -86,7 +86,7 @@
 53: ST 0,-4(5) 
 54: ST 0,-5(5) Storing argument
 * Create new activation record
-55: ST 5,-3(5) Save address of current frame pointer to memory with offset 8
+55: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
 56: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
 57: LDA 0,2(7) Save the return address in the accumulator
 58: BRK 0,0,0 Breakpoint
