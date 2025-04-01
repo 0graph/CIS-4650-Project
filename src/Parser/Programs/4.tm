@@ -92,7 +92,7 @@
 57: ST 0,-4(5) 
 58: ST 0,-5(5) Storing argument
 * Create new activation record
-59: ST 5,-3(5) Save address of current frame pointer to memory with offset 8
+59: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
 60: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
 61: LDA 0,1(7) Save the return address in the accumulator
 62: LDA 7,-56(7) Jump to output()
@@ -106,7 +106,7 @@
 66: ST 0,-4(6) 
 67: ST 0,-5(5) Storing argument
 * Create new activation record
-68: ST 5,-3(5) Save address of current frame pointer to memory with offset 11
+68: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
 69: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
 70: LDA 0,1(7) Save the return address in the accumulator
 71: LDA 7,-65(7) Jump to output()
