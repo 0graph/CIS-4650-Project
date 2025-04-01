@@ -70,6 +70,9 @@ public final class CodeGen implements AstVisitor {
     finale();
   }
 
+  /**
+   * Setup the code for input/output functions
+   */
   public void ioSetup() {
     String code;
     // I/O instructions
@@ -239,6 +242,11 @@ public final class CodeGen implements AstVisitor {
    * @param block    The current block for a function
    */
   public void visit(FunctionDec function, Block block) {
+    // Verify that this is not a function prototype
+    if (function.body instanceof NilExp) {
+      return;
+    }
+
     // The name of the function
     String code;
     String name = function.name;
@@ -249,6 +257,16 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
 
+    /**
+     * TODO: Find a way to backpatch a function prototype so that we can link and
+     * keep
+     * track of where the other instructions for this function is at
+     *
+     * TODO: Fix the semantic analyzer given an error when an array is being used
+     * properly (this is what we will use to make sure that our program is correct)
+     *
+     * This might take some tinkering to do
+     */
     Block functionBlock = block.createNewBlock(name, line - 1);
 
     /**
@@ -296,7 +314,7 @@ public final class CodeGen implements AstVisitor {
       int pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
 
       // Create an address for this variable in this scope
-      block.createAddress(name, pointer);
+      block.createAddress(name, pointer, Block.SymbolType.VARIABLE);
     } catch (Exception e) { // This should never ever happen at this stage
       e.printStackTrace();
     }
@@ -311,7 +329,7 @@ public final class CodeGen implements AstVisitor {
   public void visit(ArrayDec variable, Block block) {
     // Store the position based on the length of the variable
     String name = variable.name;
-    Integer size = variable.size;
+    Integer size = variable.size > 0 ? variable.size : 1;
 
     try {
       String comment = String.format("Making space for array variable (%s[%d])", name, size);
@@ -321,7 +339,7 @@ public final class CodeGen implements AstVisitor {
       int pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
 
       // Create an address for this variable in this scope
-      block.createAddress(name, pointer, size);
+      block.createAddress(name, pointer, size, Block.SymbolType.ARRAY);
     } catch (Exception e) { // This should never happen
       e.printStackTrace();
     }
@@ -416,11 +434,15 @@ public final class CodeGen implements AstVisitor {
     // Get address location
     Integer[] symbol = block.getSymbolAddress(name);
 
+    Integer symbolAddress = symbol[0];
+    Integer pointer = symbol[1];
+    Integer type = symbol[2];
+
     // Load the address
     if (address) {
       // Create the instructions for loading the symbol address
       comment = String.format("Load address for var (%s)", name);
-      code = Instructions.RM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
+      code = Instructions.RM("LDA", Instructions.AC, symbolAddress, pointer, comment);
       addInstruction(code);
 
       // Create the instruction to read the effective address and save it to the part
@@ -429,11 +451,36 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     } else { // Right hand side variable
-      comment = String.format("Value of %s", name);
-      code = Instructions.RM("LD", Instructions.AC, symbol[0], symbol[1], comment);
-      addInstruction(code);
 
-      code = Instructions.RM("ST", Instructions.AC, offset, symbol[1], "");
+      if (type == Block.SymbolType.VARIABLE.ordinal()) {
+        comment = String.format("Value of %s", name);
+        code = Instructions.RM("LD", Instructions.AC, symbolAddress, pointer, comment);
+        addInstruction(code);
+      } else {
+        comment = String.format("Address of %s", name);
+        code = Instructions.RM("LDA", Instructions.AC, symbolAddress, pointer, comment);
+        addInstruction(code);
+
+        /**
+         * TODO: The issue is here. We somehow have to know whether the call with the
+         * array is nested. If it's nested than that means we can't just
+         * call the LDA (load address) because we need to dereference that address to
+         * get the real address. We have to send the real addres down somehow, all the
+         * time. That is tricky because the first time we are calling we have to pass
+         * down the address ("LDA"), but this
+         * address is now a value in memory. That means that the next time we call LDA,
+         * we are actually loading the ADDRESS, that holds
+         * that actual reference to the array's base address. I am having a hard time
+         * thinking about how to do this right
+         */
+        if (block.getNestingLevel() > 0) {
+          comment = String.format("Derefence the pointer to the address of %s", name);
+          code = Instructions.RM("LD", Instructions.AC, 0, 0, comment);
+          addInstruction(code);
+        }
+      }
+
+      code = Instructions.RM("ST", Instructions.AC, offset, pointer, "");
       addInstruction(code);
     }
   }
@@ -484,6 +531,7 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     } else { // Used as part of an expression in the right hands side
+
       comment = String.format("Load the value at the %s[index] address to the AC", name);
       code = Instructions.RM("LD", Instructions.AC, 0, Instructions.AC, comment);
       addInstruction(code);
@@ -835,8 +883,10 @@ public final class CodeGen implements AstVisitor {
 
         visit(expression, block, false, offset + 1);
 
-        // Create the instructions to include the arguments
-        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset, Instructions.FP, "Storing argument");
+        // int position = offset + initialOffset - 1;
+        int position = offset + initialOffset;
+        code = Instructions.RM("ST", Instructions.AC, position,
+            Instructions.FP, "Storing argument");
         addInstruction(code);
       }
 

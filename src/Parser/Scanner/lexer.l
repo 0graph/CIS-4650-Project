@@ -34,11 +34,13 @@ NUM = [0-9]+
 
 WHITESPACE = [\r|\n|\r\n]|[ \t\f]
 COMMENTS = "/\*" ([^*]|\*+[^*/])* "\*/"
+SINGLE_COMMENTS = "//"[^\n]*
 %%
 
 /* Lexical Rules Section */
 
 {COMMENTS} {/*Ignore Comments*/}
+{SINGLE_COMMENTS} {/* Ignore Comments */}
 
 /* Reserved Keywords */
 "bool"    { return symbol(Sym.BOOL); }

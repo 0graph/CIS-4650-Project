@@ -1,0 +1,18 @@
+int x;
+
+int mut(int y){
+  int z;
+  z = y * x;
+
+  return z;
+}
+
+void main(void){
+  int y;
+
+  x = 5; 
+  y = mut(5);
+
+  output(y);
+  output(x);
+}
