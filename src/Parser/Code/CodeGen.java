@@ -461,6 +461,18 @@ public final class CodeGen implements AstVisitor {
         code = Instructions.RM("LDA", Instructions.AC, symbolAddress, pointer, comment);
         addInstruction(code);
 
+        /**
+         * TODO: The issue is here. We somehow have to know whether the call with the
+         * array is nested. If it's nested than that means we can't just
+         * call the LDA (load address) because we need to dereference that address to
+         * get the real address. We have to send the real addres down somehow, all the
+         * time. That is tricky because the first time we are calling we have to pass
+         * down the address ("LDA"), but this
+         * address is now a value in memory. That means that the next time we call LDA,
+         * we are actually loading the ADDRESS, that holds
+         * that actual reference to the array's base address. I am having a hard time
+         * thinking about how to do this right
+         */
         if (block.getNestingLevel() > 0) {
           comment = String.format("Derefence the pointer to the address of %s", name);
           code = Instructions.RM("LD", Instructions.AC, 0, 0, comment);
@@ -519,6 +531,7 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     } else { // Used as part of an expression in the right hands side
+
       comment = String.format("Load the value at the %s[index] address to the AC", name);
       code = Instructions.RM("LD", Instructions.AC, 0, Instructions.AC, comment);
       addInstruction(code);
