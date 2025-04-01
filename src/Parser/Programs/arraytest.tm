@@ -63,170 +63,173 @@
 44: LDA 5,-6(5) Load the frame pointer so that it starts at offset 6
 45: LDA 0,1(7) Save the return address in the accumulator
 46: LDA 7,-40(7) Jump to output()
-47: LD 5,0(5) Pop the frame and return to the current frame
-48: ST 0,-6(5) Store return value
+47: BRK 0,0,0 Breakpoint
+48: LD 5,0(5) Pop the frame and return to the current frame
+49: ST 0,-6(5) Store return value
 * --- Calling output() ---
 * --- Assignment Expression ---
-49: LDA 0,-3(5) Load address for var (i)
-50: ST 0,-7(5) &i
+50: LDA 0,-3(5) Load address for var (i)
+51: ST 0,-7(5) &i
 * --- Operation Expression ---
-51: LD 0,-3(5) Value of i
-52: ST 0,-9(5) 
+52: LD 0,-3(5) Value of i
+53: ST 0,-9(5) 
 * Loading Constant 1 to register 0 and save to memory with offset 10
-53: LDC 0,1(0) 
-54: ST 0,-10(5) 
+54: LDC 0,1(0) 
+55: ST 0,-10(5) 
 * Save the result of the operation expression to the address offset 8
-55: LD 0,-9(5) Load Left hand side
-56: LD 1,-10(5) Load Right hand side
-57: ADD 0,0,1 Operation
-58: ST 0,-8(5) Store value of expression
+56: LD 0,-9(5) Load Left hand side
+57: LD 1,-10(5) Load Right hand side
+58: ADD 0,0,1 Operation
+59: ST 0,-8(5) Store value of expression
 * --- Operation Expression ---
 * Store back the result of the assignment operation
-59: LD 0,-7(5) Load to memory the address and result value
-60: LD 1,-8(5) 
-61: ST 1,0(0) 
-62: ST 1,-6(5) Value Stored!
+60: LD 0,-7(5) Load to memory the address and result value
+61: LD 1,-8(5) 
+62: ST 1,0(0) 
+63: ST 1,-6(5) Value Stored!
 * --- Assignment Expression ---
-63: LDA 7,-41(7) Jump to test after body
+64: LDA 7,-42(7) Jump to test after body
 * Load the test value to register 0
 33: LD 0,-5(5) Load test value
-34: JLE 0,29(7) Jump to end if test <= 0 (false)
-64: LD 7,-1(5) Return to caller
+34: JLE 0,30(7) Jump to end if test <= 0 (false)
+65: LD 7,-1(5) Return to caller
 * --- Function Declaration (printArray) ---
 * --- Function Declaration (makeArray) ---
-65: ST 0,-1(5) Store return
+66: ST 0,-1(5) Store return
 * Making space for array variable (a[1])
 * Making Space for variable (i)
 * --- Assignment Expression ---
-66: LDA 0,-3(5) Load address for var (i)
-67: ST 0,-5(5) &i
+67: LDA 0,-3(5) Load address for var (i)
+68: ST 0,-5(5) &i
 * Loading Constant 0 to register 0 and save to memory with offset 6
-68: LDC 0,0(0) 
-69: ST 0,-6(5) 
+69: LDC 0,0(0) 
+70: ST 0,-6(5) 
 * Store back the result of the assignment operation
-70: LD 0,-5(5) Load to memory the address and result value
-71: LD 1,-6(5) 
-72: ST 1,0(0) 
-73: ST 1,-4(5) Value Stored!
+71: LD 0,-5(5) Load to memory the address and result value
+72: LD 1,-6(5) 
+73: ST 1,0(0) 
+74: ST 1,-4(5) Value Stored!
 * --- Assignment Expression ---
 * --- While Expression ---
 * --- Operation Expression ---
-74: LD 0,-3(5) Value of i
-75: ST 0,-6(5) 
+75: LD 0,-3(5) Value of i
+76: ST 0,-6(5) 
 * Loading Constant 5 to register 0 and save to memory with offset 7
-76: LDC 0,5(0) 
-77: ST 0,-7(5) 
+77: LDC 0,5(0) 
+78: ST 0,-7(5) 
 * Save the result of the operation expression to the address offset 5
-78: LD 0,-6(5) Load Left hand side
-79: LD 1,-7(5) Load Right hand side
-80: SUB 0,0,1 Subtract for Comparison
-81: JLT 0,2(7) Jump to next instruction if true
-82: LDC 0,0(0) Load 0 (false)
-83: LDA 7,1(7) Unconditional Jump
-84: LDC 0,1(0) Load 1 (true)
-85: ST 0,-5(5) Store value of expression
+79: LD 0,-6(5) Load Left hand side
+80: LD 1,-7(5) Load Right hand side
+81: SUB 0,0,1 Subtract for Comparison
+82: JLT 0,2(7) Jump to next instruction if true
+83: LDC 0,0(0) Load 0 (false)
+84: LDA 7,1(7) Unconditional Jump
+85: LDC 0,1(0) Load 1 (true)
+86: ST 0,-5(5) Store value of expression
 * --- Operation Expression ---
 * --- Assignment Expression ---
-88: LD 0,-3(5) Value of i
-89: ST 0,-8(5) 
+89: LD 0,-3(5) Value of i
+90: ST 0,-8(5) 
 * Load index calculated at offset 8 and base address of array a[] and save it to offset 7
-90: LDA 0,-2(5) Load address to register
-91: LD 1,-8(5) Load index value to register
-92: SUB 0,0,1 Substract the offset to the address
-93: ST 0,-7(5) Store the address given the index at offset 7
+91: LDA 0,-2(5) Load address to register
+92: LD 1,-8(5) Load index value to register
+93: SUB 0,0,1 Substract the offset to the address
+94: ST 0,-7(5) Store the address given the index at offset 7
 * --- Operation Expression ---
-94: LD 0,-3(5) Value of i
-95: ST 0,-9(5) 
+95: LD 0,-3(5) Value of i
+96: ST 0,-9(5) 
 * Loading Constant 1 to register 0 and save to memory with offset 10
-96: LDC 0,1(0) 
-97: ST 0,-10(5) 
+97: LDC 0,1(0) 
+98: ST 0,-10(5) 
 * Save the result of the operation expression to the address offset 8
-98: LD 0,-9(5) Load Left hand side
-99: LD 1,-10(5) Load Right hand side
-100: ADD 0,0,1 Operation
-101: ST 0,-8(5) Store value of expression
+99: LD 0,-9(5) Load Left hand side
+100: LD 1,-10(5) Load Right hand side
+101: ADD 0,0,1 Operation
+102: ST 0,-8(5) Store value of expression
 * --- Operation Expression ---
 * Store back the result of the assignment operation
-102: LD 0,-7(5) Load to memory the address and result value
-103: LD 1,-8(5) 
-104: ST 1,0(0) 
-105: ST 1,-6(5) Value Stored!
+103: LD 0,-7(5) Load to memory the address and result value
+104: LD 1,-8(5) 
+105: ST 1,0(0) 
+106: ST 1,-6(5) Value Stored!
 * --- Assignment Expression ---
 * --- Assignment Expression ---
-106: LDA 0,-3(5) Load address for var (i)
-107: ST 0,-7(5) &i
+107: LDA 0,-3(5) Load address for var (i)
+108: ST 0,-7(5) &i
 * --- Operation Expression ---
-108: LD 0,-3(5) Value of i
-109: ST 0,-9(5) 
+109: LD 0,-3(5) Value of i
+110: ST 0,-9(5) 
 * Loading Constant 1 to register 0 and save to memory with offset 10
-110: LDC 0,1(0) 
-111: ST 0,-10(5) 
+111: LDC 0,1(0) 
+112: ST 0,-10(5) 
 * Save the result of the operation expression to the address offset 8
-112: LD 0,-9(5) Load Left hand side
-113: LD 1,-10(5) Load Right hand side
-114: ADD 0,0,1 Operation
-115: ST 0,-8(5) Store value of expression
+113: LD 0,-9(5) Load Left hand side
+114: LD 1,-10(5) Load Right hand side
+115: ADD 0,0,1 Operation
+116: ST 0,-8(5) Store value of expression
 * --- Operation Expression ---
 * Store back the result of the assignment operation
-116: LD 0,-7(5) Load to memory the address and result value
-117: LD 1,-8(5) 
-118: ST 1,0(0) 
-119: ST 1,-6(5) Value Stored!
+117: LD 0,-7(5) Load to memory the address and result value
+118: LD 1,-8(5) 
+119: ST 1,0(0) 
+120: ST 1,-6(5) Value Stored!
 * --- Assignment Expression ---
-120: LDA 7,-45(7) Jump to test after body
+121: LDA 7,-45(7) Jump to test after body
 * Load the test value to register 0
-86: LD 0,-5(5) Load test value
-87: JLE 0,33(7) Jump to end if test <= 0 (false)
+87: LD 0,-5(5) Load test value
+88: JLE 0,33(7) Jump to end if test <= 0 (false)
 * --- Calling printArray() ---
 * Offset: 4
 * Adding argument 1
-121: LDA 0,-2(5) Address of a
-122: LD 0,0(0) Derefence the pointer to the address of a
-123: ST 0,-5(5) 
-124: ST 0,-6(5) Storing argument
+122: LDA 0,-2(5) Address of a
+123: LD 0,0(0) Derefence the pointer to the address of a
+124: ST 0,-5(5) 
+125: ST 0,-6(5) Storing argument
 * Create new activation record
-125: ST 5,-4(5) Save address of current frame pointer to memory with offset 4
-126: LDA 5,-4(5) Load the frame pointer so that it starts at offset 4
-127: LDA 0,1(7) Save the return address in the accumulator
-128: LDA 7,-117(7) Jump to printArray()
-129: LD 5,0(5) Pop the frame and return to the current frame
-130: ST 0,-4(5) Store return value
+126: ST 5,-4(5) Save address of current frame pointer to memory with offset 4
+127: LDA 5,-4(5) Load the frame pointer so that it starts at offset 4
+128: LDA 0,1(7) Save the return address in the accumulator
+129: LDA 7,-118(7) Jump to printArray()
+130: BRK 0,0,0 Breakpoint
+131: LD 5,0(5) Pop the frame and return to the current frame
+132: ST 0,-4(5) Store return value
 * --- Calling printArray() ---
-131: LD 7,-1(5) Return to caller
+133: LD 7,-1(5) Return to caller
 * --- Function Declaration (makeArray) ---
 * --- Function Declaration (main) ---
-132: ST 0,-1(5) Store return
+134: ST 0,-1(5) Store return
 * Making space for array variable (arr[5])
 * --- Calling makeArray() ---
 * Offset: 7
 * Adding argument 1
-133: LDA 0,-2(5) Address of arr
-134: LD 0,0(0) Derefence the pointer to the address of arr
-135: ST 0,-8(5) 
-136: ST 0,-9(5) Storing argument
+135: LDA 0,-2(5) Address of arr
+136: LD 0,0(0) Derefence the pointer to the address of arr
+137: ST 0,-8(5) 
+138: ST 0,-9(5) Storing argument
 * Create new activation record
-137: ST 5,-7(5) Save address of current frame pointer to memory with offset 7
-138: LDA 5,-7(5) Load the frame pointer so that it starts at offset 7
-139: LDA 0,1(7) Save the return address in the accumulator
-140: LDA 7,-76(7) Jump to makeArray()
-141: LD 5,0(5) Pop the frame and return to the current frame
-142: ST 0,-7(5) Store return value
+139: ST 5,-7(5) Save address of current frame pointer to memory with offset 7
+140: LDA 5,-7(5) Load the frame pointer so that it starts at offset 7
+141: LDA 0,1(7) Save the return address in the accumulator
+142: LDA 7,-77(7) Jump to makeArray()
+143: BRK 0,0,0 Breakpoint
+144: LD 5,0(5) Pop the frame and return to the current frame
+145: ST 0,-7(5) Store return value
 * --- Calling makeArray() ---
 * --- Return Expression ---
 * Loading Constant 0 to register 0 and save to memory with offset 8
-143: LDC 0,0(0) 
-144: ST 0,-8(5) 
-145: LD 1,0(0) Save value from return expression
-146: LD 7,-1(5) Return to caller
+146: LDC 0,0(0) 
+147: ST 0,-8(5) 
+148: LD 1,0(0) Save value from return expression
+149: LD 7,-1(5) Return to caller
 * --- Return Expression ---
-147: LD 7,-1(5) Return to caller
+150: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,136(7) Jump around function bodies
+11: LDA 7,139(7) Jump around function bodies
 * --- Final ---
-148: ST 5,0(5) Original Pointer
-149: LDA 5,0(5) Push Main Frame Pointer
-150: LDA 0,1(7) Load Accumulator with return pointer
-151: LDA 7,-20(7) Jump to Location
-152: LD 5,0(5) Pop Main Frame
-153: HALT 0,0,0 Exit
+151: ST 5,0(5) Original Pointer
+152: LDA 5,0(5) Push Main Frame Pointer
+153: LDA 0,1(7) Load Accumulator with return pointer
+154: LDA 7,-21(7) Jump to Location
+155: LD 5,0(5) Pop Main Frame
+156: HALT 0,0,0 Exit
 * --- Final ---

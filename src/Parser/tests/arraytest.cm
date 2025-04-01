@@ -1,0 +1,25 @@
+void printArray(int a[]) {
+    int i;
+    i = 0;
+    while(i < 5) {
+        output(a[i]);
+        i = i + 1;
+    }
+}
+
+void makeArray(int a[]) {
+    int i;
+    i = 0;
+    while(i < 5) {
+        a[i] = i + 1;
+        i = i + 1;
+    }
+    printArray(a);
+}
+
+
+int main(void) {
+    int arr[5];
+    makeArray(arr);
+    return 0;
+}
