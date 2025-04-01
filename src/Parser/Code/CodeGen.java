@@ -871,7 +871,7 @@ public final class CodeGen implements AstVisitor {
         visit(expression, block, false, offset + 1);
 
         // int position = offset + initialOffset - 1;
-        int position = offset + initialOffset - 1;
+        int position = offset + initialOffset;
         code = Instructions.RM("ST", Instructions.AC, position,
             Instructions.FP, "Storing argument");
         addInstruction(code);
