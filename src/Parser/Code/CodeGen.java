@@ -910,7 +910,11 @@ public final class CodeGen implements AstVisitor {
 
     // Save the return address to the accumulator
     comment = String.format("Save the return address in the accumulator");
-    code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, comment);
+    code = Instructions.RM("LDA", Instructions.AC, -2, Instructions.PC, comment);
+    addInstruction(code);
+
+    // add breakpoint
+    code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
     addInstruction(code);
 
     // Jump to instruction
@@ -918,9 +922,6 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, address, Instructions.PC, comment);
     addInstruction(code);
 
-    // add breakpoint
-    code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
-    addInstruction(code);
 
     // Pop the frame once we are done
     comment = String.format("Pop the frame and return to the current frame");

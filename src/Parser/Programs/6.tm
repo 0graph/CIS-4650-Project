@@ -131,9 +131,9 @@
 * Create new activation record
 92: ST 5,-8(5) Save address of current frame pointer to memory with offset 8
 93: LDA 5,-8(5) Load the frame pointer so that it starts at offset 8
-94: LDA 0,1(7) Save the return address in the accumulator
-95: LDA 7,-89(7) Jump to output()
-96: BRK 0,0,0 Breakpoint
+94: LDA 0,2(7) Save the return address in the accumulator
+95: BRK 0,0,0 Breakpoint
+96: LDA 7,-90(7) Jump to output()
 97: LD 5,0(5) Pop the frame and return to the current frame
 98: ST 0,-8(5) Store return value
 * --- Calling output() ---

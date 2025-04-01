@@ -61,9 +61,9 @@
 * Create new activation record
 43: ST 5,-6(5) Save address of current frame pointer to memory with offset 6
 44: LDA 5,-6(5) Load the frame pointer so that it starts at offset 6
-45: LDA 0,1(7) Save the return address in the accumulator
-46: LDA 7,-40(7) Jump to output()
-47: BRK 0,0,0 Breakpoint
+45: LDA 0,2(7) Save the return address in the accumulator
+46: BRK 0,0,0 Breakpoint
+47: LDA 7,-41(7) Jump to output()
 48: LD 5,0(5) Pop the frame and return to the current frame
 49: ST 0,-6(5) Store return value
 * --- Calling output() ---
@@ -188,9 +188,9 @@
 * Create new activation record
 126: ST 5,-4(5) Save address of current frame pointer to memory with offset 4
 127: LDA 5,-4(5) Load the frame pointer so that it starts at offset 4
-128: LDA 0,1(7) Save the return address in the accumulator
-129: LDA 7,-118(7) Jump to printArray()
-130: BRK 0,0,0 Breakpoint
+128: LDA 0,2(7) Save the return address in the accumulator
+129: BRK 0,0,0 Breakpoint
+130: LDA 7,-119(7) Jump to printArray()
 131: LD 5,0(5) Pop the frame and return to the current frame
 132: ST 0,-4(5) Store return value
 * --- Calling printArray() ---
@@ -209,9 +209,9 @@
 * Create new activation record
 139: ST 5,-7(5) Save address of current frame pointer to memory with offset 7
 140: LDA 5,-7(5) Load the frame pointer so that it starts at offset 7
-141: LDA 0,1(7) Save the return address in the accumulator
-142: LDA 7,-77(7) Jump to makeArray()
-143: BRK 0,0,0 Breakpoint
+141: LDA 0,2(7) Save the return address in the accumulator
+142: BRK 0,0,0 Breakpoint
+143: LDA 7,-78(7) Jump to makeArray()
 144: LD 5,0(5) Pop the frame and return to the current frame
 145: ST 0,-7(5) Store return value
 * --- Calling makeArray() ---
