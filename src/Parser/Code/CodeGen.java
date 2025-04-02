@@ -581,6 +581,8 @@ public final class CodeGen implements AstVisitor {
     // Load the return value to the accumulator
     visit(exp.exp, block, false, offset + 1);
 
+    // addBreakPoint();
+
     // code = Instructions.RM("LD", Instructions.R1, 1, Instructions.FP, "Load
     // return address");
     code = Instructions.RM("LD", Instructions.R1, 0, Instructions.AC, "Save value from return expression");
@@ -934,9 +936,7 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, comment);
     addInstruction(code);
 
-    // add breakpoint
-    // code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
-    // addInstruction(code);
+    // addBreakPoint();
 
     // Jump to instruction
     comment = String.format("Jump to %s()", name);
@@ -997,7 +997,7 @@ public final class CodeGen implements AstVisitor {
     int backupLine = buffer.lineBackup(savedLines[0]);
 
     comment = String.format("if false jump %d instructions", savedLines[1] - (backupLine + 1));
-    code = Instructions.RM_ABS("JEQ", Instructions.AC, backupLine, savedLines[1], Instructions.PC, comment);
+    code = Instructions.RM_ABS("JEQ", Instructions.AC, backupLine + 1, savedLines[1], Instructions.PC, comment);
     addInstruction(code);
     buffer.lineRestore();
 
@@ -1065,6 +1065,15 @@ public final class CodeGen implements AstVisitor {
     }
 
     return name;
+  }
+
+  /**
+   * Add a breakpoint to the program
+   * For debug purposes only
+   */
+  private void addBreakPoint() {
+    String code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
+    addInstruction(code);
   }
 
   /**
