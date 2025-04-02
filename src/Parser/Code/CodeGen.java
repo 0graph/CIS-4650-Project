@@ -382,6 +382,9 @@ public final class CodeGen implements AstVisitor {
 
     buffer.addComment("--- Assignment Expression ---");
 
+    // code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
+    // addInstruction(code);
+
     // Assign Expression to address
     visit(left, block, true, offset + 1);
 
@@ -461,8 +464,9 @@ public final class CodeGen implements AstVisitor {
         // check if the array variable is a parameter and the pointer is not global
         // if either of those is false we want to access the address of the array
         int paramOffset = block.getParamOffset();
-        if (symbolAddress < paramOffset && pointer == Instructions.FP) { 
-          comment = String.format("Original Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, symbolAddress, pointer);
+        if (symbolAddress < paramOffset && pointer == Instructions.FP) {
+          comment = String.format("Original Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, symbolAddress,
+              pointer);
           code = Instructions.RM("LD", Instructions.AC, symbolAddress, pointer, comment);
           addInstruction(code);
         } else {
@@ -470,7 +474,6 @@ public final class CodeGen implements AstVisitor {
           code = Instructions.RM("LDA", Instructions.AC, symbolAddress, pointer, comment);
           addInstruction(code);
         }
-        
 
         /**
          * TODO: The issue is here. We somehow have to know whether the call with the
@@ -487,11 +490,11 @@ public final class CodeGen implements AstVisitor {
         if (block.getNestingLevel() > 0) {
           comment = String.format("Derefence the pointer to the address of %s", name);
           code = Instructions.RM("LD", Instructions.AC, 0, 0, comment);
-          //addInstruction(code);
+          // addInstruction(code);
         }
       }
 
-      code = Instructions.RM("ST", Instructions.AC, offset, pointer, "");
+      code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "");
       addInstruction(code);
     }
   }
@@ -528,7 +531,7 @@ public final class CodeGen implements AstVisitor {
     // check if the array variable is a parameter and the pointer is not global
     // if either of those is false we want to access the address of the array
     int paramOffset = block.getParamOffset();
-    if (base < paramOffset && pointer == Instructions.FP) { 
+    if (base < paramOffset && pointer == Instructions.FP) {
       comment = String.format("Original Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, base, pointer);
       code = Instructions.RM("LD", Instructions.AC, base, pointer, comment);
       addInstruction(code);
@@ -896,8 +899,8 @@ public final class CodeGen implements AstVisitor {
     while (node != null) {
       expression = node.head;
       if (expression != null) {
-          comment = String.format("Adding argument %d", initialOffset - 1);
-          buffer.addComment(comment);
+        comment = String.format("Adding argument %d", initialOffset - 1);
+        buffer.addComment(comment);
 
         visit(expression, block, false, offset + 1);
 
@@ -905,7 +908,7 @@ public final class CodeGen implements AstVisitor {
         int position = offset + initialOffset;
         code = Instructions.RM("ST", Instructions.AC, position,
             Instructions.FP, "Storing argument");
-          addInstruction(code);
+        addInstruction(code);
       }
 
       node = node.tail;
@@ -932,14 +935,13 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
 
     // add breakpoint
-    //code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
-    //addInstruction(code);
+    // code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
+    // addInstruction(code);
 
     // Jump to instruction
     comment = String.format("Jump to %s()", name);
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, address, Instructions.PC, comment);
     addInstruction(code);
-
 
     // Pop the frame once we are done
     comment = String.format("Pop the frame and return to the current frame");
