@@ -259,13 +259,7 @@ public final class CodeGen implements AstVisitor {
 
     /**
      * TODO: Find a way to backpatch a function prototype so that we can link and
-     * keep
-     * track of where the other instructions for this function is at
-     *
-     * TODO: Fix the semantic analyzer given an error when an array is being used
-     * properly (this is what we will use to make sure that our program is correct)
-     *
-     * This might take some tinkering to do
+     * keep track of where the other instructions for this function is at
      */
     Block functionBlock = block.createNewBlock(name, line - 1);
 
@@ -910,6 +904,8 @@ public final class CodeGen implements AstVisitor {
         visit(expression, block, false, offset + 1);
 
         // int position = offset + initialOffset - 1;
+        // TODO: For some reason the position is not working perfectly when being passed
+        // down recursively. This is messing up the positions in the "gcd" example
         int position = offset + initialOffset;
         code = Instructions.RM("ST", Instructions.AC, position,
             Instructions.FP, "Storing argument");
