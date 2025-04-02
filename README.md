@@ -33,6 +33,11 @@ Use the `./run` script inside this directory to run specific commands for the pa
 
 Testing files for the parser can be found in the /tests/ folder
 
+To Compiler a file (including a semantic analysis) run:
+```bash
+./run file.txt
+```
+
 For example: to scan only a file use:
 
 ```bash
@@ -50,6 +55,10 @@ To show the Symbol Tree of a file:
 ./run -c -s tests/bruh # Show the symbol tree
 
 ./run -c -a tests/bruh # Show the parse tree
+
+./run -c -c tests/bruh # Compile the file to the "Programs" folder. Note that this does not do a semantic check alone, to do that just run "./run tests/bruh"
 ```
 
 Credits to the given **Sample Parser** as it was used as a starting point for the parser implementation of the assignment.
+
+Credits to Adam Bialecki and Marcos Cevallos
