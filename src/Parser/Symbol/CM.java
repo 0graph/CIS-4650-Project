@@ -31,9 +31,14 @@ public class CM {
         doSymbolParse(args[1], true);
         break;
 
-      case "-c":
+      case "-cx":
         System.out.println("Compiling...");
         doCompile(args[1], true);
+        break;
+
+      case "-c":
+        System.out.println("Compiling...");
+        doAll(args[1]);
         break;
 
       case "-h":
