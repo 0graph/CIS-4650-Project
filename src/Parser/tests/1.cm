@@ -1,3 +1,4 @@
+// Output the number 45 to the console
 void main(void){
   int x;
 

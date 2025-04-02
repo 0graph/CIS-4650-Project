@@ -1,16 +1,17 @@
-void main(void){
-  int x[3];
-  int i;
+/*
+ * Program contains syntactic errors
+ * The program is missing a curly brace in line 8
+ */
 
-  i = 0;
-  while(i < 3){
-    x[i] = i;
-    i = i + 1;
+void other(int a){
+  if (a + 3){
+    return 0;
   }
 
-  i = 0;
-  while(i < 3){
-    output(x[i]);
-    i = i + 1;
+  if(a == 0)
+    return 0;
   }
 }
+
+void main(void){}
+

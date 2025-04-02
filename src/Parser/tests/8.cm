@@ -1,0 +1,16 @@
+/**
+ * Main calls the function other which was never declared
+ */
+
+bool b(){
+  bool y;
+
+  y = true;
+  return y;
+}
+
+void main(void){
+  int x;
+
+  other(x);
+}

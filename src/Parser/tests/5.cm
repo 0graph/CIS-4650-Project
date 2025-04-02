@@ -1,22 +1,14 @@
-int add(int x[]){
-  int j;
+/*
+* Error 1: incompatible types in expression
+* Error 2: array access for non array type
+*/
 
-  j = 0;
-  while(j < 3){
-    x[j] = j * 2;
-    j = j + 1;
-  }
-}
-
-void main(void){
-  int x[3];
-  int i;
-
-  add(x);
-
-  i = 0;
-  while(i < 3){
-    output(x[i]);
-    i = i + 1;
-  }
+int main(void)
+{
+  int a;
+  bool b;
+  a = 5;
+  b = true;
+  a[5] = b;
+  return 0;
 }

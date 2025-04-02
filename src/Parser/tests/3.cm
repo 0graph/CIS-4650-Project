@@ -1,10 +1,9 @@
-int add(int x, int y){
-  int c;
+/**
+ * This program has a function prototype that is used for
+ * adding two numbers and returning them
+ */
 
-  c = x + y;
-
-  return c;
-}
+int add(int x, int y);
 
 void main(void){
   int k;
@@ -12,4 +11,12 @@ void main(void){
   k = add(3, 9);
 
   output(k);
+}
+
+int add(int x, int y){
+  int c;
+
+  c = x + y;
+
+  return c;
 }

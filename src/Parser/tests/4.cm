@@ -1,18 +1,10 @@
-int x;
+/*
+* Error 1: Variable 'a' is not declared
+* Error 2: Variable 'b is redeclared
+*/
 
-int mut(int y){
-  int z;
-  z = y * x;
-
-  return z;
-}
-
-void main(void){
-  int y;
-
-  x = 5; 
-  y = mut(5);
-
-  output(y);
-  output(x);
+int func(int b)
+{
+  int b;
+  return a + b;
 }
