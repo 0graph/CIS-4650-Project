@@ -30,7 +30,7 @@ public class SemanticAnalyser implements AstVisitor {
     // Function Declarations
     NodeType input = new NodeType("input", null, 0);
     input.def = new FunctionDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "input",
-        new VarDecList(new SimpleDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "input"), null), null);
+        new VarDecList(null, null), null);
 
     NodeType output = new NodeType("output", null, 0);
     output.def = new FunctionDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "output",
@@ -344,7 +344,7 @@ public class SemanticAnalyser implements AstVisitor {
           break;
 
         case ARRAY:
-          if (!(exp.variable instanceof IndexVar)) {
+          if (!(exp.variable instanceof IndexVar) && !(exp.variable instanceof SimpleVar)) {
             errors.addVariableMisuseError(name, node.type, exp.row, exp.col);
           }
           break;
