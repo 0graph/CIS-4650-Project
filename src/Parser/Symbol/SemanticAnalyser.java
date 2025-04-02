@@ -337,7 +337,8 @@ public class SemanticAnalyser implements AstVisitor {
 
       // Check if the variable called matches the one that is being used
       switch (node.type) {
-        case VARIABLE:
+        case VARIABLE: // TODO: Passing down an array from the base can result in just a simple var
+                       // being passed down
           if (!(exp.variable instanceof SimpleVar)) {
             errors.addVariableMisuseError(name, node.type, exp.row, exp.col);
           }

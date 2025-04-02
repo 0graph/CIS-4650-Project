@@ -28,7 +28,7 @@ def run_test(filename):
     output = ""
     try:
         result = subprocess.run(
-            f"./run -c -c {file}",
+            f"./run {file}",
             shell=True,
             check=True,
             capture_output=True,
