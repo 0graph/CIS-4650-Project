@@ -888,8 +888,6 @@ public final class CodeGen implements AstVisitor {
 
     Integer[] symbol = block.getSymbolAddress(name);
 
-    
-
     buffer.addComment(comment);
     buffer.addComment("Offset: " + offset);
 
@@ -904,12 +902,12 @@ public final class CodeGen implements AstVisitor {
         comment = String.format("Adding argument %d", initialOffset - 1);
         buffer.addComment(comment);
 
-
         int position = offset + initialOffset;
-        // We want to preform all instruction calculations PAST the call parameter's location
+        // We want to preform all instruction calculations PAST the call parameter's
+        // location
         // This avoids overwriting the paramemter with calculation steps
         visit(expression, block, false, position + 1);
-        
+
         code = Instructions.RM("ST", Instructions.AC, position,
             Instructions.FP, "Storing argument");
         addInstruction(code);
@@ -944,15 +942,15 @@ public final class CodeGen implements AstVisitor {
     comment = String.format("Jump to %s()", name);
 
     Integer address;
-    if(symbol == null) { // address dosen't exist yet -> we need to replace this line later
-      System.out.println("Function " + name + " not found. Adding to patch list");
+    if (symbol == null) { // address dosen't exist yet -> we need to replace this line later
+      // System.out.println("Function " + name + " not found. Adding to patch list");
       address = -9999; // this is a placeholder for the address
     } else {
       address = symbol[0]; // this is the address of the function
     }
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, address, Instructions.PC, comment);
     addInstruction(code);
-    if(symbol == null) { // add the necesessary information to patch the LDA instruction later
+    if (symbol == null) { // add the necesessary information to patch the LDA instruction later
       buffer.addPatchInstruction(name, Instructions.PC, line, code);
     }
 
