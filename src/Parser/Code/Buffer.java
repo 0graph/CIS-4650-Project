@@ -2,14 +2,26 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
 /**
  * The file that has all of the code instructions being generated in an internal
  * buffer
  */
 public class Buffer {
+
+  // data used for patching function calls in a secondary pass
+  public class PatchData {
+    public String funcName;
+    public Integer PC;
+    public Integer line;
+    public String code;
+  }
+
+
   private String name;
   private StringBuilder buffer;
+  private ArrayList<PatchData> patchInstructions = new ArrayList<PatchData>();
 
   // Keep track of the line numbers
   private int line;
@@ -25,6 +37,49 @@ public class Buffer {
 
     // Generate the buffer that contains the whole file in memory
     this.buffer = new StringBuilder();
+  }
+
+  /**
+   * Adds a line of code to the patch list to be patched at the end of compilation
+   */
+  public void addPatchInstruction(String funcName,Integer PC, Integer line, String code) {
+    PatchData data = new PatchData();
+    data.funcName = funcName;
+    data.PC = PC;
+    data.line = line;
+    data.code = code;
+
+    patchInstructions.add(data);
+  }
+
+  /**
+   * Patch the buffer by finding the instructions that were added to the patch list
+   * and replacing the buffer instructions with the correct function addresses
+   */
+  public void patchInstructions(Block block) {
+    
+    for (int i = 0; i < patchInstructions.size(); ++i) {
+      PatchData data = patchInstructions.get(i);
+      String funcName = data.funcName;
+      Integer PC = data.PC;
+      Integer line = data.line;
+      String code = data.code;
+
+      // Find the function name in the buffer
+      int index = buffer.indexOf(code);
+
+      if (index != -1) {
+        // replace line of code with new line
+        Integer[] symbol = block.getSymbolAddress(funcName);
+        String comment = String.format("Patched jump to %s", funcName);
+        String newCode = Instructions.RM_ABS("LDA", PC, line-1, symbol[0], PC, comment);
+        buffer.replace(index, index + code.length(), newCode);
+        
+      } else {
+        // If the function name is not found, print an error message
+        System.out.println("Instruction: " + code + " not found in buffer");
+      }
+    }
   }
 
   /**

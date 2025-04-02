@@ -67,6 +67,8 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
     buffer.lineRestore();
 
+    buffer.patchInstructions(block); // Patch the function calls
+
     finale();
   }
 
@@ -885,7 +887,8 @@ public final class CodeGen implements AstVisitor {
     String comment = String.format("--- Calling %s() ---", name);
 
     Integer[] symbol = block.getSymbolAddress(name);
-    Integer address = symbol[0];
+
+    
 
     buffer.addComment(comment);
     buffer.addComment("Offset: " + offset);
@@ -939,8 +942,19 @@ public final class CodeGen implements AstVisitor {
 
     // Jump to instruction
     comment = String.format("Jump to %s()", name);
+
+    Integer address;
+    if(symbol == null) { // address dosen't exist yet -> we need to replace this line later
+      System.out.println("Function " + name + " not found. Adding to patch list");
+      address = -9999; // this is a placeholder for the address
+    } else {
+      address = symbol[0]; // this is the address of the function
+    }
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, address, Instructions.PC, comment);
     addInstruction(code);
+    if(symbol == null) { // add the necesessary information to patch the LDA instruction later
+      buffer.addPatchInstruction(name, Instructions.PC, line, code);
+    }
 
     // Pop the frame once we are done
     comment = String.format("Pop the frame and return to the current frame");
