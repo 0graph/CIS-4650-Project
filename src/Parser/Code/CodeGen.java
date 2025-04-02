@@ -691,6 +691,9 @@ public final class CodeGen implements AstVisitor {
           op = "SUB";
           break;
         case 2: // negate
+          op = "MUL";
+          code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "Load -1 to negate");
+          addInstruction(code);
           break;
         case 3: // multiplication
           op = "MUL";
