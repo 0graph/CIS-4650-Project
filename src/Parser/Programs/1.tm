@@ -32,7 +32,7 @@
 * Offset: 3
 * Adding argument 1
 21: LD 0,-2(5) Value of x
-22: ST 0,-4(5) 
+22: ST 0,-6(5) 
 23: ST 0,-5(5) Storing argument
 * Create new activation record
 24: ST 5,-3(5) Save address of current frame pointer to memory with offset 3

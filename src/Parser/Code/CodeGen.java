@@ -901,12 +901,12 @@ public final class CodeGen implements AstVisitor {
         comment = String.format("Adding argument %d", initialOffset - 1);
         buffer.addComment(comment);
 
-        visit(expression, block, false, offset + 1);
 
-        // int position = offset + initialOffset - 1;
-        // TODO: For some reason the position is not working perfectly when being passed
-        // down recursively. This is messing up the positions in the "gcd" example
         int position = offset + initialOffset;
+        // We want to preform all instruction calculations PAST the call parameter's location
+        // This avoids overwriting the paramemter with calculation steps
+        visit(expression, block, false, position + 1);
+        
         code = Instructions.RM("ST", Instructions.AC, position,
             Instructions.FP, "Storing argument");
         addInstruction(code);

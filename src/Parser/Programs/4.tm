@@ -25,7 +25,7 @@
 15: LD 0,-2(5) Value of y
 16: ST 0,-7(5) 
 17: LD 0,0(6) Value of x
-18: ST 0,-8(6) 
+18: ST 0,-8(5) 
 * Save the result of the operation expression to the address offset 6
 19: LD 0,-7(5) Load Left hand side
 20: LD 1,-8(5) Load Right hand side
@@ -67,9 +67,9 @@
 * --- Calling mut() ---
 * Offset: 5
 * Adding argument 1
-* Loading Constant 5 to register 0 and save to memory with offset 6
+* Loading Constant 5 to register 0 and save to memory with offset 8
 43: LDC 0,5(0) 
-44: ST 0,-6(5) 
+44: ST 0,-8(5) 
 45: ST 0,-7(5) Storing argument
 * Create new activation record
 46: ST 5,-5(5) Save address of current frame pointer to memory with offset 5
@@ -89,7 +89,7 @@
 * Offset: 3
 * Adding argument 1
 56: LD 0,-2(5) Value of y
-57: ST 0,-4(5) 
+57: ST 0,-6(5) 
 58: ST 0,-5(5) Storing argument
 * Create new activation record
 59: ST 5,-3(5) Save address of current frame pointer to memory with offset 3
@@ -103,7 +103,7 @@
 * Offset: 3
 * Adding argument 1
 65: LD 0,0(6) Value of x
-66: ST 0,-4(6) 
+66: ST 0,-6(5) 
 67: ST 0,-5(5) Storing argument
 * Create new activation record
 68: ST 5,-3(5) Save address of current frame pointer to memory with offset 3

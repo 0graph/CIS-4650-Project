@@ -55,14 +55,14 @@
 * --- Calling add() ---
 * Offset: 5
 * Adding argument 1
-* Loading Constant 3 to register 0 and save to memory with offset 6
+* Loading Constant 3 to register 0 and save to memory with offset 8
 35: LDC 0,3(0) 
-36: ST 0,-6(5) 
+36: ST 0,-8(5) 
 37: ST 0,-7(5) Storing argument
 * Adding argument 2
-* Loading Constant 9 to register 0 and save to memory with offset 6
+* Loading Constant 9 to register 0 and save to memory with offset 9
 38: LDC 0,9(0) 
-39: ST 0,-6(5) 
+39: ST 0,-9(5) 
 40: ST 0,-8(5) Storing argument
 * Create new activation record
 41: ST 5,-5(5) Save address of current frame pointer to memory with offset 5
@@ -82,7 +82,7 @@
 * Offset: 3
 * Adding argument 1
 51: LD 0,-2(5) Value of k
-52: ST 0,-4(5) 
+52: ST 0,-6(5) 
 53: ST 0,-5(5) Storing argument
 * Create new activation record
 54: ST 5,-3(5) Save address of current frame pointer to memory with offset 3

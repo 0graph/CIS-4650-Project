@@ -51,13 +51,13 @@
 * Offset: 6
 * Adding argument 1
 35: LD 0,-3(5) Value of i
-36: ST 0,-8(5) 
-* Load index calculated at offset 8 and base address of array a[] and save it to offset 7
+36: ST 0,-10(5) 
+* Load index calculated at offset 10 and base address of array a[] and save it to offset 9
 37: LD 0,-2(5) Original Address of a, PO: 3, SA: 2, P*: 5
-38: LD 1,-8(5) Load index value to register
+38: LD 1,-10(5) Load index value to register
 39: SUB 0,0,1 Substract the offset to the address
 40: LD 0,0(0) Load the value at the a[index] address to the AC
-41: ST 0,-7(5) Value of a[index]
+41: ST 0,-9(5) Value of a[index]
 42: ST 0,-8(5) Storing argument
 * Create new activation record
 43: ST 5,-6(5) Save address of current frame pointer to memory with offset 6
@@ -130,13 +130,13 @@
 * Offset: 5
 * Adding argument 1
 88: LD 0,-2(5) Value of i
-89: ST 0,-7(5) 
-* Load index calculated at offset 7 and base address of array arr[] and save it to offset 6
+89: ST 0,-9(5) 
+* Load index calculated at offset 9 and base address of array arr[] and save it to offset 8
 90: LDA 0,0(6) Address of arr, PO: 2, SA: 0, P*: 6
-91: LD 1,-7(5) Load index value to register
+91: LD 1,-9(5) Load index value to register
 92: SUB 0,0,1 Substract the offset to the address
 93: LD 0,0(0) Load the value at the arr[index] address to the AC
-94: ST 0,-6(5) Value of arr[index]
+94: ST 0,-8(5) Value of arr[index]
 95: ST 0,-7(5) Storing argument
 * Create new activation record
 96: ST 5,-5(5) Save address of current frame pointer to memory with offset 5
@@ -261,7 +261,7 @@
 * Offset: 4
 * Adding argument 1
 174: LD 0,-2(5) Original Address of a, PO: 3, SA: 2, P*: 5
-175: ST 0,-5(5) 
+175: ST 0,-7(5) 
 176: ST 0,-6(5) Storing argument
 * Create new activation record
 177: ST 5,-4(5) Save address of current frame pointer to memory with offset 4
@@ -289,7 +289,7 @@
 * Offset: 2
 * Adding argument 1
 191: LDA 0,0(6) Address of arr, PO: 2, SA: 0, P*: 6
-192: ST 0,-3(6) 
+192: ST 0,-5(5) 
 193: ST 0,-4(5) Storing argument
 * Create new activation record
 194: ST 5,-2(5) Save address of current frame pointer to memory with offset 2

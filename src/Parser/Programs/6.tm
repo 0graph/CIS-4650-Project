@@ -120,13 +120,13 @@
 * Offset: 8
 * Adding argument 1
 84: LD 0,-2(5) Value of i
-85: ST 0,-10(5) 
-* Load index calculated at offset 10 and base address of array x[] and save it to offset 9
+85: ST 0,-12(5) 
+* Load index calculated at offset 12 and base address of array x[] and save it to offset 11
 86: LDA 0,-3(5) Address of x, PO: 2, SA: 3, P*: 5
-87: LD 1,-10(5) Load index value to register
+87: LD 1,-12(5) Load index value to register
 88: SUB 0,0,1 Substract the offset to the address
 89: LD 0,0(0) Load the value at the x[index] address to the AC
-90: ST 0,-9(5) Value of x[index]
+90: ST 0,-11(5) Value of x[index]
 91: ST 0,-10(5) Storing argument
 * Create new activation record
 92: ST 5,-8(5) Save address of current frame pointer to memory with offset 8

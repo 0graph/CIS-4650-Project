@@ -66,7 +66,7 @@
 * Offset: 5
 * Adding argument 1
 43: LD 0,-2(5) Value of c
-44: ST 0,-6(5) 
+44: ST 0,-8(5) 
 45: ST 0,-7(5) Storing argument
 * Create new activation record
 46: ST 5,-5(5) Save address of current frame pointer to memory with offset 5
