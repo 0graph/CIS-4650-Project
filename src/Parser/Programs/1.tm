@@ -39,18 +39,17 @@
 25: LDA 5,-3(5) Load the frame pointer so that it starts at offset 3
 26: LDA 0,1(7) Save the return address in the accumulator
 27: LDA 7,-21(7) Jump to output()
-28: BRK 0,0,0 Breakpoint
-29: LD 5,0(5) Pop the frame and return to the current frame
-30: ST 0,-3(5) Store return value
+28: LD 5,0(5) Pop the frame and return to the current frame
+29: ST 0,-3(5) Store return value
 * --- Calling output() ---
-31: LD 7,-1(5) Return to caller
+30: LD 7,-1(5) Return to caller
 * --- Function Declaration (main) ---
-11: LDA 7,20(7) Jump around function bodies
+11: LDA 7,19(7) Jump around function bodies
 * --- Final ---
-32: ST 5,0(5) Original Pointer
-33: LDA 5,0(5) Push Main Frame Pointer
-34: LDA 0,1(7) Load Accumulator with return pointer
-35: LDA 7,-24(7) Jump to Location
-36: LD 5,0(5) Pop Main Frame
-37: HALT 0,0,0 Exit
+31: ST 5,0(5) Original Pointer
+32: LDA 5,0(5) Push Main Frame Pointer
+33: LDA 0,1(7) Load Accumulator with return pointer
+34: LDA 7,-23(7) Jump to Location
+35: LD 5,0(5) Pop Main Frame
+36: HALT 0,0,0 Exit
 * --- Final ---

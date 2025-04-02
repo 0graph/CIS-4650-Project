@@ -53,7 +53,7 @@
 35: LD 0,-3(5) Value of i
 36: ST 0,-8(5) 
 * Load index calculated at offset 8 and base address of array a[] and save it to offset 7
-37: LD 0,-2(5) Load address to register
+37: LD 0,-2(5) Original Address of a, PO: 3, SA: 2, P*: 5
 38: LD 1,-8(5) Load index value to register
 39: SUB 0,0,1 Substract the offset to the address
 40: LD 0,0(0) Load the value at the a[index] address to the AC
@@ -132,7 +132,7 @@
 88: LD 0,-2(5) Value of i
 89: ST 0,-7(5) 
 * Load index calculated at offset 7 and base address of array arr[] and save it to offset 6
-90: LD 0,0(6) Load address to register
+90: LDA 0,0(6) Address of arr, PO: 2, SA: 0, P*: 6
 91: LD 1,-7(5) Load index value to register
 92: SUB 0,0,1 Substract the offset to the address
 93: LD 0,0(0) Load the value at the arr[index] address to the AC
@@ -210,7 +210,7 @@
 141: LD 0,-3(5) Value of i
 142: ST 0,-8(5) 
 * Load index calculated at offset 8 and base address of array a[] and save it to offset 7
-143: LD 0,-2(5) Load address to register
+143: LD 0,-2(5) Original Address of a, PO: 3, SA: 2, P*: 5
 144: LD 1,-8(5) Load index value to register
 145: SUB 0,0,1 Substract the offset to the address
 146: ST 0,-7(5) Store the address given the index at offset 7

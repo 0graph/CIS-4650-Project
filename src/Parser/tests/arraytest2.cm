@@ -1,9 +1,19 @@
+int arr[5];
 
 void printArray(int a[]) {
     int i;
     i = 0;
     while(i < 5) {
         output(a[i]);
+        i = i + 1;
+    }
+}
+
+void printArray2(void) {
+    int i;
+    i = 0;
+    while(i < 5) {
+        output(arr[i]);
         i = i + 1;
     }
 }
@@ -16,11 +26,11 @@ void makeArray(int a[]) {
         i = i + 1;
     }
     printArray(a);
+    printArray2();
 }
 
 
 int main(void) {
-    int arr[5];
     makeArray(arr);
     return 0;
 }

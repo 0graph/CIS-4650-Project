@@ -57,6 +57,9 @@ public class Block {
   // the first position if the address)
   private int offset = 2;
 
+  // the offset after the function parameters have been added
+  private int paramOffset = 0;
+
   // The current nesting level of the block (This is used for call expressions
   // where nesting expressions are possible)
   private int level = 0;
@@ -97,6 +100,22 @@ public class Block {
    */
   public int getOffset() {
     return offset;
+  }
+
+  /**
+   * Get the offset for the block after the parameters have been added
+   */
+  public int getParamOffset() {
+    return paramOffset;
+  }
+
+  /**
+   * Set the offset for the parameters
+   *
+   * @param value The value to set the offset to
+   */
+  public void setParamOffset(int value) {
+    paramOffset = value;
   }
 
   /**
