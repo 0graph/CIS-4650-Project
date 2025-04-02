@@ -345,7 +345,7 @@ public class SemanticAnalyser implements AstVisitor {
           break;
 
         case ARRAY:
-          if (!(exp.variable instanceof IndexVar)) {
+          if (!(exp.variable instanceof IndexVar) && !(exp.variable instanceof SimpleVar)) {
             errors.addVariableMisuseError(name, node.type, exp.row, exp.col);
           }
           break;
