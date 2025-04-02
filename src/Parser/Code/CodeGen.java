@@ -996,8 +996,8 @@ public final class CodeGen implements AstVisitor {
     savedLines[1] = buffer.skipLines(0);
     int backupLine = buffer.lineBackup(savedLines[0]);
 
-    comment = String.format("if false jump %d instructions", savedLines[1] - (backupLine + 1));
-    code = Instructions.RM_ABS("JEQ", Instructions.AC, backupLine + 1, savedLines[1], Instructions.PC, comment);
+    comment = String.format("if false jump %d instructions", savedLines[1] - (backupLine));
+    code = Instructions.RM_ABS("JEQ", Instructions.AC, backupLine - 1, savedLines[1], Instructions.PC, comment);
     addInstruction(code);
     buffer.lineRestore();
 
