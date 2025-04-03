@@ -514,9 +514,20 @@ public final class CodeGen implements AstVisitor {
     Integer[] symbol = block.getSymbolAddress(name);
     Integer base = symbol[0];
     Integer pointer = symbol[1];
+    Integer arraySize = symbol[3];
 
     // Get the value for the index that will be updated
     visit(index, block, false, offset + 1);
+
+    buffer.addComment("Check that index is valid");
+
+    code = Instructions.RM("LDC", Instructions.R1, arraySize, Instructions.R1, "Load Size");
+    addInstruction(code);
+
+    code = Instructions.RR("SUB", Instructions.R2, Instructions.AC, Instructions.R1, "Check size");
+    addInstruction(code);
+
+    // TODO: Add a check for the right result, halt if out of range
 
     // Add the Index to a register to then calculate the offset of the array index
     comment = String.format(
