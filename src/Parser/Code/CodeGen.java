@@ -527,7 +527,16 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RR("SUB", Instructions.R2, Instructions.AC, Instructions.R1, "Check size");
     addInstruction(code);
 
-    // TODO: Add a check for the right result, halt if out of range, backpatch
+    // Backpatch the line
+    Integer[] backpatch = new Integer[] { 0, 0 };
+    backpatch[0] = buffer.skipLines(1);
+
+    code = Instructions.RR("HALT", 0, 0, 0, "Index out of range");
+    addInstruction(code);
+
+    backpatch[1] = buffer.skipLines(0);
+    int line = buffer.lineBackup(backpatch[0]);
+    // code = Instructions.RM("JGT", );
 
     // Add the Index to a register to then calculate the offset of the array index
     comment = String.format(
