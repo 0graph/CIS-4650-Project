@@ -521,6 +521,7 @@ public final class CodeGen implements AstVisitor {
 
     buffer.addComment("Check that index is valid");
 
+
     code = Instructions.RM("LDC", Instructions.R1, arraySize, Instructions.R1, "Load Size");
     addInstruction(code);
 
@@ -528,6 +529,8 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
 
     // TODO: Add a check for the right result, halt if out of range, backpatch
+    code = Instructions.RM("JGE", Instructions.R2, -1000, Instructions.PC, "Check size");
+    addInstruction(code);
 
     // Add the Index to a register to then calculate the offset of the array index
     comment = String.format(
