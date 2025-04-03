@@ -522,6 +522,7 @@ public final class CodeGen implements AstVisitor {
     buffer.addComment("Check that index is valid");
 
 
+    // check if the array access is larger then the size of the array
     code = Instructions.RM("LDC", Instructions.R1, arraySize, Instructions.R1, "Load Size");
     addInstruction(code);
 
@@ -529,7 +530,17 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
 
     // TODO: Add a check for the right result, halt if out of range, backpatch
-    code = Instructions.RM("JGE", Instructions.R2, -1000, Instructions.PC, "Check size");
+    code = Instructions.RM("JGE", Instructions.R2, -1000, Instructions.PC, "Jump to error if out of range");
+    addInstruction(code);
+
+    // check if the array access is less than 0
+    code = Instructions.RM("LDC", Instructions.R1, 0, Instructions.R1, "Load Size");
+    addInstruction(code);
+
+    code = Instructions.RR("SUB", Instructions.R2, Instructions.AC, Instructions.R1, "Check size");
+    addInstruction(code);
+
+    code = Instructions.RM("JLT", Instructions.R2, -1000, Instructions.PC, "Jump to error if out of range");
     addInstruction(code);
 
     // Add the Index to a register to then calculate the offset of the array index
