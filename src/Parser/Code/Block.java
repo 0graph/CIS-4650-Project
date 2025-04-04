@@ -27,6 +27,7 @@ public class Block {
     public Integer address;
     public Integer pointer;
     public SymbolType type;
+    public Integer size = 1;
 
     /**
      * Create a new symbol
@@ -47,6 +48,17 @@ public class Block {
       this.address = address;
       this.pointer = pointer;
       this.type = type;
+    }
+
+    /**
+     * Userd for arrays
+     */
+    public Symbol(String name, Integer address, Integer pointer, SymbolType type, Integer size) {
+      this.name = name;
+      this.address = address;
+      this.pointer = pointer;
+      this.type = type;
+      this.size = size;
     }
   }
 
@@ -199,7 +211,7 @@ public class Block {
     }
 
     // The address is the first position of the array
-    address = new Symbol(id, offset, pointer, type);
+    address = new Symbol(id, offset, pointer, type, size);
     symbols.put(id, address);
 
     // Increase the offset
@@ -252,7 +264,7 @@ public class Block {
     Symbol symbol = symbols.get(id);
 
     if (symbol != null) {
-      info = new Integer[] { symbol.address, symbol.pointer, symbol.type.ordinal() };
+      info = new Integer[] { symbol.address, symbol.pointer, symbol.type.ordinal(), symbol.size };
     }
 
     return info;
