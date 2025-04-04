@@ -1,0 +1,22 @@
+/**
+ * This program has a function prototype that is used for
+ * adding two numbers and returning them
+ */
+
+int add(int x, int y);
+
+void main(void){
+  int k;
+
+  k = add(3, 9);
+
+  output(k);
+}
+
+int add(int x, int y){
+  int c;
+
+  c = x + y;
+
+  return c;
+}

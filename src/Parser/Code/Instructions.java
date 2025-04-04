@@ -17,6 +17,9 @@ public final class Instructions {
   // Register 1
   public static final int R1 = 1;
 
+  // Register 2
+  public static final int R2 = 2;
+
   /**
    * Create an RR instruction. Example: 1: MUL 6,0,0
    *

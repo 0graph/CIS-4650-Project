@@ -1,0 +1,7 @@
+// Output the number 45 to the console
+void main(void){
+  int x;
+
+  x = 45;
+  output(x);
+}

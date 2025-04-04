@@ -14,14 +14,4 @@ services:
       - ./src/Parser/Symbol:/app/Symbol
       - ./src/Parser/Code:/app/Code
       - ./src/Parser/Programs:/app/Programs
-
-  assembly: # Simulator
-    image: socsguelph/socslinux:latest
-    volumes:
-      - ./src/Assembly:/app
-      - ./src/Parser/Programs:/app/Programs
-    command: "bash"
-    stdin_open: true
-    tty: true
-    working_dir: /app
-
+      - ./src/Parser/Simulator:/app/Simulator

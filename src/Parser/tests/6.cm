@@ -1,0 +1,17 @@
+/*
+ * Program contains syntactic errors
+ * The program is missing a curly brace in line 8
+ */
+
+void other(int a){
+  if (a + 3){
+    return 0;
+  }
+
+  if(a == 0)
+    return 0;
+  }
+}
+
+void main(void){}
+

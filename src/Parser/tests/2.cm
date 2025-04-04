@@ -1,3 +1,4 @@
+// Sorts 10 values given through the standard input
 int x[10];
 
 int minloc(int a[], int low, int high) {

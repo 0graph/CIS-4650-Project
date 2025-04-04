@@ -10,6 +10,58 @@ public class Block {
   public Block outerScope;
   public ArrayList<Block> innerScopes = new ArrayList<Block>();
 
+  /**
+   * The type of symbols
+   */
+  public static enum SymbolType {
+    VARIABLE,
+    ARRAY,
+    FUNCTION
+  }
+
+  /**
+   * The symbol within this scope
+   */
+  public class Symbol {
+    public String name;
+    public Integer address;
+    public Integer pointer;
+    public SymbolType type;
+    public Integer size = 1;
+
+    /**
+     * Create a new symbol
+     * Default to type of variable
+     */
+    public Symbol(String name, Integer address, Integer pointer) {
+      this.name = name;
+      this.address = address;
+      this.pointer = pointer;
+      this.type = SymbolType.VARIABLE;
+    }
+
+    /**
+     * Create a new symbol
+     */
+    public Symbol(String name, Integer address, Integer pointer, SymbolType type) {
+      this.name = name;
+      this.address = address;
+      this.pointer = pointer;
+      this.type = type;
+    }
+
+    /**
+     * Userd for arrays
+     */
+    public Symbol(String name, Integer address, Integer pointer, SymbolType type, Integer size) {
+      this.name = name;
+      this.address = address;
+      this.pointer = pointer;
+      this.type = type;
+      this.size = size;
+    }
+  }
+
   // The address of this block is the instruction line number
   private int address;
 
@@ -17,13 +69,16 @@ public class Block {
   // the first position if the address)
   private int offset = 2;
 
+  // the offset after the function parameters have been added
+  private int paramOffset = 0;
+
   // The current nesting level of the block (This is used for call expressions
   // where nesting expressions are possible)
   private int level = 0;
 
   // The Symbols and their address in this current scope
   // The Integer holds two values: [offset, global/frame pointer]
-  private HashMap<String, Integer[]> symbols = new HashMap<String, Integer[]>();
+  private HashMap<String, Symbol> symbols = new HashMap<String, Symbol>();
 
   /**
    * Create a new block with the offsets
@@ -57,6 +112,22 @@ public class Block {
    */
   public int getOffset() {
     return offset;
+  }
+
+  /**
+   * Get the offset for the block after the parameters have been added
+   */
+  public int getParamOffset() {
+    return paramOffset;
+  }
+
+  /**
+   * Set the offset for the parameters
+   *
+   * @param value The value to set the offset to
+   */
+  public void setParamOffset(int value) {
+    paramOffset = value;
   }
 
   /**
@@ -101,9 +172,9 @@ public class Block {
    * @param pointer The pointer for which this address is a part of (global
    *                pointer/frame pointer)
    */
-  public void createAddress(String id, int pointer) throws Exception {
+  public void createAddress(String id, int pointer, SymbolType type) throws Exception {
     // Check if the address has already been created in this scope
-    Integer[] address;
+    Symbol address;
 
     address = symbols.get(id);
 
@@ -112,7 +183,7 @@ public class Block {
       throw new Exception(message);
     }
 
-    address = new Integer[] { offset, pointer };
+    address = new Symbol(id, offset, pointer, type);
     symbols.put(id, address);
 
     // Increase the offset
@@ -128,9 +199,9 @@ public class Block {
    *                pointer/frame pointer)
    * @param size    The offset amount
    */
-  public void createAddress(String id, int pointer, int size) throws Exception {
+  public void createAddress(String id, int pointer, int size, SymbolType type) throws Exception {
     // Check if the address has already been created in this scope
-    Integer[] address;
+    Symbol address;
 
     address = symbols.get(id);
 
@@ -140,7 +211,7 @@ public class Block {
     }
 
     // The address is the first position of the array
-    address = new Integer[] { offset, pointer };
+    address = new Symbol(id, offset, pointer, type, size);
     symbols.put(id, address);
 
     // Increase the offset
@@ -173,7 +244,7 @@ public class Block {
    */
   public Block createNewBlock(String name, int address) {
     // Add the current block as a symbol
-    Integer[] symbol = new Integer[] { address, Instructions.GP };
+    Symbol symbol = new Symbol(name, address, Instructions.GP, SymbolType.FUNCTION);
     symbols.put(name, symbol);
 
     Block innerBlock = createNewBlock(address);
@@ -185,11 +256,18 @@ public class Block {
    * Get the symbol addresses in the current scope, if it exists
    *
    * @param id The symbol id
+   * @return Returns the information of the symbol as an array of compatability
+   *         references
    */
   public Integer[] getSymbolAddressInScope(String id) {
-    Integer[] symbol = symbols.get(id);
+    Integer[] info = null;
+    Symbol symbol = symbols.get(id);
 
-    return symbol;
+    if (symbol != null) {
+      info = new Integer[] { symbol.address, symbol.pointer, symbol.type.ordinal(), symbol.size };
+    }
+
+    return info;
   }
 
   /**

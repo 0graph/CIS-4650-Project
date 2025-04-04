@@ -1,0 +1,22 @@
+/**
+ * Main is never declared
+ *
+ * Missing else statement bracket
+ *
+ * bad function call
+ */
+
+bool other(int a, int b){
+  bool status;
+  if(a > b){
+    status = false;
+  }else{
+    status = true;
+  
+}
+
+void yea(void){
+  other(2);
+}
+
+

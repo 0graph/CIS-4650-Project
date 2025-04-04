@@ -8,8 +8,9 @@ import java.util.*;
 public class SemanticAnalyser implements AstVisitor {
   final static int SPACES = 4;
 
-  private SymbolTable table;
   private SymbolErrors errors;
+  private SymbolTable table;
+  private boolean main = false; // Check if the main fucntion was declared
 
   public SemanticAnalyser() {
     // Initialize the global scope
@@ -29,7 +30,7 @@ public class SemanticAnalyser implements AstVisitor {
     // Function Declarations
     NodeType input = new NodeType("input", null, 0);
     input.def = new FunctionDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "input",
-        new VarDecList(new SimpleDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "input"), null), null);
+        new VarDecList(null, null), null);
 
     NodeType output = new NodeType("output", null, 0);
     output.def = new FunctionDec(0, 0, new VarType(0, 0, Type.INT.ordinal()), "output",
@@ -68,7 +69,13 @@ public class SemanticAnalyser implements AstVisitor {
    * Create a symbol table based on the results parsed
    */
   public void symbolTable(Ast ast) {
+    // Parse Symbols
     visit(ast, table);
+
+    // Main function was not declared
+    if (!main) {
+      errors.addError("Error: Main Function was never declared!", 0, 0);
+    }
   }
 
   /**
@@ -135,6 +142,8 @@ public class SemanticAnalyser implements AstVisitor {
    */
   public void visit(FunctionDec dec, SymbolTable table) {
     NodeType node = new NodeType(dec.name, dec, table.level, NodeType.SymbolType.FUNCTION);
+
+    main = dec.name.equals("main") ? true : main;
 
     // Add symbol to scope
     try {
@@ -290,9 +299,9 @@ public class SemanticAnalyser implements AstVisitor {
         } catch (Exception e) {
           errors.addIncorrectCallsError(exp.func, ast.row, ast.col);
         }
+        i++;
       }
 
-      i++;
       list = list.tail;
     }
 
@@ -335,7 +344,7 @@ public class SemanticAnalyser implements AstVisitor {
           break;
 
         case ARRAY:
-          if (!(exp.variable instanceof IndexVar)) {
+          if (!(exp.variable instanceof IndexVar) && !(exp.variable instanceof SimpleVar)) {
             errors.addVariableMisuseError(name, node.type, exp.row, exp.col);
           }
           break;
@@ -544,5 +553,16 @@ public class SemanticAnalyser implements AstVisitor {
     }
 
     return builder.toString();
+  }
+
+  /**
+   * Returns the number of errors (if any)
+   *
+   * @return The number of errors
+   */
+  public int getErrors() {
+    int amount = errors.getErrors().size();
+
+    return amount;
   }
 }

@@ -1,0 +1,13 @@
+/**
+ * Function b takes an input of type bool but is called with type int
+ *
+ * Malformed if statement
+ */
+
+void other(bool b){
+  if(){}
+}
+
+void main(void){
+  other(2);
+}

@@ -67,9 +67,14 @@ public final class CodeGen implements AstVisitor {
     addInstruction(code);
     buffer.lineRestore();
 
+    buffer.patchInstructions(block); // Patch the function calls
+
     finale();
   }
 
+  /**
+   * Setup the code for input/output functions
+   */
   public void ioSetup() {
     String code;
     // I/O instructions
@@ -239,6 +244,11 @@ public final class CodeGen implements AstVisitor {
    * @param block    The current block for a function
    */
   public void visit(FunctionDec function, Block block) {
+    // Verify that this is not a function prototype
+    if (function.body instanceof NilExp) {
+      return;
+    }
+
     // The name of the function
     String code;
     String name = function.name;
@@ -249,6 +259,10 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("ST", Instructions.AC, 1, Instructions.FP, "Store return");
     addInstruction(code);
 
+    /**
+     * TODO: Find a way to backpatch a function prototype so that we can link and
+     * keep track of where the other instructions for this function is at
+     */
     Block functionBlock = block.createNewBlock(name, line - 1);
 
     /**
@@ -262,6 +276,7 @@ public final class CodeGen implements AstVisitor {
 
     // Add the params to the function block
     visit(function.params, functionBlock, functionBlock.getOffset());
+    functionBlock.setParamOffset(functionBlock.getOffset()); // Set the param offset
 
     // Visit the declarations first
     visit(((CompoundExp) function.body).decs, functionBlock,
@@ -296,7 +311,7 @@ public final class CodeGen implements AstVisitor {
       int pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
 
       // Create an address for this variable in this scope
-      block.createAddress(name, pointer);
+      block.createAddress(name, pointer, Block.SymbolType.VARIABLE);
     } catch (Exception e) { // This should never ever happen at this stage
       e.printStackTrace();
     }
@@ -311,7 +326,7 @@ public final class CodeGen implements AstVisitor {
   public void visit(ArrayDec variable, Block block) {
     // Store the position based on the length of the variable
     String name = variable.name;
-    Integer size = variable.size;
+    Integer size = variable.size > 0 ? variable.size : 1;
 
     try {
       String comment = String.format("Making space for array variable (%s[%d])", name, size);
@@ -321,7 +336,7 @@ public final class CodeGen implements AstVisitor {
       int pointer = block.outerScope == null ? Instructions.GP : Instructions.FP;
 
       // Create an address for this variable in this scope
-      block.createAddress(name, pointer, size);
+      block.createAddress(name, pointer, size, Block.SymbolType.ARRAY);
     } catch (Exception e) { // This should never happen
       e.printStackTrace();
     }
@@ -362,6 +377,9 @@ public final class CodeGen implements AstVisitor {
     Exp right = expression.rhs;
 
     buffer.addComment("--- Assignment Expression ---");
+
+    // code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
+    // addInstruction(code);
 
     // Assign Expression to address
     visit(left, block, true, offset + 1);
@@ -416,11 +434,15 @@ public final class CodeGen implements AstVisitor {
     // Get address location
     Integer[] symbol = block.getSymbolAddress(name);
 
+    Integer symbolAddress = symbol[0];
+    Integer pointer = symbol[1];
+    Integer type = symbol[2];
+
     // Load the address
     if (address) {
       // Create the instructions for loading the symbol address
       comment = String.format("Load address for var (%s)", name);
-      code = Instructions.RM("LDA", Instructions.AC, symbol[0], symbol[1], comment);
+      code = Instructions.RM("LDA", Instructions.AC, symbolAddress, pointer, comment);
       addInstruction(code);
 
       // Create the instruction to read the effective address and save it to the part
@@ -429,11 +451,46 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     } else { // Right hand side variable
-      comment = String.format("Value of %s", name);
-      code = Instructions.RM("LD", Instructions.AC, symbol[0], symbol[1], comment);
-      addInstruction(code);
 
-      code = Instructions.RM("ST", Instructions.AC, offset, symbol[1], "");
+      if (type == Block.SymbolType.VARIABLE.ordinal()) {
+        comment = String.format("Value of %s", name);
+        code = Instructions.RM("LD", Instructions.AC, symbolAddress, pointer, comment);
+        addInstruction(code);
+      } else {
+        // check if the array variable is a parameter and the pointer is not global
+        // if either of those is false we want to access the address of the array
+        int paramOffset = block.getParamOffset();
+        if (symbolAddress < paramOffset && pointer == Instructions.FP) {
+          comment = String.format("Original Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, symbolAddress,
+              pointer);
+          code = Instructions.RM("LD", Instructions.AC, symbolAddress, pointer, comment);
+          addInstruction(code);
+        } else {
+          comment = String.format("Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, symbolAddress, pointer);
+          code = Instructions.RM("LDA", Instructions.AC, symbolAddress, pointer, comment);
+          addInstruction(code);
+        }
+
+        /**
+         * TODO: The issue is here. We somehow have to know whether the call with the
+         * array is nested. If it's nested than that means we can't just
+         * call the LDA (load address) because we need to dereference that address to
+         * get the real address. We have to send the real addres down somehow, all the
+         * time. That is tricky because the first time we are calling we have to pass
+         * down the address ("LDA"), but this
+         * address is now a value in memory. That means that the next time we call LDA,
+         * we are actually loading the ADDRESS, that holds
+         * that actual reference to the array's base address. I am having a hard time
+         * thinking about how to do this right
+         */
+        if (block.getNestingLevel() > 0) {
+          comment = String.format("Derefence the pointer to the address of %s", name);
+          code = Instructions.RM("LD", Instructions.AC, 0, 0, comment);
+          // addInstruction(code);
+        }
+      }
+
+      code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, "");
       addInstruction(code);
     }
   }
@@ -457,9 +514,34 @@ public final class CodeGen implements AstVisitor {
     Integer[] symbol = block.getSymbolAddress(name);
     Integer base = symbol[0];
     Integer pointer = symbol[1];
+    Integer arraySize = symbol[3];
 
     // Get the value for the index that will be updated
     visit(index, block, false, offset + 1);
+
+    buffer.addComment("Check that index is valid");
+
+
+    // check if the array access is larger then the size of the array
+    code = Instructions.RM("LDC", Instructions.R1, arraySize, Instructions.R1, "Load Size");
+    addInstruction(code);
+
+    code = Instructions.RR("SUB", Instructions.R2, Instructions.AC, Instructions.R1, "Check size");
+    addInstruction(code);
+
+    // TODO: Add a check for the right result, halt if out of range, backpatch
+    code = Instructions.RM("JGE", Instructions.R2, -1000, Instructions.PC, "Jump to error if out of range");
+    addInstruction(code);
+
+    // check if the array access is less than 0
+    code = Instructions.RM("LDC", Instructions.R1, 0, Instructions.R1, "Load Size");
+    addInstruction(code);
+
+    code = Instructions.RR("SUB", Instructions.R2, Instructions.AC, Instructions.R1, "Check size");
+    addInstruction(code);
+
+    code = Instructions.RM("JLT", Instructions.R2, -1000, Instructions.PC, "Jump to error if out of range");
+    addInstruction(code);
 
     // Add the Index to a register to then calculate the offset of the array index
     comment = String.format(
@@ -467,8 +549,18 @@ public final class CodeGen implements AstVisitor {
         offset + 1, name, offset);
     buffer.addComment(comment);
 
-    code = Instructions.RM("LDA", Instructions.AC, base, pointer, "Load address to register");
-    addInstruction(code);
+    // check if the array variable is a parameter and the pointer is not global
+    // if either of those is false we want to access the address of the array
+    int paramOffset = block.getParamOffset();
+    if (base < paramOffset && pointer == Instructions.FP) {
+      comment = String.format("Original Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, base, pointer);
+      code = Instructions.RM("LD", Instructions.AC, base, pointer, comment);
+      addInstruction(code);
+    } else {
+      comment = String.format("Address of %s, PO: %d, SA: %d, P*: %d", name, paramOffset, base, pointer);
+      code = Instructions.RM("LDA", Instructions.AC, base, pointer, comment);
+      addInstruction(code);
+    }
 
     code = Instructions.RM("LD", Instructions.R1, offset + 1, Instructions.FP, "Load index value to register");
     addInstruction(code);
@@ -484,12 +576,13 @@ public final class CodeGen implements AstVisitor {
       code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     } else { // Used as part of an expression in the right hands side
+
       comment = String.format("Load the value at the %s[index] address to the AC", name);
       code = Instructions.RM("LD", Instructions.AC, 0, Instructions.AC, comment);
       addInstruction(code);
 
       comment = String.format("Value of %s[index]", name);
-      code = Instructions.RM("ST", Instructions.AC, offset, pointer, comment);
+      code = Instructions.RM("ST", Instructions.AC, offset, Instructions.FP, comment);
       addInstruction(code);
     }
   }
@@ -508,6 +601,8 @@ public final class CodeGen implements AstVisitor {
     buffer.addComment("--- Return Expression ---");
     // Load the return value to the accumulator
     visit(exp.exp, block, false, offset + 1);
+
+    // addBreakPoint();
 
     // code = Instructions.RM("LD", Instructions.R1, 1, Instructions.FP, "Load
     // return address");
@@ -617,6 +712,9 @@ public final class CodeGen implements AstVisitor {
           op = "SUB";
           break;
         case 2: // negate
+          op = "MUL";
+          code = Instructions.RM("LDC", Instructions.AC, 1, Instructions.AC, "Load -1 to negate");
+          addInstruction(code);
           break;
         case 3: // multiplication
           op = "MUL";
@@ -806,9 +904,6 @@ public final class CodeGen implements AstVisitor {
    *               nest and have sub-levels)
    */
   public void visit(CallExp call, Block block, int offset) {
-    int level = block.getNestingLevel();
-
-    block.incrementNestingLevel(offset); // Increment the nesting level for subsequent cals
 
     String name = call.func;
     ExpList arguments = call.args;
@@ -817,7 +912,6 @@ public final class CodeGen implements AstVisitor {
     String comment = String.format("--- Calling %s() ---", name);
 
     Integer[] symbol = block.getSymbolAddress(name);
-    Integer address = symbol[0];
 
     buffer.addComment(comment);
     buffer.addComment("Offset: " + offset);
@@ -833,10 +927,14 @@ public final class CodeGen implements AstVisitor {
         comment = String.format("Adding argument %d", initialOffset - 1);
         buffer.addComment(comment);
 
-        visit(expression, block, false, offset + 1);
+        int position = offset + initialOffset;
+        // We want to preform all instruction calculations PAST the call parameter's
+        // location
+        // This avoids overwriting the paramemter with calculation steps
+        visit(expression, block, false, position + 1);
 
-        // Create the instructions to include the arguments
-        code = Instructions.RM("ST", Instructions.AC, offset + initialOffset, Instructions.FP, "Storing argument");
+        code = Instructions.RM("ST", Instructions.AC, position,
+            Instructions.FP, "Storing argument");
         addInstruction(code);
       }
 
@@ -847,7 +945,7 @@ public final class CodeGen implements AstVisitor {
     buffer.addComment("Create new activation record");
 
     // Save the address of the current frame pointer
-    comment = String.format("Save address of current frame pointer to memory with offset %d", offset + level);
+    comment = String.format("Save address of current frame pointer to memory with offset %d", offset);
     // code = Instructions.RM("ST", Instructions.FP, offset + level,
     // Instructions.FP, comment);
     code = Instructions.RM("ST", Instructions.FP, offset, Instructions.FP, comment);
@@ -863,10 +961,23 @@ public final class CodeGen implements AstVisitor {
     code = Instructions.RM("LDA", Instructions.AC, -1, Instructions.PC, comment);
     addInstruction(code);
 
+    // addBreakPoint();
+
     // Jump to instruction
     comment = String.format("Jump to %s()", name);
+
+    Integer address;
+    if (symbol == null) { // address dosen't exist yet -> we need to replace this line later
+      // System.out.println("Function " + name + " not found. Adding to patch list");
+      address = -9999; // this is a placeholder for the address
+    } else {
+      address = symbol[0]; // this is the address of the function
+    }
     code = Instructions.RM_ABS("LDA", Instructions.PC, line, address, Instructions.PC, comment);
     addInstruction(code);
+    if (symbol == null) { // add the necesessary information to patch the LDA instruction later
+      buffer.addPatchInstruction(name, Instructions.PC, line, code);
+    }
 
     // Pop the frame once we are done
     comment = String.format("Pop the frame and return to the current frame");
@@ -921,8 +1032,8 @@ public final class CodeGen implements AstVisitor {
     savedLines[1] = buffer.skipLines(0);
     int backupLine = buffer.lineBackup(savedLines[0]);
 
-    comment = String.format("if false jump %d instructions", savedLines[1] - (backupLine + 1));
-    code = Instructions.RM_ABS("JEQ", Instructions.AC, backupLine, savedLines[1], Instructions.PC, comment);
+    comment = String.format("if false jump %d instructions", savedLines[1] - (backupLine));
+    code = Instructions.RM_ABS("JEQ", Instructions.AC, backupLine - 1, savedLines[1], Instructions.PC, comment);
     addInstruction(code);
     buffer.lineRestore();
 
@@ -990,6 +1101,15 @@ public final class CodeGen implements AstVisitor {
     }
 
     return name;
+  }
+
+  /**
+   * Add a breakpoint to the program
+   * For debug purposes only
+   */
+  private void addBreakPoint() {
+    String code = Instructions.RR("BRK", 0, 0, 0, "Breakpoint");
+    addInstruction(code);
   }
 
   /**
